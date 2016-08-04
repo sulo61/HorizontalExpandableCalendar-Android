@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="month_columns">7</integer>
+    <integer name="month_rows">6</integer>
+</resources>

@@ -6,7 +6,7 @@ import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
 import com.mikesu.expandablecalendar.ExpandableCalendar;
-import com.mikesu.expandablecalendar.view.pages.MonthPageView;
+import com.mikesu.expandablecalendar.view.page.MonthPageView;
 import java.util.Random;
 import org.joda.time.Months;
 
@@ -15,6 +15,10 @@ import org.joda.time.Months;
  * www.michalsulek.pl
  */
 public class MonthViewPagerAdapter extends PagerAdapter {
+
+  public static final int DAYS_IN_PAGE = 42;
+  public static final int ROWS = 6;
+  public static final int COLUMNS = 7;
 
   private Context context;
 
@@ -35,8 +39,11 @@ public class MonthViewPagerAdapter extends PagerAdapter {
   @Override
   public Object instantiateItem(ViewGroup container, int position) {
     MonthPageView monthPageView = new MonthPageView(context);
-    monthPageView.setBackgroundColor(Color.rgb(new Random().nextInt(200), new Random().nextInt(200), new Random().nextInt(200)));
     container.addView(monthPageView, 0);
+
+    monthPageView.setBackgroundColor(Color.rgb(new Random().nextInt(200), new Random().nextInt(200), new Random().nextInt(200)));
+    monthPageView.setup(2016, 8);
+
     return monthPageView;
   }
 
