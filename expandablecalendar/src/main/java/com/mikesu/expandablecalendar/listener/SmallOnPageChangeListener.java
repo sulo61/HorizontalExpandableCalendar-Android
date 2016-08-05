@@ -1,4 +1,4 @@
-package com.mikesu.expandablecalendar.listeners;
+package com.mikesu.expandablecalendar.listener;
 
 import android.support.v4.view.ViewPager;
 

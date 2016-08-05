@@ -6,7 +6,7 @@ import android.util.AttributeSet;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.mikesu.expandablecalendar.adapter.MonthViewPagerAdapter;
-import com.mikesu.expandablecalendar.listeners.SmallOnPageChangeListener;
+import com.mikesu.expandablecalendar.listener.SmallOnPageChangeListener;
 import org.joda.time.DateTime;
 import org.joda.time.Months;
 
