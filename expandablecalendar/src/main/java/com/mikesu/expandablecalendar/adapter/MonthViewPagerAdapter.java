@@ -21,10 +21,6 @@ public class MonthViewPagerAdapter extends PagerAdapter {
   public static final int ROWS = 6;
   public static final int COLUMNS = 7;
 
-  public static int cellWidth = 0;
-  public static int cellHeight = 0;
-  public static boolean cellMeasured = false;
-
   private Context context;
 
   public MonthViewPagerAdapter(Context context) {

@@ -6,4 +6,4 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:columnCount="7"
-    android:rowCount="6"/>
+    android:rowCount="1"/>
