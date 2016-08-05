@@ -4,7 +4,9 @@ import android.content.Context;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import com.mikesu.expandablecalendar.adapter.MonthViewPagerAdapter;
+import com.mikesu.expandablecalendar.listeners.SmallOnPageChangeListener;
 import org.joda.time.DateTime;
 import org.joda.time.Months;
 
@@ -16,16 +18,17 @@ import org.joda.time.Months;
 public class ExpandableCalendar extends RelativeLayout {
 
   public static final DateTime START_DATE = new DateTime().plusYears(-1);
-  public static final DateTime END_DATE = new DateTime().plusYears(1);
-  public static final DateTime TODAY_DATE = new DateTime();
+  public static final DateTime END_DATE = new DateTime().plusYears(1).plusMonths(1);
+  public static final DateTime INIT_DAY = new DateTime();
+
+  public static int monthsBetweenStartAndInit;
+
+  private TextView title;
 
   private ViewPager monthViewPager;
   private MonthViewPagerAdapter monthViewPagerAdapter;
   private ViewPager weekViewPager;
   private CurrentVisibleViewPager currentVisibleViewPager;
-
-  private int width;
-  private int height;
 
   public ExpandableCalendar(Context context) {
     super(context);
@@ -43,14 +46,20 @@ public class ExpandableCalendar extends RelativeLayout {
   }
 
   private void init() {
-    initViews();
     initVariables();
+    initViews();
   }
 
   private void initViews() {
     inflate(getContext(), R.layout.expandable_calendar, this);
+    initTitle();
     initMonthViewPager();
     initWeekViewPager();
+    setTitle(INIT_DAY);
+  }
+
+  private void initTitle() {
+    title = (TextView) findViewById(R.id.title);
   }
 
   private void initWeekViewPager() {
@@ -61,21 +70,24 @@ public class ExpandableCalendar extends RelativeLayout {
     monthViewPager = (ViewPager) findViewById(R.id.month_view_pager);
     monthViewPagerAdapter = new MonthViewPagerAdapter(getContext());
     monthViewPager.setAdapter(monthViewPagerAdapter);
-    monthViewPager.setCurrentItem(Months.monthsBetween(START_DATE, TODAY_DATE).getMonths());
+    monthViewPager.setCurrentItem(monthsBetweenStartAndInit);
+    monthViewPager.addOnPageChangeListener(new SmallOnPageChangeListener() {
+      @Override
+      public void scrollStateChanged(int state) {
+        if (state == ViewPager.SCROLL_STATE_IDLE) {
+          setTitle(new DateTime().plusMonths(-monthsBetweenStartAndInit).plusMonths(monthViewPager.getCurrentItem()));
+        }
+      }
+    });
+  }
+
+  private void setTitle(DateTime titleDateTime) {
+    title.setText(titleDateTime.getYear() + " - " + titleDateTime.getMonthOfYear());
   }
 
   private void initVariables() {
-    height = 0;
-    width = 0;
     currentVisibleViewPager = CurrentVisibleViewPager.MONTH;
-  }
-
-
-  @Override
-  protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-    width = MeasureSpec.getSize(widthMeasureSpec);
-    height = MeasureSpec.getSize(heightMeasureSpec);
-    super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    monthsBetweenStartAndInit = Months.monthsBetween(START_DATE, INIT_DAY).getMonths();
   }
 
   private enum CurrentVisibleViewPager {
