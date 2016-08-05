@@ -3,7 +3,6 @@ package com.mikesu.expandablecalendar.adapter;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.v4.view.PagerAdapter;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import com.mikesu.expandablecalendar.ExpandableCalendar;
@@ -50,7 +49,6 @@ public class MonthViewPagerAdapter extends PagerAdapter {
     // tmp colors
     monthPageView.setBackgroundColor(Color.rgb(new Random().nextInt(200) + 50, new Random().nextInt(200) + 50, new Random().nextInt(200) + 50));
     // tmp colors
-    Log.e("SSSS", new DateTime().withDayOfMonth(1).plusMonths(-ExpandableCalendar.monthsBetweenStartAndInit).plusMonths(position).toString());
     monthPageView.setup(new DateTime().withDayOfMonth(1).plusMonths(-ExpandableCalendar.monthsBetweenStartAndInit).plusMonths(position));
 
     return monthPageView;

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:exp="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -13,8 +14,13 @@
     <com.mikesu.expandablecalendar.ExpandableCalendar
         android:id="@+id/calendar"
         android:layout_width="wrap_content"
-        android:layout_height="200dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"/>
+        android:layout_alignParentTop="true"
+        exp:bottom_container_height="48dp"
+        exp:center_container_height="200dp"
+        exp:top_container_height="48dp"
+        tools:layout_height="220dp"/>
+
 </RelativeLayout>
