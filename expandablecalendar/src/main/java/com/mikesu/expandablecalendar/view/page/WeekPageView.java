@@ -4,9 +4,9 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 import android.widget.GridLayout;
-import com.mikesu.expandablecalendar.Config;
+import com.mikesu.expandablecalendar.common.Config;
 import com.mikesu.expandablecalendar.R;
-import com.mikesu.expandablecalendar.view.cell.CellView;
+import com.mikesu.expandablecalendar.view.cell.DayView;
 import org.joda.time.DateTime;
 
 /**
@@ -56,8 +56,8 @@ public class WeekPageView extends FrameLayout {
 
   private void setSizeToCells() {
     for (int i = 0; i < gridLayout.getChildCount(); i++) {
-      CellView cellView = (CellView) gridLayout.getChildAt(i);
-      GridLayout.LayoutParams gridParams = (GridLayout.LayoutParams) cellView.getLayoutParams();
+      DayView dayView = (DayView) gridLayout.getChildAt(i);
+      GridLayout.LayoutParams gridParams = (GridLayout.LayoutParams) dayView.getLayoutParams();
       gridParams.height = Config.cellHeight;
       gridParams.width = Config.cellWidth;
     }
@@ -67,13 +67,13 @@ public class WeekPageView extends FrameLayout {
     DateTime cellDate = pageDate.plusDays(-pageDate.getDayOfWeek() + 1);
     for (int r = 0; r < Config.WEEK_ROWS; r++) {
       for (int c = 0; c < Config.COLUMNS; c++) {
-        CellView cellView = new CellView(getContext());
+        DayView dayView = new DayView(getContext());
 
         GridLayout.LayoutParams cellParams = new GridLayout.LayoutParams(GridLayout.spec(r), GridLayout.spec(c));
-        cellView.setLayoutParams(cellParams);
-        cellView.setText(String.valueOf(cellDate.getDayOfMonth()));
+        dayView.setLayoutParams(cellParams);
+        dayView.setText(String.valueOf(cellDate.getDayOfMonth()));
 
-        gridLayout.addView(cellView);
+        gridLayout.addView(dayView);
 
         cellDate = cellDate.plusDays(1);
       }

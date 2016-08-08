@@ -5,16 +5,15 @@ import android.graphics.Color;
 import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
-import com.mikesu.expandablecalendar.Config;
+import com.mikesu.expandablecalendar.common.Config;
+import com.mikesu.expandablecalendar.common.Utils;
 import com.mikesu.expandablecalendar.view.page.MonthPageView;
-import java.util.Random;
 import org.joda.time.DateTime;
 import org.joda.time.Months;
 
 /**
  * Created by MikeSu on 04/08/16.
  * www.michalsulek.pl
- *
  */
 
 public class MonthViewPagerAdapter extends PagerAdapter {
@@ -40,12 +39,11 @@ public class MonthViewPagerAdapter extends PagerAdapter {
     MonthPageView monthPageView = new MonthPageView(context);
     container.addView(monthPageView, 0);
 
-    // tmp colors
     monthPageView.setBackgroundColor(Color.rgb(
-        new Random().nextInt(50) + 200,
-        new Random().nextInt(50) + 200,
-        new Random().nextInt(50) + 200));
-    // tmp colors
+        Utils.getRandomColor(),
+        Utils.getRandomColor(),
+        Utils.getRandomColor()));
+
     monthPageView.setup(new DateTime().withDayOfMonth(1).plusMonths(-Config.monthsBetweenStartAndInit).plusMonths(position));
 
     return monthPageView;

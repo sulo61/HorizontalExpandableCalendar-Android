@@ -13,6 +13,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.mikesu.expandablecalendar.adapter.MonthViewPagerAdapter;
 import com.mikesu.expandablecalendar.adapter.WeekViewPagerAdapter;
+import com.mikesu.expandablecalendar.common.Config;
+import com.mikesu.expandablecalendar.common.Utils;
 import com.mikesu.expandablecalendar.listener.SmallOnPageChangeListener;
 import org.joda.time.DateTime;
 
@@ -80,7 +82,7 @@ public class ExpandableCalendar extends RelativeLayout {
       if (typedArray.hasValue(R.styleable.ExpandableCalendar_center_container_expanded_height)) {
         monthViewPagerHeight = typedArray.getDimensionPixelSize(R.styleable.ExpandableCalendar_center_container_expanded_height,
             LinearLayout.LayoutParams.WRAP_CONTENT);
-        weekViewPagerHeight = monthViewPagerHeight / Config.MONTH_ROWS;
+        weekViewPagerHeight = monthViewPagerHeight / (Config.MONTH_ROWS + (Config.USE_DAY_LABELS ? 1 : 0));
 
         setHeightToCenterContainer(Config.currentVisibleViewPager == Config.CurrentVisibleViewPager.MONTH ?
             monthViewPagerHeight : weekViewPagerHeight);
