@@ -64,7 +64,7 @@ public class MonthPageView extends FrameLayout {
   }
 
   private void addCellsToGrid() {
-    DateTime cellDate = pageDate.plusDays(-pageDate.getDayOfWeek());
+    DateTime cellDate = pageDate.plusDays(-pageDate.getDayOfWeek() + 1);
     for (int r = 0; r < Config.MONTH_ROWS; r++) {
       for (int c = 0; c < Config.COLUMNS; c++) {
         MonthCellView monthCellView = new MonthCellView(getContext());
