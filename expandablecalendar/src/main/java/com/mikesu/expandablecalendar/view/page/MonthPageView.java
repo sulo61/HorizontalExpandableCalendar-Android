@@ -2,12 +2,10 @@ package com.mikesu.expandablecalendar.view.page;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.GridLayout;
-import com.mikesu.expandablecalendar.ExpandableCalendar;
+import com.mikesu.expandablecalendar.Config;
 import com.mikesu.expandablecalendar.R;
-import com.mikesu.expandablecalendar.adapter.MonthViewPagerAdapter;
 import com.mikesu.expandablecalendar.view.cell.MonthCellView;
 import org.joda.time.DateTime;
 
@@ -20,8 +18,6 @@ public class MonthPageView extends FrameLayout {
 
   private GridLayout gridLayout;
   private DateTime pageDate;
-  private int height;
-  private int width;
 
   public MonthPageView(Context context) {
     super(context);
@@ -41,27 +37,7 @@ public class MonthPageView extends FrameLayout {
   private void init() {
     initVariables();
     initViews();
-    initSizes();
-  }
-
-  private void initSizes() {
-    if (!ExpandableCalendar.cellMeasured) {
-      getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-        @Override
-        public void onGlobalLayout() {
-          ExpandableCalendar.cellMeasured = true;
-
-          MonthPageView.this.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-          width = getMeasuredWidth();
-          height = getMeasuredHeight();
-
-          ExpandableCalendar.cellWidth = width / MonthViewPagerAdapter.COLUMNS;
-          ExpandableCalendar.cellHeight = height / MonthViewPagerAdapter.ROWS;
-
-          setSizeToCells();
-        }
-      });
-    }
+    setSizeToCells();
   }
 
   private void initVariables() {
@@ -82,15 +58,15 @@ public class MonthPageView extends FrameLayout {
     for (int i = 0; i < gridLayout.getChildCount(); i++) {
       MonthCellView monthCellView = (MonthCellView) gridLayout.getChildAt(i);
       GridLayout.LayoutParams gridParams = (GridLayout.LayoutParams) monthCellView.getLayoutParams();
-      gridParams.height = ExpandableCalendar.cellHeight;
-      gridParams.width = ExpandableCalendar.cellWidth;
+      gridParams.height = Config.cellHeight;
+      gridParams.width = Config.cellWidth;
     }
   }
 
   private void addCellsToGrid() {
     DateTime cellDate = pageDate.plusDays(-pageDate.getDayOfWeek());
-    for (int r = 0; r < MonthViewPagerAdapter.ROWS; r++) {
-      for (int c = 0; c < MonthViewPagerAdapter.COLUMNS; c++) {
+    for (int r = 0; r < Config.MONTH_ROWS; r++) {
+      for (int c = 0; c < Config.COLUMNS; c++) {
         MonthCellView monthCellView = new MonthCellView(getContext());
 
         GridLayout.LayoutParams cellParams = new GridLayout.LayoutParams(GridLayout.spec(r), GridLayout.spec(c));

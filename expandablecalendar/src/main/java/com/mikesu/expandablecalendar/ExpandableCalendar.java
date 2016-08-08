@@ -27,16 +27,6 @@ public class ExpandableCalendar extends RelativeLayout {
 
   private static final String TAG = ExpandableCalendar.class.getName();
 
-  public static final DateTime START_DATE = new DateTime().plusYears(-1);
-  public static final DateTime END_DATE = new DateTime().plusYears(1).plusMonths(1);
-  public static final DateTime INIT_DAY = new DateTime();
-
-  public static int monthsBetweenStartAndInit;
-  public static int weeksBetweenStartAndInit;
-  public static int cellWidth = 0;
-  public static int cellHeight = 0;
-  public static boolean cellMeasured = false;
-
   private RelativeLayout topContainer;
   private RelativeLayout centerContainer;
   private RelativeLayout bottomContainer;
@@ -64,9 +54,22 @@ public class ExpandableCalendar extends RelativeLayout {
   }
 
   private void init(AttributeSet attributeSet) {
+    bindViews();
     initVariables();
-    initViews();
     setValuesFromAttr(attributeSet);
+    setupCellSize();
+  }
+
+  private void setupCellSize() {
+    getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+      @Override
+      public void onGlobalLayout() {
+        ExpandableCalendar.this.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+        Config.cellHeight = weekViewPagerHeight;
+        Config.cellWidth = getMeasuredWidth() / Config.COLUMNS;
+        setupViews();
+      }
+    });
   }
 
   private void setValuesFromAttr(AttributeSet attributeSet) {
@@ -77,10 +80,13 @@ public class ExpandableCalendar extends RelativeLayout {
             typedArray.getDimensionPixelSize(R.styleable.ExpandableCalendar_top_container_height,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
       }
-      if (typedArray.hasValue(R.styleable.ExpandableCalendar_center_container_height)) {
-        ((LinearLayout.LayoutParams) centerContainer.getLayoutParams()).height =
-            typedArray.getDimensionPixelSize(R.styleable.ExpandableCalendar_center_container_height,
-                LinearLayout.LayoutParams.WRAP_CONTENT);
+      if (typedArray.hasValue(R.styleable.ExpandableCalendar_center_container_expanded_height)) {
+        monthViewPagerHeight = typedArray.getDimensionPixelSize(R.styleable.ExpandableCalendar_center_container_expanded_height,
+            LinearLayout.LayoutParams.WRAP_CONTENT);
+        weekViewPagerHeight = monthViewPagerHeight / Config.MONTH_ROWS;
+
+        setHeightToCenterContainer(
+            currentVisibleViewPager==CurrentVisibleViewPager.MONTH ? monthViewPagerHeight : weekViewPagerHeight);
       }
       if (typedArray.hasValue(R.styleable.ExpandableCalendar_bottom_container_height)) {
         ((LinearLayout.LayoutParams) bottomContainer.getLayoutParams()).height =
@@ -91,16 +97,17 @@ public class ExpandableCalendar extends RelativeLayout {
     }
   }
 
-  private void initViews() {
+  private void bindViews() {
     inflate(getContext(), R.layout.expandable_calendar, this);
+    bindContainers();
+  }
 
-    initContainers();
+  private void setupViews() {
     initTopContainer();
     initCenterContainer();
     initBottomContainer();
-    initSizes();
 
-    setTitleTextView(INIT_DAY);
+    setTitleTextView(Config.INIT_DAY);
   }
 
   private void initTopContainer() {
@@ -122,11 +129,13 @@ public class ExpandableCalendar extends RelativeLayout {
             monthViewPager.setVisibility(View.GONE);
             weekViewPager.setVisibility(View.VISIBLE);
             currentVisibleViewPager = CurrentVisibleViewPager.WEEK;
+            setHeightToCenterContainer(weekViewPagerHeight);
             break;
           case WEEK:
             monthViewPager.setVisibility(View.VISIBLE);
             weekViewPager.setVisibility(View.GONE);
             currentVisibleViewPager = CurrentVisibleViewPager.MONTH;
+            setHeightToCenterContainer(monthViewPagerHeight);
             break;
           default:
             Log.e(TAG, "switchViewButton click, unknown type of currentVisibleViewPager");
@@ -135,19 +144,7 @@ public class ExpandableCalendar extends RelativeLayout {
     });
   }
 
-  private void initSizes() {
-    getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-      @Override
-      public void onGlobalLayout() {
-        ExpandableCalendar.this.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-
-        monthViewPagerHeight = monthViewPager.getMeasuredHeight();
-        weekViewPagerHeight = weekViewPager.getMeasuredHeight();
-      }
-    });
-  }
-
-  private void initContainers() {
+  private void bindContainers() {
     topContainer = (RelativeLayout) findViewById(R.id.top_container);
     centerContainer = (RelativeLayout) findViewById(R.id.center_container);
     bottomContainer = (RelativeLayout) findViewById(R.id.bottom_container);
@@ -157,30 +154,32 @@ public class ExpandableCalendar extends RelativeLayout {
     monthViewPager = (ViewPager) findViewById(R.id.month_view_pager);
     monthViewPagerAdapter = new MonthViewPagerAdapter(getContext());
     monthViewPager.setAdapter(monthViewPagerAdapter);
-    monthViewPager.setCurrentItem(monthsBetweenStartAndInit);
+    monthViewPager.setCurrentItem(Config.monthsBetweenStartAndInit);
     monthViewPager.addOnPageChangeListener(new SmallOnPageChangeListener() {
       @Override
       public void scrollStateChanged(int state) {
         if (state == ViewPager.SCROLL_STATE_IDLE) {
-          setTitleTextView(new DateTime().plusMonths(-monthsBetweenStartAndInit).plusMonths(monthViewPager.getCurrentItem()));
+          setTitleTextView(new DateTime().plusMonths(-Config.monthsBetweenStartAndInit).plusMonths(monthViewPager.getCurrentItem()));
         }
       }
     });
+    monthViewPager.setVisibility(currentVisibleViewPager==CurrentVisibleViewPager.MONTH ? VISIBLE : GONE);
   }
 
   private void initWeekViewPager() {
     weekViewPager = (ViewPager) findViewById(R.id.week_view_pager);
     weekViewPagerAdapter = new WeekViewPagerAdapter(getContext());
     weekViewPager.setAdapter(weekViewPagerAdapter);
-    weekViewPager.setCurrentItem(weeksBetweenStartAndInit);
+    weekViewPager.setCurrentItem(Config.weeksBetweenStartAndInit);
     weekViewPager.addOnPageChangeListener(new SmallOnPageChangeListener() {
       @Override
       public void scrollStateChanged(int state) {
         if (state == ViewPager.SCROLL_STATE_IDLE) {
-          setTitleTextView(new DateTime().plusWeeks(-weeksBetweenStartAndInit).plusWeeks(weekViewPager.getCurrentItem()));
+          setTitleTextView(new DateTime().plusWeeks(-Config.weeksBetweenStartAndInit).plusWeeks(weekViewPager.getCurrentItem()));
         }
       }
     });
+    weekViewPager.setVisibility(currentVisibleViewPager==CurrentVisibleViewPager.WEEK ? VISIBLE : GONE);
   }
 
   private void setTitleTextView(DateTime titleDateTime) {
@@ -188,9 +187,13 @@ public class ExpandableCalendar extends RelativeLayout {
   }
 
   private void initVariables() {
-    currentVisibleViewPager = CurrentVisibleViewPager.MONTH;
-    monthsBetweenStartAndInit = Months.monthsBetween(START_DATE, INIT_DAY).getMonths();
-    weeksBetweenStartAndInit = Weeks.weeksBetween(START_DATE, INIT_DAY).getWeeks();
+    currentVisibleViewPager = CurrentVisibleViewPager.WEEK;
+    Config.monthsBetweenStartAndInit = Months.monthsBetween(Config.START_DATE, Config.INIT_DAY).getMonths();
+    Config.weeksBetweenStartAndInit = Weeks.weeksBetween(Config.START_DATE, Config.INIT_DAY).getWeeks();
+  }
+
+  private void setHeightToCenterContainer(int height) {
+    ((LinearLayout.LayoutParams) centerContainer.getLayoutParams()).height = height;
   }
 
   private enum CurrentVisibleViewPager {
