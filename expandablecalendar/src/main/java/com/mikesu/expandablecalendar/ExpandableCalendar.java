@@ -87,7 +87,7 @@ public class ExpandableCalendar extends RelativeLayout {
         weekViewPagerHeight = monthViewPagerHeight / ExpandableConfig.MONTH_ROWS;
 
         setHeightToCenterContainer(
-            currentVisibleViewPager==CurrentVisibleViewPager.MONTH ? monthViewPagerHeight : weekViewPagerHeight);
+            currentVisibleViewPager == CurrentVisibleViewPager.MONTH ? monthViewPagerHeight : weekViewPagerHeight);
       }
       if (typedArray.hasValue(R.styleable.ExpandableCalendar_bottom_container_height)) {
         ((LinearLayout.LayoutParams) bottomContainer.getLayoutParams()).height =
@@ -176,7 +176,7 @@ public class ExpandableCalendar extends RelativeLayout {
         }
       }
     });
-    monthViewPager.setVisibility(currentVisibleViewPager==CurrentVisibleViewPager.MONTH ? VISIBLE : GONE);
+    monthViewPager.setVisibility(currentVisibleViewPager == CurrentVisibleViewPager.MONTH ? VISIBLE : GONE);
   }
 
   private void initWeekViewPager() {
@@ -198,13 +198,15 @@ public class ExpandableCalendar extends RelativeLayout {
         }
       }
     });
-    weekViewPager.setVisibility(currentVisibleViewPager==CurrentVisibleViewPager.WEEK ? VISIBLE : GONE);
+    weekViewPager.setVisibility(currentVisibleViewPager == CurrentVisibleViewPager.WEEK ? VISIBLE : GONE);
   }
 
   private void initVariables() {
     currentVisibleViewPager = CurrentVisibleViewPager.WEEK;
-    ExpandableConfig.monthsBetweenStartAndInit = Months.monthsBetween(ExpandableConfig.START_DATE, ExpandableConfig.INIT_DATE).getMonths();
-    ExpandableConfig.weeksBetweenStartAndInit = Weeks.weeksBetween(ExpandableConfig.START_DATE, ExpandableConfig.INIT_DATE).getWeeks();
+    ExpandableConfig.monthsBetweenStartAndInit =
+        Months.monthsBetween(ExpandableConfig.START_DATE, ExpandableConfig.INIT_DATE).getMonths();
+    ExpandableConfig.weeksBetweenStartAndInit =
+        Weeks.weeksBetween(ExpandableConfig.START_DATE, ExpandableConfig.INIT_DATE).getWeeks();
   }
 
   private void setHeightToCenterContainer(int height) {
@@ -225,7 +227,8 @@ public class ExpandableCalendar extends RelativeLayout {
   }
 
   private void refreshTitleTextView() {
-    titleTextView.setText(String.format("%s - %s", ExpandableConfig.currentDate.getYear(), ExpandableConfig.currentDate.getMonthOfYear()));
+    titleTextView.setText(
+        String.format("%s - %s", ExpandableConfig.currentDate.getYear(), ExpandableConfig.currentDate.getMonthOfYear()));
   }
 
   private enum CurrentVisibleViewPager {
