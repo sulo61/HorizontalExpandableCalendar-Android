@@ -7,7 +7,7 @@ import org.joda.time.DateTime;
  * www.michalsulek.pl
  */
 
-public class Config {
+public class ExpandableConfig {
 
   public static final DateTime INIT_DATE = new DateTime().withDayOfMonth(1);
   public static final DateTime START_DATE = INIT_DATE.plusYears(-1);

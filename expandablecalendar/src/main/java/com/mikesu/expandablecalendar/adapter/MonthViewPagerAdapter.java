@@ -5,7 +5,7 @@ import android.graphics.Color;
 import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
-import com.mikesu.expandablecalendar.Config;
+import com.mikesu.expandablecalendar.ExpandableConfig;
 import com.mikesu.expandablecalendar.view.page.MonthPageView;
 import java.util.Random;
 import org.joda.time.DateTime;
@@ -26,7 +26,7 @@ public class MonthViewPagerAdapter extends PagerAdapter {
 
   @Override
   public int getCount() {
-    return Months.monthsBetween(Config.START_DATE, Config.END_DATE).getMonths();
+    return Months.monthsBetween(ExpandableConfig.START_DATE, ExpandableConfig.END_DATE).getMonths();
   }
 
   @Override
@@ -42,7 +42,7 @@ public class MonthViewPagerAdapter extends PagerAdapter {
     // tmp colors
     monthPageView.setBackgroundColor(Color.rgb(new Random().nextInt(200) + 50, new Random().nextInt(200) + 50, new Random().nextInt(200) + 50));
     // tmp colors
-    monthPageView.setup(new DateTime().withDayOfMonth(1).plusMonths(-Config.monthsBetweenStartAndInit).plusMonths(position));
+    monthPageView.setup(new DateTime().withDayOfMonth(1).plusMonths(-ExpandableConfig.monthsBetweenStartAndInit).plusMonths(position));
 
     return monthPageView;
   }
