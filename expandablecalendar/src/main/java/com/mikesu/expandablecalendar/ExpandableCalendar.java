@@ -15,8 +15,6 @@ import com.mikesu.expandablecalendar.adapter.MonthViewPagerAdapter;
 import com.mikesu.expandablecalendar.adapter.WeekViewPagerAdapter;
 import com.mikesu.expandablecalendar.listener.SmallOnPageChangeListener;
 import org.joda.time.DateTime;
-import org.joda.time.Months;
-import org.joda.time.Weeks;
 
 /**
  * Created by MikeSu on 04/08/16.
@@ -33,8 +31,6 @@ public class ExpandableCalendar extends RelativeLayout {
   private TextView titleTextView;
   private Button switchViewButton;
   private Button scrollToInitButton;
-
-
 
   private ViewPager monthViewPager;
   private MonthViewPagerAdapter monthViewPagerAdapter;
@@ -116,7 +112,7 @@ public class ExpandableCalendar extends RelativeLayout {
     scrollToInitButton.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View view) {
-        scrollToDate(Config.INIT_DATE, true, true);
+        scrollToDate(Config.INIT_DATE, true, true, true);
       }
     });
   }
@@ -133,12 +129,14 @@ public class ExpandableCalendar extends RelativeLayout {
       public void onClick(View view) {
         switch (Config.currentVisibleViewPager) {
           case MONTH:
+            scrollToDate(Config.currentDate, false, true, false);
             monthViewPager.setVisibility(View.GONE);
             weekViewPager.setVisibility(View.VISIBLE);
             Config.currentVisibleViewPager = Config.CurrentVisibleViewPager.WEEK;
             setHeightToCenterContainer(weekViewPagerHeight);
             break;
           case WEEK:
+            scrollToDate(Config.currentDate, true, false, false);
             monthViewPager.setVisibility(View.VISIBLE);
             weekViewPager.setVisibility(View.GONE);
             Config.currentVisibleViewPager = Config.CurrentVisibleViewPager.MONTH;
@@ -167,14 +165,10 @@ public class ExpandableCalendar extends RelativeLayout {
       public void scrollStateChanged(int state) {
         if (Config.currentVisibleViewPager == Config.CurrentVisibleViewPager.MONTH) {
           if (state == ViewPager.SCROLL_STATE_IDLE) {
-            Config.currentDate = new DateTime()
+            Config.currentDate = Config.INIT_DATE
                 .plusMonths(-Config.monthsBetweenStartAndInit)
-                .plusMonths(monthViewPager.getCurrentItem())
-                .withDayOfMonth(1)
-                .plusWeeks(-1)
-                .plusDays(-2);
+                .plusMonths(monthViewPager.getCurrentItem());
             refreshTitleTextView();
-            scrollToCurrentDate(false, true);
           }
         }
       }
@@ -186,50 +180,47 @@ public class ExpandableCalendar extends RelativeLayout {
     weekViewPager = (ViewPager) findViewById(R.id.week_view_pager);
     weekViewPagerAdapter = new WeekViewPagerAdapter(getContext());
     weekViewPager.setAdapter(weekViewPagerAdapter);
-    weekViewPager.setCurrentItem(Config.weeksBetweenStartAndInit);
+    setWeekViewPagerPosition(Config.weeksBetweenStartAndInit, false);
     weekViewPager.addOnPageChangeListener(new SmallOnPageChangeListener() {
       @Override
       public void scrollStateChanged(int state) {
         if (Config.currentVisibleViewPager == Config.CurrentVisibleViewPager.WEEK) {
           if (state == ViewPager.SCROLL_STATE_IDLE) {
-            Config.currentDate = new DateTime()
+            Config.currentDate = Config.INIT_DATE
                 .plusWeeks(-Config.weeksBetweenStartAndInit)
-                .plusWeeks(weekViewPager.getCurrentItem())
-                .withDayOfWeek(1)
-                .plusWeeks(1)
-                .plusDays(2);
+                .plusWeeks(weekViewPager.getCurrentItem());
             refreshTitleTextView();
-            scrollToCurrentDate(true, false);
           }
         }
       }
     });
-    weekViewPager.setVisibility(
-        Config.currentVisibleViewPager == Config.CurrentVisibleViewPager.WEEK ? VISIBLE : GONE);
+    weekViewPager.setVisibility(Config.currentVisibleViewPager == Config.CurrentVisibleViewPager.WEEK ? VISIBLE : GONE);
   }
 
   private void initVariables() {
-    Config.monthsBetweenStartAndInit =
-        Months.monthsBetween(Config.START_DATE, Config.INIT_DATE).getMonths();
-    Config.weeksBetweenStartAndInit =
-        Weeks.weeksBetween(Config.START_DATE, Config.INIT_DATE).getWeeks();
+    Config.monthsBetweenStartAndInit = Utils.monthsBetween(Config.START_DATE, Config.INIT_DATE);
+    Config.weeksBetweenStartAndInit = Utils.weeksBetween(Config.START_DATE, Config.INIT_DATE);
   }
 
   private void setHeightToCenterContainer(int height) {
     ((LinearLayout.LayoutParams) centerContainer.getLayoutParams()).height = height;
   }
 
-  private void scrollToCurrentDate(boolean scrollMonthPager, boolean scrollWeekPager) {
-    scrollToDate(Config.currentDate, scrollMonthPager, scrollWeekPager);
-  }
-
-  private void scrollToDate(DateTime dateTime, boolean scrollMonthPager, boolean scrollWeekPager) {
+  private void scrollToDate(DateTime dateTime, boolean scrollMonthPager, boolean scrollWeekPager, boolean animate) {
     if (scrollMonthPager) {
-      monthViewPager.setCurrentItem(Months.monthsBetween(Config.START_DATE, dateTime).getMonths(), false);
+      setMonthViewPagerPosition(Utils.monthsBetween(Config.START_DATE, dateTime), animate);
     }
     if (scrollWeekPager) {
-      weekViewPager.setCurrentItem(Weeks.weeksBetween(Config.START_DATE, dateTime).getWeeks(), false);
+      setWeekViewPagerPosition(Utils.weeksBetween(Config.START_DATE, dateTime.plusDays(-1)), animate);
     }
+  }
+
+  private void setWeekViewPagerPosition(int position, boolean animate) {
+    weekViewPager.setCurrentItem(position, animate);
+  }
+
+  private void setMonthViewPagerPosition(int position, boolean animate) {
+    monthViewPager.setCurrentItem(position, animate);
   }
 
   private void refreshTitleTextView() {

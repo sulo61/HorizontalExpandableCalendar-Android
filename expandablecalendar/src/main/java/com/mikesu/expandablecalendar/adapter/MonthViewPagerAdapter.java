@@ -14,6 +14,7 @@ import org.joda.time.Months;
 /**
  * Created by MikeSu on 04/08/16.
  * www.michalsulek.pl
+ *
  */
 
 public class MonthViewPagerAdapter extends PagerAdapter {
@@ -40,7 +41,10 @@ public class MonthViewPagerAdapter extends PagerAdapter {
     container.addView(monthPageView, 0);
 
     // tmp colors
-    monthPageView.setBackgroundColor(Color.rgb(new Random().nextInt(50) + 200, new Random().nextInt(50) + 200, new Random().nextInt(50) + 200));
+    monthPageView.setBackgroundColor(Color.rgb(
+        new Random().nextInt(50) + 200,
+        new Random().nextInt(50) + 200,
+        new Random().nextInt(50) + 200));
     // tmp colors
     monthPageView.setup(new DateTime().withDayOfMonth(1).plusMonths(-Config.monthsBetweenStartAndInit).plusMonths(position));
 
