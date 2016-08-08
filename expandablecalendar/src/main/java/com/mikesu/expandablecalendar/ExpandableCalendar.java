@@ -32,6 +32,7 @@ public class ExpandableCalendar extends RelativeLayout {
   private RelativeLayout bottomContainer;
   private TextView titleTextView;
   private Button switchViewButton;
+  private Button scrollToInitButton;
 
   private CurrentVisibleViewPager currentVisibleViewPager;
 
@@ -106,12 +107,18 @@ public class ExpandableCalendar extends RelativeLayout {
     initTopContainer();
     initCenterContainer();
     initBottomContainer();
-
-    setTitleTextView(Config.INIT_DAY);
+    refreshTitleTextView();
   }
 
   private void initTopContainer() {
     titleTextView = (TextView) findViewById(R.id.title);
+    scrollToInitButton = (Button) findViewById(R.id.scroll_to_init_button);
+    scrollToInitButton.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        scrollToDate(Config.INIT_DATE, true, true);
+      }
+    });
   }
 
   private void initCenterContainer() {
@@ -158,8 +165,14 @@ public class ExpandableCalendar extends RelativeLayout {
     monthViewPager.addOnPageChangeListener(new SmallOnPageChangeListener() {
       @Override
       public void scrollStateChanged(int state) {
-        if (state == ViewPager.SCROLL_STATE_IDLE) {
-          setTitleTextView(new DateTime().plusMonths(-Config.monthsBetweenStartAndInit).plusMonths(monthViewPager.getCurrentItem()));
+        if (currentVisibleViewPager == CurrentVisibleViewPager.MONTH) {
+          if (state == ViewPager.SCROLL_STATE_IDLE) {
+            Config.currentDate = new DateTime()
+                .plusMonths(-Config.monthsBetweenStartAndInit)
+                .plusMonths(monthViewPager.getCurrentItem());
+            refreshTitleTextView();
+            scrollToCurrentDate(false, true);
+          }
         }
       }
     });
@@ -174,26 +187,45 @@ public class ExpandableCalendar extends RelativeLayout {
     weekViewPager.addOnPageChangeListener(new SmallOnPageChangeListener() {
       @Override
       public void scrollStateChanged(int state) {
-        if (state == ViewPager.SCROLL_STATE_IDLE) {
-          setTitleTextView(new DateTime().plusWeeks(-Config.weeksBetweenStartAndInit).plusWeeks(weekViewPager.getCurrentItem()));
+        if (currentVisibleViewPager == CurrentVisibleViewPager.WEEK) {
+          if (state == ViewPager.SCROLL_STATE_IDLE) {
+            Config.currentDate = new DateTime()
+                .plusWeeks(-Config.weeksBetweenStartAndInit)
+                .plusWeeks(weekViewPager.getCurrentItem());
+            refreshTitleTextView();
+            scrollToCurrentDate(true, false);
+          }
         }
       }
     });
     weekViewPager.setVisibility(currentVisibleViewPager==CurrentVisibleViewPager.WEEK ? VISIBLE : GONE);
   }
 
-  private void setTitleTextView(DateTime titleDateTime) {
-    titleTextView.setText(String.format("%s - %s", titleDateTime.getYear(), titleDateTime.getMonthOfYear()));
-  }
-
   private void initVariables() {
     currentVisibleViewPager = CurrentVisibleViewPager.WEEK;
-    Config.monthsBetweenStartAndInit = Months.monthsBetween(Config.START_DATE, Config.INIT_DAY).getMonths();
-    Config.weeksBetweenStartAndInit = Weeks.weeksBetween(Config.START_DATE, Config.INIT_DAY).getWeeks();
+    Config.monthsBetweenStartAndInit = Months.monthsBetween(Config.START_DATE, Config.INIT_DATE).getMonths();
+    Config.weeksBetweenStartAndInit = Weeks.weeksBetween(Config.START_DATE, Config.INIT_DATE).getWeeks();
   }
 
   private void setHeightToCenterContainer(int height) {
     ((LinearLayout.LayoutParams) centerContainer.getLayoutParams()).height = height;
+  }
+
+  private void scrollToCurrentDate(boolean scrollMonthPager, boolean scrollWeekPager) {
+    scrollToDate(Config.currentDate, scrollMonthPager, scrollWeekPager);
+  }
+
+  private void scrollToDate(DateTime dateTime, boolean scrollMonthPager, boolean scrollWeekPager) {
+    if (scrollMonthPager) {
+      monthViewPager.setCurrentItem(Months.monthsBetween(Config.START_DATE, dateTime).getMonths());
+    }
+    if (scrollWeekPager) {
+      weekViewPager.setCurrentItem(Weeks.weeksBetween(Config.START_DATE, dateTime).getWeeks());
+    }
+  }
+
+  private void refreshTitleTextView() {
+    titleTextView.setText(String.format("%s - %s", Config.currentDate.getYear(), Config.currentDate.getMonthOfYear()));
   }
 
   private enum CurrentVisibleViewPager {
