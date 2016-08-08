@@ -7,7 +7,7 @@ import org.joda.time.DateTime;
  * www.michalsulek.pl
  */
 
-public class ExpandableConfig {
+public class Config {
 
   public static final DateTime INIT_DATE = new DateTime().withDayOfMonth(1);
   public static final DateTime START_DATE = INIT_DATE.plusYears(-1);
@@ -17,10 +17,16 @@ public class ExpandableConfig {
   public static final int WEEK_ROWS = 1;
   public static final int COLUMNS = 7;
 
+  public static CurrentVisibleViewPager currentVisibleViewPager = CurrentVisibleViewPager.WEEK;
   public static DateTime currentDate = INIT_DATE;
   public static int monthsBetweenStartAndInit = 0;
   public static int weeksBetweenStartAndInit = 0;
   public static int cellWidth = 0;
   public static int cellHeight = 0;
+
+  public enum CurrentVisibleViewPager {
+    MONTH,
+    WEEK
+  }
 
 }

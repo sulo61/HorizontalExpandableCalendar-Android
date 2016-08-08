@@ -5,7 +5,7 @@ import android.graphics.Color;
 import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
-import com.mikesu.expandablecalendar.ExpandableConfig;
+import com.mikesu.expandablecalendar.Config;
 import com.mikesu.expandablecalendar.view.page.WeekPageView;
 import java.util.Random;
 import org.joda.time.DateTime;
@@ -26,7 +26,7 @@ public class WeekViewPagerAdapter extends PagerAdapter {
 
   @Override
   public int getCount() {
-    return Weeks.weeksBetween(ExpandableConfig.START_DATE, ExpandableConfig.END_DATE).getWeeks();
+    return Weeks.weeksBetween(Config.START_DATE, Config.END_DATE).getWeeks();
   }
 
   @Override
@@ -42,7 +42,7 @@ public class WeekViewPagerAdapter extends PagerAdapter {
     // tmp colors
     weekPageView.setBackgroundColor(Color.rgb(new Random().nextInt(200) + 50, new Random().nextInt(200) + 50, new Random().nextInt(200) + 50));
     // tmp colors
-    weekPageView.setup(new DateTime().withDayOfWeek(1).plusWeeks(-ExpandableConfig.weeksBetweenStartAndInit).plusWeeks(position));
+    weekPageView.setup(new DateTime().withDayOfWeek(1).plusWeeks(-Config.weeksBetweenStartAndInit).plusWeeks(position));
 
     return weekPageView;
   }

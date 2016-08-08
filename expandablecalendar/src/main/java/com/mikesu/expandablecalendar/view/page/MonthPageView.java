@@ -4,7 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 import android.widget.GridLayout;
-import com.mikesu.expandablecalendar.ExpandableConfig;
+import com.mikesu.expandablecalendar.Config;
 import com.mikesu.expandablecalendar.R;
 import com.mikesu.expandablecalendar.view.cell.MonthCellView;
 import org.joda.time.DateTime;
@@ -58,15 +58,15 @@ public class MonthPageView extends FrameLayout {
     for (int i = 0; i < gridLayout.getChildCount(); i++) {
       MonthCellView monthCellView = (MonthCellView) gridLayout.getChildAt(i);
       GridLayout.LayoutParams gridParams = (GridLayout.LayoutParams) monthCellView.getLayoutParams();
-      gridParams.height = ExpandableConfig.cellHeight;
-      gridParams.width = ExpandableConfig.cellWidth;
+      gridParams.height = Config.cellHeight;
+      gridParams.width = Config.cellWidth;
     }
   }
 
   private void addCellsToGrid() {
     DateTime cellDate = pageDate.plusDays(-pageDate.getDayOfWeek());
-    for (int r = 0; r < ExpandableConfig.MONTH_ROWS; r++) {
-      for (int c = 0; c < ExpandableConfig.COLUMNS; c++) {
+    for (int r = 0; r < Config.MONTH_ROWS; r++) {
+      for (int c = 0; c < Config.COLUMNS; c++) {
         MonthCellView monthCellView = new MonthCellView(getContext());
 
         GridLayout.LayoutParams cellParams = new GridLayout.LayoutParams(GridLayout.spec(r), GridLayout.spec(c));
