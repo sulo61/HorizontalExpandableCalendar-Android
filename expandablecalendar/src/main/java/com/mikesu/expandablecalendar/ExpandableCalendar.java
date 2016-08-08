@@ -169,7 +169,10 @@ public class ExpandableCalendar extends RelativeLayout {
           if (state == ViewPager.SCROLL_STATE_IDLE) {
             Config.currentDate = new DateTime()
                 .plusMonths(-Config.monthsBetweenStartAndInit)
-                .plusMonths(monthViewPager.getCurrentItem());
+                .plusMonths(monthViewPager.getCurrentItem())
+                .withDayOfMonth(1)
+                .plusWeeks(-1)
+                .plusDays(-2);
             refreshTitleTextView();
             scrollToCurrentDate(false, true);
           }
@@ -191,7 +194,10 @@ public class ExpandableCalendar extends RelativeLayout {
           if (state == ViewPager.SCROLL_STATE_IDLE) {
             Config.currentDate = new DateTime()
                 .plusWeeks(-Config.weeksBetweenStartAndInit)
-                .plusWeeks(weekViewPager.getCurrentItem());
+                .plusWeeks(weekViewPager.getCurrentItem())
+                .withDayOfWeek(1)
+                .plusWeeks(1)
+                .plusDays(2);
             refreshTitleTextView();
             scrollToCurrentDate(true, false);
           }
@@ -219,10 +225,10 @@ public class ExpandableCalendar extends RelativeLayout {
 
   private void scrollToDate(DateTime dateTime, boolean scrollMonthPager, boolean scrollWeekPager) {
     if (scrollMonthPager) {
-      monthViewPager.setCurrentItem(Months.monthsBetween(Config.START_DATE, dateTime).getMonths());
+      monthViewPager.setCurrentItem(Months.monthsBetween(Config.START_DATE, dateTime).getMonths(), false);
     }
     if (scrollWeekPager) {
-      weekViewPager.setCurrentItem(Weeks.weeksBetween(Config.START_DATE, dateTime).getWeeks());
+      weekViewPager.setCurrentItem(Weeks.weeksBetween(Config.START_DATE, dateTime).getWeeks(), false);
     }
   }
 

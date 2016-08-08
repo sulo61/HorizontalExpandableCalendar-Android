@@ -40,7 +40,7 @@ public class MonthViewPagerAdapter extends PagerAdapter {
     container.addView(monthPageView, 0);
 
     // tmp colors
-    monthPageView.setBackgroundColor(Color.rgb(new Random().nextInt(200) + 50, new Random().nextInt(200) + 50, new Random().nextInt(200) + 50));
+    monthPageView.setBackgroundColor(Color.rgb(new Random().nextInt(50) + 200, new Random().nextInt(50) + 200, new Random().nextInt(50) + 200));
     // tmp colors
     monthPageView.setup(new DateTime().withDayOfMonth(1).plusMonths(-Config.monthsBetweenStartAndInit).plusMonths(position));
 

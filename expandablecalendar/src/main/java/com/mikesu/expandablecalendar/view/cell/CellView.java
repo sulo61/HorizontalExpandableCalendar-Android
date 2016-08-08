@@ -12,22 +12,22 @@ import com.mikesu.expandablecalendar.R;
  * www.michalsulek.pl
  */
 
-public class MonthCellView extends FrameLayout {
+public class CellView extends FrameLayout {
 
   private TextView text;
   private TimeType timeType;
 
-  public MonthCellView(Context context) {
+  public CellView(Context context) {
     super(context);
     init();
   }
 
-  public MonthCellView(Context context, AttributeSet attrs) {
+  public CellView(Context context, AttributeSet attrs) {
     super(context, attrs);
     init();
   }
 
-  public MonthCellView(Context context, AttributeSet attrs, int defStyleAttr) {
+  public CellView(Context context, AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
     init();
   }

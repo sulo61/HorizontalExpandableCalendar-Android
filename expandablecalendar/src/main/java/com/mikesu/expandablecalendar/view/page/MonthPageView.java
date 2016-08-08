@@ -6,7 +6,7 @@ import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import com.mikesu.expandablecalendar.Config;
 import com.mikesu.expandablecalendar.R;
-import com.mikesu.expandablecalendar.view.cell.MonthCellView;
+import com.mikesu.expandablecalendar.view.cell.CellView;
 import org.joda.time.DateTime;
 
 /**
@@ -56,8 +56,8 @@ public class MonthPageView extends FrameLayout {
 
   private void setSizeToCells() {
     for (int i = 0; i < gridLayout.getChildCount(); i++) {
-      MonthCellView monthCellView = (MonthCellView) gridLayout.getChildAt(i);
-      GridLayout.LayoutParams gridParams = (GridLayout.LayoutParams) monthCellView.getLayoutParams();
+      CellView cellView = (CellView) gridLayout.getChildAt(i);
+      GridLayout.LayoutParams gridParams = (GridLayout.LayoutParams) cellView.getLayoutParams();
       gridParams.height = Config.cellHeight;
       gridParams.width = Config.cellWidth;
     }
@@ -67,27 +67,27 @@ public class MonthPageView extends FrameLayout {
     DateTime cellDate = pageDate.plusDays(-pageDate.getDayOfWeek() + 1);
     for (int r = 0; r < Config.MONTH_ROWS; r++) {
       for (int c = 0; c < Config.COLUMNS; c++) {
-        MonthCellView monthCellView = new MonthCellView(getContext());
+        CellView cellView = new CellView(getContext());
 
         GridLayout.LayoutParams cellParams = new GridLayout.LayoutParams(GridLayout.spec(r), GridLayout.spec(c));
-        monthCellView.setLayoutParams(cellParams);
-        monthCellView.setText(String.valueOf(cellDate.getDayOfMonth()));
-        monthCellView.setTimeType(getTimeType(cellDate));
+        cellView.setLayoutParams(cellParams);
+        cellView.setText(String.valueOf(cellDate.getDayOfMonth()));
+        cellView.setTimeType(getTimeType(cellDate));
 
-        gridLayout.addView(monthCellView);
+        gridLayout.addView(cellView);
 
         cellDate = cellDate.plusDays(1);
       }
     }
   }
 
-  private MonthCellView.TimeType getTimeType(DateTime cellTime) {
+  private CellView.TimeType getTimeType(DateTime cellTime) {
     if (cellTime.getMonthOfYear() < pageDate.getMonthOfYear()) {
-      return MonthCellView.TimeType.PAST;
+      return CellView.TimeType.PAST;
     } else if (cellTime.getMonthOfYear() > pageDate.getMonthOfYear()) {
-      return MonthCellView.TimeType.FUTURE;
+      return CellView.TimeType.FUTURE;
     } else {
-      return MonthCellView.TimeType.CURRENT;
+      return CellView.TimeType.CURRENT;
     }
   }
 }

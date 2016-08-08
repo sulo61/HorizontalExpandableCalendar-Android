@@ -40,7 +40,7 @@ public class WeekViewPagerAdapter extends PagerAdapter {
     container.addView(weekPageView, 0);
 
     // tmp colors
-    weekPageView.setBackgroundColor(Color.rgb(new Random().nextInt(200) + 50, new Random().nextInt(200) + 50, new Random().nextInt(200) + 50));
+    weekPageView.setBackgroundColor(Color.rgb(new Random().nextInt(50) + 200, new Random().nextInt(50) + 200, new Random().nextInt(50) + 200));
     // tmp colors
     weekPageView.setup(new DateTime().withDayOfWeek(1).plusWeeks(-Config.weeksBetweenStartAndInit).plusWeeks(position));
 
