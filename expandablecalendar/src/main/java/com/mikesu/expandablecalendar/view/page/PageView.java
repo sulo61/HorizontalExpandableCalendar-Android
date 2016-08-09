@@ -1,11 +1,10 @@
 package com.mikesu.expandablecalendar.view.page;
 
 import android.content.Context;
-import android.util.AttributeSet;
 import android.widget.FrameLayout;
 import android.widget.GridLayout;
-import com.mikesu.expandablecalendar.common.Config;
 import com.mikesu.expandablecalendar.R;
+import com.mikesu.expandablecalendar.common.Config;
 import com.mikesu.expandablecalendar.common.Constants;
 import com.mikesu.expandablecalendar.common.Marks;
 import com.mikesu.expandablecalendar.common.Utils;
@@ -15,43 +14,41 @@ import com.mikesu.expandablecalendar.view.cell.LabelCellView;
 import org.joda.time.DateTime;
 
 /**
- * Created by MikeSu on 04/08/16.
+ * Created by MikeSu on 09.08.2016.
  * www.michalsulek.pl
  */
-
-public class WeekPageView extends FrameLayout {
+public class PageView extends FrameLayout {
 
   private GridLayout gridLayout;
   private DateTime pageDate;
 
-  public WeekPageView(Context context) {
+  private Config.ViewPagerType viewPagerType;
+  private int rows;
+  private int layout;
+
+  public PageView(Context context) {
+    this(context, null);
+  }
+
+  public PageView(Context context, Config.ViewPagerType viewPagerType) {
     super(context);
-    init();
-  }
-
-  public WeekPageView(Context context, AttributeSet attrs) {
-    super(context, attrs);
-    init();
-  }
-
-  public WeekPageView(Context context, AttributeSet attrs, int defStyleAttr) {
-    super(context, attrs, defStyleAttr);
-    init();
+    if (viewPagerType != null) {
+      this.viewPagerType = viewPagerType;
+      this.rows = viewPagerType == Config.ViewPagerType.MONTH ? Config.MONTH_ROWS : Config.WEEK_ROWS;
+      this.layout = viewPagerType == Config.ViewPagerType.MONTH ? R.layout.month_page_view : R.layout.week_page_view;
+      init();
+    }
   }
 
   private void init() {
-    initVariables();
     initViews();
   }
 
-  private void initVariables() {
-  }
-
   private void initViews() {
-    inflate(getContext(), R.layout.week_page_view, this);
+    inflate(getContext(), layout, this);
     gridLayout = (GridLayout) findViewById(R.id.grid_layout);
     gridLayout.setColumnCount(Config.COLUMNS);
-    gridLayout.setRowCount(Config.WEEK_ROWS + (Utils.dayLabelExtraRow()));
+    gridLayout.setRowCount(rows + (Utils.dayLabelExtraRow()));
   }
 
   public void setup(DateTime pageDate) {
@@ -73,9 +70,10 @@ public class WeekPageView extends FrameLayout {
         label.setDayType(Utils.isWeekendByColumnNumber(l) ? CellBaseView.DayType.WEEKEND : CellBaseView.DayType.NO_WEEKEND);
 
         gridLayout.addView(label);
+
       }
     }
-    for (int r = Utils.dayLabelExtraRow(); r < Config.WEEK_ROWS + (Utils.dayLabelExtraRow()); r++) {
+    for (int r = Utils.dayLabelExtraRow(); r < rows + (Utils.dayLabelExtraRow()); r++) {
       for (int c = 0; c < Config.COLUMNS; c++) {
         DayCellView dayView = new DayCellView(getContext());
 
@@ -88,6 +86,10 @@ public class WeekPageView extends FrameLayout {
         dayView.setDayType(Utils.isWeekendByColumnNumber(c) ? CellBaseView.DayType.WEEKEND : CellBaseView.DayType.NO_WEEKEND);
         dayView.setMark(Marks.getMark(cellDate), Config.cellHeight);
 
+        if (viewPagerType == Config.ViewPagerType.MONTH) {
+          dayView.setTimeType(getTimeType(cellDate));
+        }
+
         gridLayout.addView(dayView);
 
         cellDate = cellDate.plusDays(1);
@@ -95,11 +97,20 @@ public class WeekPageView extends FrameLayout {
     }
   }
 
-  public void verifyMarks() {
+  private DayCellView.TimeType getTimeType(DateTime cellTime) {
+    if (cellTime.getMonthOfYear() < pageDate.getMonthOfYear()) {
+      return DayCellView.TimeType.PAST;
+    } else if (cellTime.getMonthOfYear() > pageDate.getMonthOfYear()) {
+      return DayCellView.TimeType.FUTURE;
+    } else {
+      return DayCellView.TimeType.CURRENT;
+    }
+  }
+
+  public void updateMarks() {
     for (int c = Utils.dayLabelExtraChildCount(); c < gridLayout.getChildCount(); c++) {
       DayCellView dayCellView = (DayCellView) gridLayout.getChildAt(c);
       dayCellView.setMarkSetup(Marks.getMark((DateTime) dayCellView.getTag()));
     }
   }
-
 }

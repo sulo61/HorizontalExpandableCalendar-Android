@@ -11,8 +11,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import com.mikesu.expandablecalendar.adapter.MonthPagerAdapter;
-import com.mikesu.expandablecalendar.adapter.WeekPagerAdapter;
+import com.mikesu.expandablecalendar.adapter.CalendarAdapter;
 import com.mikesu.expandablecalendar.common.Config;
 import com.mikesu.expandablecalendar.common.Marks;
 import com.mikesu.expandablecalendar.common.Utils;
@@ -38,11 +37,11 @@ public class ExpandableCalendar extends RelativeLayout {
   private Button randomMarkButton;
 
   private ViewPager monthViewPager;
-  private MonthPagerAdapter monthPagerAdapter;
+  private CalendarAdapter monthPagerAdapter;
   private int monthViewPagerHeight;
 
   private ViewPager weekViewPager;
-  private WeekPagerAdapter weekPagerAdapter;
+  private CalendarAdapter weekPagerAdapter;
   private int weekViewPagerHeight;
 
   public ExpandableCalendar(Context context, AttributeSet attrs) {
@@ -175,15 +174,15 @@ public class ExpandableCalendar extends RelativeLayout {
             scrollToDate(Config.scrollDate, false, true, false);
             monthViewPager.setVisibility(View.GONE);
             weekViewPager.setVisibility(View.VISIBLE);
-            Config.currentViewPager = Config.CurrentViewPager.WEEK;
+            Config.currentViewPager = Config.ViewPagerType.WEEK;
             setHeightToCenterContainer(weekViewPagerHeight);
-            weekPagerAdapter.verifyMarks();
+            weekPagerAdapter.updateMarks();
             break;
           case WEEK:
             scrollToDate(Config.scrollDate, true, false, false);
             monthViewPager.setVisibility(View.VISIBLE);
             weekViewPager.setVisibility(View.GONE);
-            Config.currentViewPager = Config.CurrentViewPager.MONTH;
+            Config.currentViewPager = Config.ViewPagerType.MONTH;
             setHeightToCenterContainer(monthViewPagerHeight);
             monthPagerAdapter.updateMarks();
             break;
@@ -202,7 +201,7 @@ public class ExpandableCalendar extends RelativeLayout {
 
   private void initMonthViewPager() {
     monthViewPager = (ViewPager) findViewById(R.id.month_view_pager);
-    monthPagerAdapter = new MonthPagerAdapter(getContext());
+    monthPagerAdapter = new CalendarAdapter(getContext(), Config.ViewPagerType.MONTH);
     monthViewPager.setAdapter(monthPagerAdapter);
     monthViewPager.setCurrentItem(Config.monthsBetweenStartAndInit);
     monthViewPager.addOnPageChangeListener(new SmallPageChangeListener() {
@@ -223,7 +222,7 @@ public class ExpandableCalendar extends RelativeLayout {
 
   private void initWeekViewPager() {
     weekViewPager = (ViewPager) findViewById(R.id.week_view_pager);
-    weekPagerAdapter = new WeekPagerAdapter(getContext());
+    weekPagerAdapter = new CalendarAdapter(getContext(), Config.ViewPagerType.WEEK);
     weekViewPager.setAdapter(weekPagerAdapter);
     setWeekViewPagerPosition(Config.weeksBetweenStartAndInit, false);
     weekViewPager.addOnPageChangeListener(new SmallPageChangeListener() {
@@ -274,10 +273,10 @@ public class ExpandableCalendar extends RelativeLayout {
   }
 
   private void updateMarks() {
-    if (Config.currentViewPager == Config.CurrentViewPager.MONTH) {
+    if (Config.currentViewPager == Config.ViewPagerType.MONTH) {
       monthPagerAdapter.updateMarks();
     } else {
-      weekPagerAdapter.verifyMarks();
+      weekPagerAdapter.updateMarks();
     }
   }
 
