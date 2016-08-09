@@ -67,7 +67,7 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
 
     Marks.init();
     Marks.markToday();
-    Marks.refreshMarkSelected(true);
+    Marks.refreshMarkSelected(Config.selectionDate);
   }
 
   private void setCellHeight() {
@@ -271,9 +271,7 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
 
   @Override
   public void onDayClick(DateTime dateTime) {
-    Marks.refreshMarkSelected(false);
-    Config.selectionDate = dateTime;
-    Marks.refreshMarkSelected(true);
+    Marks.refreshMarkSelected(dateTime);
     updateMarks();
   }
 }

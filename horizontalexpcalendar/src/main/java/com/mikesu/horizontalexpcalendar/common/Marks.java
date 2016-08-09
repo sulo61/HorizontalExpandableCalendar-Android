@@ -33,21 +33,27 @@ public class Marks {
     unlock();
   }
 
-  public static void refreshMarkSelected(boolean selected) {
+  public static void refreshMarkSelected(DateTime newSelection) {
     if (isLocked()) {
       return;
     }
     lock();
-    MarkSetup markSetup = getMark(Config.selectionDate);
-    if (markSetup == null) {
-      markSetup = new MarkSetup();
-      marksMap.put(dateTimeToStringKey(Config.selectionDate), markSetup);
+    MarkSetup oldSelectionSetup = getMark(Config.selectionDate);
+    if (oldSelectionSetup != null) {
+      oldSelectionSetup.setSelected(false);
+      if (oldSelectionSetup.canBeDeleted()) {
+        marksMap.remove(dateTimeToStringKey(Config.selectionDate));
+      }
     }
 
-    markSetup.setSelected(selected);
-    if (markSetup.canBeDeleted()) {
-      marksMap.remove(dateTimeToStringKey(Config.selectionDate));
+    MarkSetup newSelectionSetup = getMark(newSelection);
+    if (newSelectionSetup == null) {
+      newSelectionSetup = new MarkSetup();
+      marksMap.put(dateTimeToStringKey(newSelection), newSelectionSetup);
     }
+    newSelectionSetup.setSelected(true);
+
+    Config.selectionDate = newSelection;
 
     unlock();
   }
