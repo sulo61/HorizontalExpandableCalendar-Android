@@ -17,6 +17,7 @@ import com.mikesu.expandablecalendar.common.Config;
 import com.mikesu.expandablecalendar.common.Marks;
 import com.mikesu.expandablecalendar.common.Utils;
 import com.mikesu.expandablecalendar.listener.SmallPageChangeListener;
+import java.util.Random;
 import org.joda.time.DateTime;
 
 /**
@@ -34,6 +35,7 @@ public class ExpandableCalendar extends RelativeLayout {
   private TextView titleTextView;
   private Button switchViewButton;
   private Button scrollToInitButton;
+  private Button randomMarkButton;
 
   private ViewPager monthViewPager;
   private MonthPagerAdapter monthPagerAdapter;
@@ -54,12 +56,6 @@ public class ExpandableCalendar extends RelativeLayout {
   }
 
   @Override
-  protected void onAttachedToWindow() {
-    super.onAttachedToWindow();
-    Marks.init();
-  }
-
-  @Override
   protected void onDetachedFromWindow() {
     Marks.clear();
     super.onDetachedFromWindow();
@@ -70,6 +66,10 @@ public class ExpandableCalendar extends RelativeLayout {
     initVariables();
     setValuesFromAttr(attributeSet);
     setupCellWidth();
+
+    Marks.init();
+    Marks.markToday();
+    Marks.refreshMarkSelected(true);
   }
 
   private void setCellHeight() {
@@ -157,6 +157,7 @@ public class ExpandableCalendar extends RelativeLayout {
 
   private void initBottomContainer() {
     switchViewButton = (Button) findViewById(R.id.change_calendar_view_button);
+    randomMarkButton = (Button) findViewById(R.id.random_selected);
     switchViewButton.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View view) {
@@ -178,6 +179,15 @@ public class ExpandableCalendar extends RelativeLayout {
           default:
             Log.e(TAG, "switchViewButton click, unknown type of currentVisibleViewPager");
         }
+      }
+    });
+    randomMarkButton.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        Marks.refreshMarkSelected(false);
+        Config.currentDate = new DateTime().withDayOfMonth(new Random().nextInt(30));
+        Marks.refreshMarkSelected(true);
+        monthPagerAdapter.notifyDataSetChanged();
       }
     });
   }
