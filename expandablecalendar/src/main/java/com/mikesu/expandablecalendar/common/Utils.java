@@ -37,6 +37,6 @@ public class Utils {
   }
 
   public static boolean isMonthView() {
-    return Config.currentVisibleViewPager == Config.CurrentVisibleViewPager.MONTH;
+    return Config.currentViewPager == Config.CurrentViewPager.MONTH;
   }
 }

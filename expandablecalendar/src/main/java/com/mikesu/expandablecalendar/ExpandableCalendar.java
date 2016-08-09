@@ -170,12 +170,12 @@ public class ExpandableCalendar extends RelativeLayout {
     switchViewButton.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View view) {
-        switch (Config.currentVisibleViewPager) {
+        switch (Config.currentViewPager) {
           case MONTH:
             scrollToDate(Config.scrollDate, false, true, false);
             monthViewPager.setVisibility(View.GONE);
             weekViewPager.setVisibility(View.VISIBLE);
-            Config.currentVisibleViewPager = Config.CurrentVisibleViewPager.WEEK;
+            Config.currentViewPager = Config.CurrentViewPager.WEEK;
             setHeightToCenterContainer(weekViewPagerHeight);
             weekPagerAdapter.verifyMarks();
             break;
@@ -183,12 +183,12 @@ public class ExpandableCalendar extends RelativeLayout {
             scrollToDate(Config.scrollDate, true, false, false);
             monthViewPager.setVisibility(View.VISIBLE);
             weekViewPager.setVisibility(View.GONE);
-            Config.currentVisibleViewPager = Config.CurrentVisibleViewPager.MONTH;
+            Config.currentViewPager = Config.CurrentViewPager.MONTH;
             setHeightToCenterContainer(monthViewPagerHeight);
             monthPagerAdapter.updateMarks();
             break;
           default:
-            Log.e(TAG, "switchViewButton click, unknown type of currentVisibleViewPager");
+            Log.e(TAG, "switchViewButton click, unknown type of currentViewPager");
         }
       }
     });
@@ -274,7 +274,7 @@ public class ExpandableCalendar extends RelativeLayout {
   }
 
   private void updateMarks() {
-    if (Config.currentVisibleViewPager == Config.CurrentVisibleViewPager.MONTH) {
+    if (Config.currentViewPager == Config.CurrentViewPager.MONTH) {
       monthPagerAdapter.updateMarks();
     } else {
       weekPagerAdapter.verifyMarks();

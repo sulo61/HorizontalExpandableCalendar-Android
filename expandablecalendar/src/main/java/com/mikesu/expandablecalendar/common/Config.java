@@ -32,7 +32,7 @@ public class Config {
   public static final int WEEK_ROWS = 1;
   public static final int COLUMNS = 7;
 
-  public static CurrentVisibleViewPager currentVisibleViewPager = CurrentVisibleViewPager.MONTH;
+  public static CurrentViewPager currentViewPager = CurrentViewPager.MONTH;
   public static DateTime scrollDate = INIT_DATE;
   public static DateTime selectionDate = new DateTime();
   public static int monthsBetweenStartAndInit = 0;
@@ -40,7 +40,7 @@ public class Config {
   public static int cellWidth = 0;
   public static int cellHeight = 0;
 
-  public enum CurrentVisibleViewPager {
+  public enum CurrentViewPager {
     MONTH,
     WEEK
   }
