@@ -7,7 +7,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -28,12 +27,7 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
 
   private static final String TAG = HorizontalExpCalendar.class.getName();
 
-  private RelativeLayout topContainer;
-  private RelativeLayout centerContainer;
-  private RelativeLayout bottomContainer;
   private TextView titleTextView;
-  private Button switchViewButton;
-  private Button scrollToInitButton;
 
   private ViewPager monthViewPager;
   private CalendarAdapter monthPagerAdapter;
@@ -60,7 +54,8 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
   }
 
   private void init(AttributeSet attributeSet) {
-    bindViews();
+    inflate(getContext(), R.layout.horizontal_exp_calendar, this);
+
     initVariables();
     setValuesFromAttr(attributeSet);
     setupCellWidth();
@@ -100,7 +95,7 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
 
   private void setupBottomContainerFromAttr(TypedArray typedArray) {
     if (typedArray.hasValue(R.styleable.HorizontalExpCalendar_bottom_container_height)) {
-      ((LinearLayout.LayoutParams) bottomContainer.getLayoutParams()).height =
+      ((LinearLayout.LayoutParams) findViewById(R.id.bottom_container).getLayoutParams()).height =
           typedArray.getDimensionPixelSize(R.styleable.HorizontalExpCalendar_bottom_container_height,
               LinearLayout.LayoutParams.WRAP_CONTENT);
     }
@@ -119,16 +114,12 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
 
   private void setupTopContainerFromAttr(TypedArray typedArray) {
     if (typedArray.hasValue(R.styleable.HorizontalExpCalendar_top_container_height)) {
-      ((LinearLayout.LayoutParams) topContainer.getLayoutParams()).height =
+      ((LinearLayout.LayoutParams) findViewById(R.id.top_container).getLayoutParams()).height =
           typedArray.getDimensionPixelSize(R.styleable.HorizontalExpCalendar_top_container_height,
               LinearLayout.LayoutParams.WRAP_CONTENT);
     }
   }
 
-  private void bindViews() {
-    inflate(getContext(), R.layout.horizontal_exp_calendar, this);
-    bindContainers();
-  }
 
   private void setupViews() {
     initTopContainer();
@@ -139,8 +130,7 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
 
   private void initTopContainer() {
     titleTextView = (TextView) findViewById(R.id.title);
-    scrollToInitButton = (Button) findViewById(R.id.scroll_to_init_button);
-    scrollToInitButton.setOnClickListener(new OnClickListener() {
+    findViewById(R.id.scroll_to_init_button).setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View view) {
         scrollToDate(Config.INIT_DATE, true, true, true);
@@ -154,8 +144,7 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
   }
 
   private void initBottomContainer() {
-    switchViewButton = (Button) findViewById(R.id.change_calendar_view_button);
-    switchViewButton.setOnClickListener(new OnClickListener() {
+    findViewById(R.id.change_calendar_view_button).setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View view) {
         switch (Config.currentViewPager) {
@@ -180,12 +169,6 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
         }
       }
     });
-  }
-
-  private void bindContainers() {
-    topContainer = (RelativeLayout) findViewById(R.id.top_container);
-    centerContainer = (RelativeLayout) findViewById(R.id.center_container);
-    bottomContainer = (RelativeLayout) findViewById(R.id.bottom_container);
   }
 
   private void initMonthViewPager() {
@@ -236,7 +219,7 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
   }
 
   private void setHeightToCenterContainer(int height) {
-    ((LinearLayout.LayoutParams) centerContainer.getLayoutParams()).height = height;
+    ((LinearLayout.LayoutParams) findViewById(R.id.center_container).getLayoutParams()).height = height;
   }
 
   private void scrollToDate(DateTime dateTime, boolean scrollMonthPager, boolean scrollWeekPager, boolean animate) {
