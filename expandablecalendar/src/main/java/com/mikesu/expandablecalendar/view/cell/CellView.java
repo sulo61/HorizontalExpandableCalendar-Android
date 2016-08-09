@@ -8,6 +8,7 @@ import android.widget.FrameLayout;
  * Created by MikeSu on 08.08.2016.
  * www.michalsulek.pl
  */
+
 public abstract class CellView extends FrameLayout {
 
   public CellView(Context context) {
@@ -24,7 +25,7 @@ public abstract class CellView extends FrameLayout {
 
   public enum DayType {
     WEEKEND,
-    NONWEEKEND
+    NO_WEEKEND
   }
 
   public enum TimeType {

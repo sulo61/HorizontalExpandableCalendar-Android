@@ -11,11 +11,11 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import com.mikesu.expandablecalendar.adapter.MonthViewPagerAdapter;
-import com.mikesu.expandablecalendar.adapter.WeekViewPagerAdapter;
+import com.mikesu.expandablecalendar.adapter.MonthPagerAdapter;
+import com.mikesu.expandablecalendar.adapter.WeekPagerAdapter;
 import com.mikesu.expandablecalendar.common.Config;
 import com.mikesu.expandablecalendar.common.Utils;
-import com.mikesu.expandablecalendar.listener.SmallOnPageChangeListener;
+import com.mikesu.expandablecalendar.listener.SmallPageChangeListener;
 import org.joda.time.DateTime;
 
 /**
@@ -35,11 +35,11 @@ public class ExpandableCalendar extends RelativeLayout {
   private Button scrollToInitButton;
 
   private ViewPager monthViewPager;
-  private MonthViewPagerAdapter monthViewPagerAdapter;
+  private MonthPagerAdapter monthPagerAdapter;
   private int monthViewPagerHeight;
 
   private ViewPager weekViewPager;
-  private WeekViewPagerAdapter weekViewPagerAdapter;
+  private WeekPagerAdapter weekPagerAdapter;
   private int weekViewPagerHeight;
 
   public ExpandableCalendar(Context context, AttributeSet attrs) {
@@ -177,10 +177,10 @@ public class ExpandableCalendar extends RelativeLayout {
 
   private void initMonthViewPager() {
     monthViewPager = (ViewPager) findViewById(R.id.month_view_pager);
-    monthViewPagerAdapter = new MonthViewPagerAdapter(getContext());
-    monthViewPager.setAdapter(monthViewPagerAdapter);
+    monthPagerAdapter = new MonthPagerAdapter(getContext());
+    monthViewPager.setAdapter(monthPagerAdapter);
     monthViewPager.setCurrentItem(Config.monthsBetweenStartAndInit);
-    monthViewPager.addOnPageChangeListener(new SmallOnPageChangeListener() {
+    monthViewPager.addOnPageChangeListener(new SmallPageChangeListener() {
       @Override
       public void scrollStateChanged(int state) {
         if (Utils.isMonthView()) {
@@ -198,10 +198,10 @@ public class ExpandableCalendar extends RelativeLayout {
 
   private void initWeekViewPager() {
     weekViewPager = (ViewPager) findViewById(R.id.week_view_pager);
-    weekViewPagerAdapter = new WeekViewPagerAdapter(getContext());
-    weekViewPager.setAdapter(weekViewPagerAdapter);
+    weekPagerAdapter = new WeekPagerAdapter(getContext());
+    weekViewPager.setAdapter(weekPagerAdapter);
     setWeekViewPagerPosition(Config.weeksBetweenStartAndInit, false);
-    weekViewPager.addOnPageChangeListener(new SmallOnPageChangeListener() {
+    weekViewPager.addOnPageChangeListener(new SmallPageChangeListener() {
       @Override
       public void scrollStateChanged(int state) {
         if (!Utils.isMonthView()) {

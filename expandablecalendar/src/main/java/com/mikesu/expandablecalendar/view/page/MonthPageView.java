@@ -65,7 +65,7 @@ public class MonthPageView extends FrameLayout {
         labelParams.width = Config.cellWidth;
         label.setLayoutParams(labelParams);
         label.setText(Constants.NAME_OF_DAYS[l]);
-        label.setDayType(Utils.isWeekendByColumnNumber(l) ? CellView.DayType.WEEKEND : CellView.DayType.NONWEEKEND);
+        label.setDayType(Utils.isWeekendByColumnNumber(l) ? CellView.DayType.WEEKEND : CellView.DayType.NO_WEEKEND);
 
         gridLayout.addView(label);
 
@@ -81,7 +81,7 @@ public class MonthPageView extends FrameLayout {
         dayView.setLayoutParams(cellParams);
         dayView.setText(String.valueOf(cellDate.getDayOfMonth()));
         dayView.setTimeType(getTimeType(cellDate));
-        dayView.setDayType(Utils.isWeekendByColumnNumber(c) ? CellView.DayType.WEEKEND : CellView.DayType.NONWEEKEND);
+        dayView.setDayType(Utils.isWeekendByColumnNumber(c) ? CellView.DayType.WEEKEND : CellView.DayType.NO_WEEKEND);
 
         gridLayout.addView(dayView);
 

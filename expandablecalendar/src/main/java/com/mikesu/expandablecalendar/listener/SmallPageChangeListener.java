@@ -7,7 +7,7 @@ import android.support.v4.view.ViewPager;
  * www.michalsulek.pl
  */
 
-public abstract class SmallOnPageChangeListener implements ViewPager.OnPageChangeListener {
+public abstract class SmallPageChangeListener implements ViewPager.OnPageChangeListener {
 
   @Override
   public void onPageScrollStateChanged(int state) {

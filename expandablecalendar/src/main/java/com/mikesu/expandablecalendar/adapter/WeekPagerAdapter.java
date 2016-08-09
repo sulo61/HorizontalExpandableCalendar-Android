@@ -7,26 +7,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.mikesu.expandablecalendar.common.Config;
 import com.mikesu.expandablecalendar.common.Utils;
-import com.mikesu.expandablecalendar.view.page.MonthPageView;
+import com.mikesu.expandablecalendar.view.page.WeekPageView;
 import org.joda.time.DateTime;
-import org.joda.time.Months;
 
 /**
  * Created by MikeSu on 04/08/16.
  * www.michalsulek.pl
  */
 
-public class MonthViewPagerAdapter extends PagerAdapter {
+public class WeekPagerAdapter extends PagerAdapter {
 
   private Context context;
 
-  public MonthViewPagerAdapter(Context context) {
+  public WeekPagerAdapter(Context context) {
     this.context = context;
   }
 
   @Override
   public int getCount() {
-    return Months.monthsBetween(Config.START_DATE, Config.END_DATE).getMonths();
+    return Utils.weeksBetween(Config.START_DATE, Config.END_DATE);
   }
 
   @Override
@@ -36,21 +35,21 @@ public class MonthViewPagerAdapter extends PagerAdapter {
 
   @Override
   public Object instantiateItem(ViewGroup container, int position) {
-    MonthPageView monthPageView = new MonthPageView(context);
-    container.addView(monthPageView, 0);
+    WeekPageView weekPageView = new WeekPageView(context);
+    container.addView(weekPageView, 0);
 
-    monthPageView.setBackgroundColor(Color.rgb(
+    weekPageView.setBackgroundColor(Color.rgb(
         Utils.getRandomColor(),
         Utils.getRandomColor(),
         Utils.getRandomColor()));
 
-    monthPageView.setup(new DateTime().withDayOfMonth(1).plusMonths(-Config.monthsBetweenStartAndInit).plusMonths(position));
+    weekPageView.setup(new DateTime().withDayOfWeek(1).plusWeeks(-Config.weeksBetweenStartAndInit).plusWeeks(position - 1));
 
-    return monthPageView;
+    return weekPageView;
   }
 
   @Override
   public void destroyItem(ViewGroup container, int position, Object object) {
-    container.removeView((MonthPageView) object);
+    container.removeView((WeekPageView) object);
   }
 }
