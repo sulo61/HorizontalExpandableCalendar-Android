@@ -14,7 +14,7 @@ import com.mikesu.expandablecalendar.model.MarkSetup;
  * www.michalsulek.pl
  */
 
-public class DayCellView extends CellBaseView {
+public class DayCellView extends BaseCellView {
 
   private TextView text;
   private TimeType timeType;

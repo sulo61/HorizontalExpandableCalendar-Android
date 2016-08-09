@@ -8,7 +8,7 @@ import com.mikesu.expandablecalendar.common.Config;
 import com.mikesu.expandablecalendar.common.Constants;
 import com.mikesu.expandablecalendar.common.Marks;
 import com.mikesu.expandablecalendar.common.Utils;
-import com.mikesu.expandablecalendar.view.cell.CellBaseView;
+import com.mikesu.expandablecalendar.view.cell.BaseCellView;
 import com.mikesu.expandablecalendar.view.cell.DayCellView;
 import com.mikesu.expandablecalendar.view.cell.LabelCellView;
 import org.joda.time.DateTime;
@@ -67,7 +67,7 @@ public class PageView extends FrameLayout {
         labelParams.width = Config.cellWidth;
         label.setLayoutParams(labelParams);
         label.setText(Constants.NAME_OF_DAYS[l]);
-        label.setDayType(Utils.isWeekendByColumnNumber(l) ? CellBaseView.DayType.WEEKEND : CellBaseView.DayType.NO_WEEKEND);
+        label.setDayType(Utils.isWeekendByColumnNumber(l) ? BaseCellView.DayType.WEEKEND : BaseCellView.DayType.NO_WEEKEND);
 
         gridLayout.addView(label);
 
@@ -83,7 +83,7 @@ public class PageView extends FrameLayout {
         dayView.setTag(cellDate);
         dayView.setLayoutParams(cellParams);
         dayView.setDayNumber(cellDate.getDayOfMonth());
-        dayView.setDayType(Utils.isWeekendByColumnNumber(c) ? CellBaseView.DayType.WEEKEND : CellBaseView.DayType.NO_WEEKEND);
+        dayView.setDayType(Utils.isWeekendByColumnNumber(c) ? BaseCellView.DayType.WEEKEND : BaseCellView.DayType.NO_WEEKEND);
         dayView.setMark(Marks.getMark(cellDate), Config.cellHeight);
 
         if (viewPagerType == Config.ViewPagerType.MONTH) {

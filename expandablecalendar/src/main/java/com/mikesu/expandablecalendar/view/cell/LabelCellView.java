@@ -10,7 +10,7 @@ import com.mikesu.expandablecalendar.R;
  * www.michalsulek.pl
  */
 
-public class LabelCellView extends CellBaseView {
+public class LabelCellView extends BaseCellView {
 
   private TextView text;
 

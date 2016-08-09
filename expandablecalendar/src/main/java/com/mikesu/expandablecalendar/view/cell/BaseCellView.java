@@ -10,19 +10,19 @@ import com.mikesu.expandablecalendar.common.Config;
  * www.michalsulek.pl
  */
 
-public abstract class CellBaseView extends FrameLayout {
+public abstract class BaseCellView extends FrameLayout {
 
   protected DayType dayType;
 
-  public CellBaseView(Context context) {
+  public BaseCellView(Context context) {
     super(context);
   }
 
-  public CellBaseView(Context context, AttributeSet attrs) {
+  public BaseCellView(Context context, AttributeSet attrs) {
     super(context, attrs);
   }
 
-  public CellBaseView(Context context, AttributeSet attrs, int defStyleAttr) {
+  public BaseCellView(Context context, AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
   }
 
