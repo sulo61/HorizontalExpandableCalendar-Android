@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.mikesu.expandablecalendar.adapter.MonthPagerAdapter;
 import com.mikesu.expandablecalendar.adapter.WeekPagerAdapter;
 import com.mikesu.expandablecalendar.common.Config;
+import com.mikesu.expandablecalendar.common.Marks;
 import com.mikesu.expandablecalendar.common.Utils;
 import com.mikesu.expandablecalendar.listener.SmallPageChangeListener;
 import org.joda.time.DateTime;
@@ -50,6 +51,18 @@ public class ExpandableCalendar extends RelativeLayout {
   public ExpandableCalendar(Context context, AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
     init(attrs);
+  }
+
+  @Override
+  protected void onAttachedToWindow() {
+    super.onAttachedToWindow();
+    Marks.init();
+  }
+
+  @Override
+  protected void onDetachedFromWindow() {
+    Marks.clear();
+    super.onDetachedFromWindow();
   }
 
   private void init(AttributeSet attributeSet) {

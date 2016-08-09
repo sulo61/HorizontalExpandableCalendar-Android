@@ -5,10 +5,18 @@ package com.mikesu.expandablecalendar.model;
  * www.michalsulek.pl
  */
 
-public class Mark {
+public class MarkSetup {
 
   private boolean today;
   private boolean selected;
+
+  public MarkSetup() {
+  }
+
+  public MarkSetup(boolean today, boolean selected) {
+    this.today = today;
+    this.selected = selected;
+  }
 
   public boolean isToday() {
     return today;

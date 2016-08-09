@@ -7,10 +7,11 @@ import android.widget.GridLayout;
 import com.mikesu.expandablecalendar.R;
 import com.mikesu.expandablecalendar.common.Config;
 import com.mikesu.expandablecalendar.common.Constants;
+import com.mikesu.expandablecalendar.common.Marks;
 import com.mikesu.expandablecalendar.common.Utils;
-import com.mikesu.expandablecalendar.view.cell.CellView;
-import com.mikesu.expandablecalendar.view.cell.DayView;
-import com.mikesu.expandablecalendar.view.cell.LabelView;
+import com.mikesu.expandablecalendar.view.cell.CellBaseView;
+import com.mikesu.expandablecalendar.view.cell.DayCellView;
+import com.mikesu.expandablecalendar.view.cell.LabelCellView;
 import org.joda.time.DateTime;
 
 /**
@@ -58,14 +59,14 @@ public class MonthPageView extends FrameLayout {
     DateTime cellDate = pageDate.plusDays(-pageDate.getDayOfWeek() + 1);
     if (Config.USE_DAY_LABELS) {
       for (int l = 0; l < Config.COLUMNS; l++) {
-        LabelView label = new LabelView(getContext());
+        LabelCellView label = new LabelCellView(getContext());
 
         GridLayout.LayoutParams labelParams = new GridLayout.LayoutParams(GridLayout.spec(0), GridLayout.spec(l));
         labelParams.height = Config.cellHeight;
         labelParams.width = Config.cellWidth;
         label.setLayoutParams(labelParams);
         label.setText(Constants.NAME_OF_DAYS[l]);
-        label.setDayType(Utils.isWeekendByColumnNumber(l) ? CellView.DayType.WEEKEND : CellView.DayType.NO_WEEKEND);
+        label.setDayType(Utils.isWeekendByColumnNumber(l) ? CellBaseView.DayType.WEEKEND : CellBaseView.DayType.NO_WEEKEND);
 
         gridLayout.addView(label);
 
@@ -73,7 +74,7 @@ public class MonthPageView extends FrameLayout {
     }
     for (int r = Utils.dayLabelExtraRow(); r < Config.MONTH_ROWS + (Utils.dayLabelExtraRow()); r++) {
       for (int c = 0; c < Config.COLUMNS; c++) {
-        DayView dayView = new DayView(getContext());
+        DayCellView dayView = new DayCellView(getContext());
 
         GridLayout.LayoutParams cellParams = new GridLayout.LayoutParams(GridLayout.spec(r), GridLayout.spec(c));
         cellParams.height = Config.cellHeight;
@@ -81,7 +82,8 @@ public class MonthPageView extends FrameLayout {
         dayView.setLayoutParams(cellParams);
         dayView.setText(String.valueOf(cellDate.getDayOfMonth()));
         dayView.setTimeType(getTimeType(cellDate));
-        dayView.setDayType(Utils.isWeekendByColumnNumber(c) ? CellView.DayType.WEEKEND : CellView.DayType.NO_WEEKEND);
+        dayView.setDayType(Utils.isWeekendByColumnNumber(c) ? CellBaseView.DayType.WEEKEND : CellBaseView.DayType.NO_WEEKEND);
+        dayView.setMark(Marks.getMark(cellDate), Config.cellHeight);
 
         gridLayout.addView(dayView);
 
@@ -90,13 +92,13 @@ public class MonthPageView extends FrameLayout {
     }
   }
 
-  private DayView.TimeType getTimeType(DateTime cellTime) {
+  private DayCellView.TimeType getTimeType(DateTime cellTime) {
     if (cellTime.getMonthOfYear() < pageDate.getMonthOfYear()) {
-      return DayView.TimeType.PAST;
+      return DayCellView.TimeType.PAST;
     } else if (cellTime.getMonthOfYear() > pageDate.getMonthOfYear()) {
-      return DayView.TimeType.FUTURE;
+      return DayCellView.TimeType.FUTURE;
     } else {
-      return DayView.TimeType.CURRENT;
+      return DayCellView.TimeType.CURRENT;
     }
   }
 }

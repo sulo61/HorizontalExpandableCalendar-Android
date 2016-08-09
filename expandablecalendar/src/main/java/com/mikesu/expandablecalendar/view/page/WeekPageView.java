@@ -7,10 +7,11 @@ import android.widget.GridLayout;
 import com.mikesu.expandablecalendar.common.Config;
 import com.mikesu.expandablecalendar.R;
 import com.mikesu.expandablecalendar.common.Constants;
+import com.mikesu.expandablecalendar.common.Marks;
 import com.mikesu.expandablecalendar.common.Utils;
-import com.mikesu.expandablecalendar.view.cell.CellView;
-import com.mikesu.expandablecalendar.view.cell.DayView;
-import com.mikesu.expandablecalendar.view.cell.LabelView;
+import com.mikesu.expandablecalendar.view.cell.CellBaseView;
+import com.mikesu.expandablecalendar.view.cell.DayCellView;
+import com.mikesu.expandablecalendar.view.cell.LabelCellView;
 import org.joda.time.DateTime;
 
 /**
@@ -62,28 +63,29 @@ public class WeekPageView extends FrameLayout {
     DateTime cellDate = pageDate.plusDays(-pageDate.getDayOfWeek() + 1);
     if (Config.USE_DAY_LABELS) {
       for (int l = 0; l < Config.COLUMNS; l++) {
-        LabelView label = new LabelView(getContext());
+        LabelCellView label = new LabelCellView(getContext());
 
         GridLayout.LayoutParams labelParams = new GridLayout.LayoutParams(GridLayout.spec(0), GridLayout.spec(l));
         labelParams.height = Config.cellHeight;
         labelParams.width = Config.cellWidth;
         label.setLayoutParams(labelParams);
         label.setText(Constants.NAME_OF_DAYS[l]);
-        label.setDayType(Utils.isWeekendByColumnNumber(l) ? CellView.DayType.WEEKEND : CellView.DayType.NO_WEEKEND);
+        label.setDayType(Utils.isWeekendByColumnNumber(l) ? CellBaseView.DayType.WEEKEND : CellBaseView.DayType.NO_WEEKEND);
 
         gridLayout.addView(label);
       }
     }
     for (int r = Utils.dayLabelExtraRow(); r < Config.WEEK_ROWS + (Utils.dayLabelExtraRow()); r++) {
       for (int c = 0; c < Config.COLUMNS; c++) {
-        DayView dayView = new DayView(getContext());
+        DayCellView dayView = new DayCellView(getContext());
 
         GridLayout.LayoutParams cellParams = new GridLayout.LayoutParams(GridLayout.spec(r), GridLayout.spec(c));
         cellParams.height = Config.cellHeight;
         cellParams.width = Config.cellWidth;
         dayView.setLayoutParams(cellParams);
         dayView.setText(String.valueOf(cellDate.getDayOfMonth()));
-        dayView.setDayType(Utils.isWeekendByColumnNumber(c) ? CellView.DayType.WEEKEND : CellView.DayType.NO_WEEKEND);
+        dayView.setDayType(Utils.isWeekendByColumnNumber(c) ? CellBaseView.DayType.WEEKEND : CellBaseView.DayType.NO_WEEKEND);
+        dayView.setMark(Marks.getMark(cellDate), Config.cellHeight);
 
         gridLayout.addView(dayView);
 
