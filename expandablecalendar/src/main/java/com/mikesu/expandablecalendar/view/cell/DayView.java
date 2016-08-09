@@ -16,7 +16,6 @@ public class DayView extends CellView {
 
   private TextView text;
   private TimeType timeType;
-  private DayType dayType;
 
   public DayView(Context context) {
     super(context);
@@ -57,13 +56,6 @@ public class DayView extends CellView {
     setTextBackgroundByDayType();
   }
 
-  private void setTextBackgroundByDayType() {
-    if (this.dayType == DayType.WEEKEND) {
-      text.setBackgroundColor(Config.CELL_WEEKEND_BACKGROUND);
-    } else {
-      text.setBackgroundColor(Config.CELL_NON_WEEKEND_BACKGROUND);
-    }
-  }
 
   private void setTextColorByTimeType() {
     if (this.timeType == TimeType.CURRENT) {

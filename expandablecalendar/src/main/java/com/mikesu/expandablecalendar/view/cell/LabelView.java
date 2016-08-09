@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.TextView;
 import com.mikesu.expandablecalendar.R;
-import com.mikesu.expandablecalendar.common.Config;
 
 /**
  * Created by MikeSu on 04/08/16.
@@ -14,7 +13,6 @@ import com.mikesu.expandablecalendar.common.Config;
 public class LabelView extends CellView {
 
   private TextView text;
-  private DayType dayType;
 
   public LabelView(Context context) {
     super(context);
@@ -50,12 +48,5 @@ public class LabelView extends CellView {
     setTextBackgroundByDayType();
   }
 
-  private void setTextBackgroundByDayType() {
-    if (this.dayType == DayType.WEEKEND) {
-      text.setBackgroundColor(Config.CELL_WEEKEND_BACKGROUND);
-    } else {
-      text.setBackgroundColor(Config.CELL_NON_WEEKEND_BACKGROUND);
-    }
-  }
 
 }
