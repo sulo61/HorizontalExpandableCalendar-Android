@@ -16,7 +16,7 @@ import com.mikesu.horizontalexpcalendar.common.Config;
 import com.mikesu.horizontalexpcalendar.common.Marks;
 import com.mikesu.horizontalexpcalendar.common.Utils;
 import com.mikesu.horizontalexpcalendar.listener.SmallPageChangeListener;
-import java.util.Random;
+import com.mikesu.horizontalexpcalendar.view.page.PageView;
 import org.joda.time.DateTime;
 
 /**
@@ -24,7 +24,7 @@ import org.joda.time.DateTime;
  * www.michalsulek.pl
  */
 
-public class HorizontalExpCalendar extends RelativeLayout {
+public class HorizontalExpCalendar extends RelativeLayout implements PageView.PageViewListener {
 
   private static final String TAG = HorizontalExpCalendar.class.getName();
 
@@ -34,7 +34,6 @@ public class HorizontalExpCalendar extends RelativeLayout {
   private TextView titleTextView;
   private Button switchViewButton;
   private Button scrollToInitButton;
-  private Button randomMarkButton;
 
   private ViewPager monthViewPager;
   private CalendarAdapter monthPagerAdapter;
@@ -127,7 +126,7 @@ public class HorizontalExpCalendar extends RelativeLayout {
   }
 
   private void bindViews() {
-    inflate(getContext(), R.layout.expandable_calendar, this);
+    inflate(getContext(), R.layout.horizontal_exp_calendar, this);
     bindContainers();
   }
 
@@ -145,16 +144,6 @@ public class HorizontalExpCalendar extends RelativeLayout {
       @Override
       public void onClick(View view) {
         scrollToDate(Config.INIT_DATE, true, true, true);
-      }
-    });
-    randomMarkButton = (Button) findViewById(R.id.random_selected);
-    randomMarkButton.setOnClickListener(new OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        Marks.refreshMarkSelected(false);
-        Config.selectionDate = new DateTime().withDayOfMonth(new Random().nextInt(30) + 1);
-        Marks.refreshMarkSelected(true);
-        updateMarks();
       }
     });
   }
@@ -201,7 +190,7 @@ public class HorizontalExpCalendar extends RelativeLayout {
 
   private void initMonthViewPager() {
     monthViewPager = (ViewPager) findViewById(R.id.month_view_pager);
-    monthPagerAdapter = new CalendarAdapter(getContext(), Config.ViewPagerType.MONTH);
+    monthPagerAdapter = new CalendarAdapter(getContext(), Config.ViewPagerType.MONTH, this);
     monthViewPager.setAdapter(monthPagerAdapter);
     monthViewPager.setCurrentItem(Config.monthsBetweenStartAndInit);
     monthViewPager.addOnPageChangeListener(new SmallPageChangeListener() {
@@ -222,7 +211,7 @@ public class HorizontalExpCalendar extends RelativeLayout {
 
   private void initWeekViewPager() {
     weekViewPager = (ViewPager) findViewById(R.id.week_view_pager);
-    weekPagerAdapter = new CalendarAdapter(getContext(), Config.ViewPagerType.WEEK);
+    weekPagerAdapter = new CalendarAdapter(getContext(), Config.ViewPagerType.WEEK, this);
     weekViewPager.setAdapter(weekPagerAdapter);
     setWeekViewPagerPosition(Config.weeksBetweenStartAndInit, false);
     weekViewPager.addOnPageChangeListener(new SmallPageChangeListener() {
@@ -280,4 +269,11 @@ public class HorizontalExpCalendar extends RelativeLayout {
     }
   }
 
+  @Override
+  public void onDayClick(DateTime dateTime) {
+    Marks.refreshMarkSelected(false);
+    Config.selectionDate = dateTime;
+    Marks.refreshMarkSelected(true);
+    updateMarks();
+  }
 }

@@ -19,11 +19,13 @@ import org.joda.time.DateTime;
  */
 public class CalendarAdapter extends PagerAdapter {
 
+  private PageView.PageViewListener pageViewListener;
   private Config.ViewPagerType viewPagerType;
   private List<PageView> visiblePages;
   private Context context;
 
-  public CalendarAdapter(Context context, Config.ViewPagerType viewPagerType) {
+  public CalendarAdapter(Context context, Config.ViewPagerType viewPagerType, PageView.PageViewListener pageViewListener) {
+    this.pageViewListener = pageViewListener;
     this.viewPagerType = viewPagerType;
     this.visiblePages = new ArrayList<>();
     this.context = context;
@@ -48,7 +50,7 @@ public class CalendarAdapter extends PagerAdapter {
 
   @Override
   public Object instantiateItem(ViewGroup container, int position) {
-    PageView pageView = new PageView(context, viewPagerType);
+    PageView pageView = new PageView(context, viewPagerType, pageViewListener);
     visiblePages.add(pageView);
 
     container.addView(pageView, 0);

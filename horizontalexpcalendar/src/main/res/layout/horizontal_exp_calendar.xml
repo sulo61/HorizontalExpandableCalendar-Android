@@ -26,14 +26,6 @@
             android:layout_centerVertical="true"
             android:text="INIT"/>
 
-        <Button
-            android:id="@+id/random_selected"
-            android:layout_width="70dp"
-            android:layout_height="36dp"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:text="Rand"/>
-
     </RelativeLayout>
 
     <RelativeLayout

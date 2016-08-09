@@ -1,6 +1,7 @@
 package com.mikesu.horizontalexpcalendar.view.page;
 
 import android.content.Context;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import com.mikesu.horizontalexpcalendar.R;
@@ -17,25 +18,27 @@ import org.joda.time.DateTime;
  * Created by MikeSu on 09.08.2016.
  * www.michalsulek.pl
  */
-public class PageView extends FrameLayout {
+public class PageView extends FrameLayout implements View.OnClickListener {
 
+  private PageViewListener pageViewListener;
   private GridLayout gridLayout;
   private DateTime pageDate;
 
   private Config.ViewPagerType viewPagerType;
   private int rows;
-  private int layout;
 
   public PageView(Context context) {
-    this(context, null);
+    this(context, null, null);
   }
 
-  public PageView(Context context, Config.ViewPagerType viewPagerType) {
+  public PageView(Context context, Config.ViewPagerType viewPagerType, PageViewListener pageViewListener) {
     super(context);
+    if (pageViewListener != null) {
+      this.pageViewListener = pageViewListener;
+    }
     if (viewPagerType != null) {
       this.viewPagerType = viewPagerType;
       this.rows = viewPagerType == Config.ViewPagerType.MONTH ? Config.MONTH_ROWS : Config.WEEK_ROWS;
-      this.layout = viewPagerType == Config.ViewPagerType.MONTH ? R.layout.month_page_view : R.layout.week_page_view;
       init();
     }
   }
@@ -45,7 +48,7 @@ public class PageView extends FrameLayout {
   }
 
   private void initViews() {
-    inflate(getContext(), layout, this);
+    inflate(getContext(), R.layout.page_view, this);
     gridLayout = (GridLayout) findViewById(R.id.grid_layout);
     gridLayout.setColumnCount(Config.COLUMNS);
     gridLayout.setRowCount(rows + (Utils.dayLabelExtraRow()));
@@ -75,22 +78,23 @@ public class PageView extends FrameLayout {
     }
     for (int r = Utils.dayLabelExtraRow(); r < rows + (Utils.dayLabelExtraRow()); r++) {
       for (int c = 0; c < Config.COLUMNS; c++) {
-        DayCellView dayView = new DayCellView(getContext());
+        DayCellView dayCellView = new DayCellView(getContext());
 
         GridLayout.LayoutParams cellParams = new GridLayout.LayoutParams(GridLayout.spec(r), GridLayout.spec(c));
         cellParams.height = Config.cellHeight;
         cellParams.width = Config.cellWidth;
-        dayView.setTag(cellDate);
-        dayView.setLayoutParams(cellParams);
-        dayView.setDayNumber(cellDate.getDayOfMonth());
-        dayView.setDayType(Utils.isWeekendByColumnNumber(c) ? BaseCellView.DayType.WEEKEND : BaseCellView.DayType.NO_WEEKEND);
-        dayView.setMark(Marks.getMark(cellDate), Config.cellHeight);
+        dayCellView.setTag(cellDate);
+        dayCellView.setLayoutParams(cellParams);
+        dayCellView.setDayNumber(cellDate.getDayOfMonth());
+        dayCellView.setDayType(Utils.isWeekendByColumnNumber(c) ? BaseCellView.DayType.WEEKEND : BaseCellView.DayType.NO_WEEKEND);
+        dayCellView.setMark(Marks.getMark(cellDate), Config.cellHeight);
+        dayCellView.setOnClickListener(this);
 
         if (viewPagerType == Config.ViewPagerType.MONTH) {
-          dayView.setTimeType(getTimeType(cellDate));
+          dayCellView.setTimeType(getTimeType(cellDate));
         }
 
-        gridLayout.addView(dayView);
+        gridLayout.addView(dayCellView);
 
         cellDate = cellDate.plusDays(1);
       }
@@ -112,5 +116,16 @@ public class PageView extends FrameLayout {
       DayCellView dayCellView = (DayCellView) gridLayout.getChildAt(c);
       dayCellView.setMarkSetup(Marks.getMark((DateTime) dayCellView.getTag()));
     }
+  }
+
+  @Override
+  public void onClick(View view) {
+    if (pageViewListener != null) {
+      pageViewListener.onDayClick((DateTime) view.getTag());
+    }
+  }
+
+  public interface PageViewListener {
+    void onDayClick(DateTime dateTime);
   }
 }
