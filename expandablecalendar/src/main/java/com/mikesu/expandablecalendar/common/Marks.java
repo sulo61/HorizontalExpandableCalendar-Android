@@ -13,9 +13,7 @@ import org.joda.time.DateTime;
 public class Marks {
 
   private static Map<String, MarkSetup> marksMap;
-  private static long lastClearTimestamp = 0;
   private static boolean locked = false;
-  private static final long CLEAR_DELAY = 10000;
 
   public static void init() {
     marksMap = new HashMap<>();
@@ -40,12 +38,17 @@ public class Marks {
       return;
     }
     lock();
-    MarkSetup markSetup = getMark(Config.currentDate);
+    MarkSetup markSetup = getMark(Config.selectionDate);
     if (markSetup == null) {
-      addMark(Config.currentDate, new MarkSetup(false, selected));
-    } else {
-      markSetup.setSelected(selected);
+      markSetup = new MarkSetup();
+      marksMap.put(dateTimeToStringKey(Config.selectionDate), markSetup);
     }
+
+    markSetup.setSelected(selected);
+    if (markSetup.canBeDeleted()) {
+      marksMap.remove(dateTimeToStringKey(Config.selectionDate));
+    }
+
     unlock();
   }
 
@@ -56,32 +59,14 @@ public class Marks {
 
   public static void addMark(DateTime dateTime, MarkSetup markSetup) {
     marksMap.put(dateTimeToStringKey(dateTime), markSetup);
-    clearUselessMarks();
   }
 
   public static MarkSetup getMark(DateTime dateTime) {
-    clearUselessMarks();
     return marksMap.get(dateTimeToStringKey(dateTime));
   }
 
   private static String dateTimeToStringKey(DateTime dateTime) {
     return dateTime.getYear() + "-" + dateTime.getMonthOfYear() + "-" + dateTime.getDayOfMonth();
-  }
-
-  public static void clearUselessMarks() {
-    if (System.currentTimeMillis() - lastClearTimestamp > CLEAR_DELAY) {
-      lastClearTimestamp = System.currentTimeMillis();
-      for (Map.Entry<String, MarkSetup> entry : marksMap.entrySet()) {
-        MarkSetup markSetup = entry.getValue();
-        if (isEmptyMark(markSetup)) {
-          marksMap.remove(markSetup);
-        }
-      }
-    }
-  }
-
-  private static boolean isEmptyMark(MarkSetup markSetup) {
-    return (markSetup == null || (!markSetup.isSelected() && !markSetup.isToday()));
   }
 
   public static void lock() {

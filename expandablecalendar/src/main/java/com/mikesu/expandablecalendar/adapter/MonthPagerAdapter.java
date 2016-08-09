@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import com.mikesu.expandablecalendar.common.Config;
 import com.mikesu.expandablecalendar.common.Utils;
 import com.mikesu.expandablecalendar.view.page.MonthPageView;
+import java.util.ArrayList;
+import java.util.List;
 import org.joda.time.DateTime;
 import org.joda.time.Months;
 
@@ -18,9 +20,11 @@ import org.joda.time.Months;
 
 public class MonthPagerAdapter extends PagerAdapter {
 
+  private List<MonthPageView> visiblePages;
   private Context context;
 
   public MonthPagerAdapter(Context context) {
+    visiblePages = new ArrayList<>();
     this.context = context;
   }
 
@@ -37,6 +41,8 @@ public class MonthPagerAdapter extends PagerAdapter {
   @Override
   public Object instantiateItem(ViewGroup container, int position) {
     MonthPageView monthPageView = new MonthPageView(context);
+    visiblePages.add(monthPageView);
+
     container.addView(monthPageView, 0);
 
     monthPageView.setBackgroundColor(Color.rgb(
@@ -51,6 +57,14 @@ public class MonthPagerAdapter extends PagerAdapter {
 
   @Override
   public void destroyItem(ViewGroup container, int position, Object object) {
+    visiblePages.remove(object);
+
     container.removeView((MonthPageView) object);
+  }
+
+  public void updateMarks() {
+    for (MonthPageView monthPageView : visiblePages) {
+      monthPageView.updateMarks();
+    }
   }
 }

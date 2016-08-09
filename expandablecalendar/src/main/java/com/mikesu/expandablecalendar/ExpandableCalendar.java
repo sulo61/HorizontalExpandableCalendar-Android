@@ -148,6 +148,16 @@ public class ExpandableCalendar extends RelativeLayout {
         scrollToDate(Config.INIT_DATE, true, true, true);
       }
     });
+    randomMarkButton = (Button) findViewById(R.id.random_selected);
+    randomMarkButton.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        Marks.refreshMarkSelected(false);
+        Config.selectionDate = new DateTime().withDayOfMonth(new Random().nextInt(30) + 1);
+        Marks.refreshMarkSelected(true);
+        updateMarks();
+      }
+    });
   }
 
   private void initCenterContainer() {
@@ -157,37 +167,29 @@ public class ExpandableCalendar extends RelativeLayout {
 
   private void initBottomContainer() {
     switchViewButton = (Button) findViewById(R.id.change_calendar_view_button);
-    randomMarkButton = (Button) findViewById(R.id.random_selected);
     switchViewButton.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View view) {
         switch (Config.currentVisibleViewPager) {
           case MONTH:
-            scrollToDate(Config.currentDate, false, true, false);
+            scrollToDate(Config.scrollDate, false, true, false);
             monthViewPager.setVisibility(View.GONE);
             weekViewPager.setVisibility(View.VISIBLE);
             Config.currentVisibleViewPager = Config.CurrentVisibleViewPager.WEEK;
             setHeightToCenterContainer(weekViewPagerHeight);
+            weekPagerAdapter.verifyMarks();
             break;
           case WEEK:
-            scrollToDate(Config.currentDate, true, false, false);
+            scrollToDate(Config.scrollDate, true, false, false);
             monthViewPager.setVisibility(View.VISIBLE);
             weekViewPager.setVisibility(View.GONE);
             Config.currentVisibleViewPager = Config.CurrentVisibleViewPager.MONTH;
             setHeightToCenterContainer(monthViewPagerHeight);
+            monthPagerAdapter.updateMarks();
             break;
           default:
             Log.e(TAG, "switchViewButton click, unknown type of currentVisibleViewPager");
         }
-      }
-    });
-    randomMarkButton.setOnClickListener(new OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        Marks.refreshMarkSelected(false);
-        Config.currentDate = new DateTime().withDayOfMonth(new Random().nextInt(30));
-        Marks.refreshMarkSelected(true);
-        monthPagerAdapter.notifyDataSetChanged();
       }
     });
   }
@@ -208,7 +210,7 @@ public class ExpandableCalendar extends RelativeLayout {
       public void scrollStateChanged(int state) {
         if (Utils.isMonthView()) {
           if (state == ViewPager.SCROLL_STATE_IDLE) {
-            Config.currentDate = Config.INIT_DATE
+            Config.scrollDate = Config.INIT_DATE
                 .plusMonths(-Config.monthsBetweenStartAndInit)
                 .plusMonths(monthViewPager.getCurrentItem());
             refreshTitleTextView();
@@ -229,7 +231,7 @@ public class ExpandableCalendar extends RelativeLayout {
       public void scrollStateChanged(int state) {
         if (!Utils.isMonthView()) {
           if (state == ViewPager.SCROLL_STATE_IDLE) {
-            Config.currentDate = Config.INIT_DATE
+            Config.scrollDate = Config.INIT_DATE
                 .plusWeeks(-Config.weeksBetweenStartAndInit)
                 .plusWeeks(weekViewPager.getCurrentItem());
             refreshTitleTextView();
@@ -268,7 +270,15 @@ public class ExpandableCalendar extends RelativeLayout {
 
   private void refreshTitleTextView() {
     titleTextView.setText(
-        String.format("%s - %s", Config.currentDate.getYear(), Config.currentDate.getMonthOfYear()));
+        String.format("%s - %s", Config.scrollDate.getYear(), Config.scrollDate.getMonthOfYear()));
+  }
+
+  private void updateMarks() {
+    if (Config.currentVisibleViewPager == Config.CurrentVisibleViewPager.MONTH) {
+      monthPagerAdapter.updateMarks();
+    } else {
+      weekPagerAdapter.verifyMarks();
+    }
   }
 
 }

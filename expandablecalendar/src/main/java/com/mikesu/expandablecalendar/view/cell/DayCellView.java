@@ -22,6 +22,7 @@ public class DayCellView extends CellBaseView {
   private View markToday;
   private View markSelected;
   private MarkSetup markSetup;
+  private long markTimestamp;
 
   public DayCellView(Context context) {
     super(context);
@@ -51,13 +52,13 @@ public class DayCellView extends CellBaseView {
     markSelected = findViewById(R.id.mark_selected_view);
   }
 
-  public void setText(String text) {
-    this.text.setText(text);
-  }
-
   public void setTimeType(TimeType timeType) {
     this.timeType = timeType;
     setTextColorByTimeType();
+  }
+
+  public void setDayNumber(int dayNumber) {
+    this.text.setText(String.valueOf(dayNumber));
   }
 
   public void setDayType(DayType dayType) {
@@ -99,4 +100,9 @@ public class DayCellView extends CellBaseView {
       markSelected.setVisibility(markSetup.isSelected() ? VISIBLE : GONE);
     }
   }
+
+  public long getMarkTimestamp() {
+    return markTimestamp;
+  }
+
 }

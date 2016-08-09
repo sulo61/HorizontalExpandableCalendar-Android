@@ -7,7 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.mikesu.expandablecalendar.common.Config;
 import com.mikesu.expandablecalendar.common.Utils;
+import com.mikesu.expandablecalendar.view.page.MonthPageView;
 import com.mikesu.expandablecalendar.view.page.WeekPageView;
+import java.util.ArrayList;
+import java.util.List;
 import org.joda.time.DateTime;
 
 /**
@@ -17,9 +20,11 @@ import org.joda.time.DateTime;
 
 public class WeekPagerAdapter extends PagerAdapter {
 
+  private List<WeekPageView> visiblePages;
   private Context context;
 
   public WeekPagerAdapter(Context context) {
+    this.visiblePages = new ArrayList<>();
     this.context = context;
   }
 
@@ -36,6 +41,8 @@ public class WeekPagerAdapter extends PagerAdapter {
   @Override
   public Object instantiateItem(ViewGroup container, int position) {
     WeekPageView weekPageView = new WeekPageView(context);
+    visiblePages.add(weekPageView);
+
     container.addView(weekPageView, 0);
 
     weekPageView.setBackgroundColor(Color.rgb(
@@ -50,6 +57,13 @@ public class WeekPagerAdapter extends PagerAdapter {
 
   @Override
   public void destroyItem(ViewGroup container, int position, Object object) {
+    visiblePages.remove(object);
     container.removeView((WeekPageView) object);
+  }
+
+  public void verifyMarks() {
+    for (WeekPageView weekPageView : visiblePages) {
+      weekPageView.verifyMarks();
+    }
   }
 }

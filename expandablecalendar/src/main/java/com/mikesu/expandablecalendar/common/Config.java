@@ -33,7 +33,8 @@ public class Config {
   public static final int COLUMNS = 7;
 
   public static CurrentVisibleViewPager currentVisibleViewPager = CurrentVisibleViewPager.MONTH;
-  public static DateTime currentDate = INIT_DATE;
+  public static DateTime scrollDate = INIT_DATE;
+  public static DateTime selectionDate = new DateTime();
   public static int monthsBetweenStartAndInit = 0;
   public static int weeksBetweenStartAndInit = 0;
   public static int cellWidth = 0;

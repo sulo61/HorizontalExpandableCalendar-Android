@@ -79,8 +79,9 @@ public class MonthPageView extends FrameLayout {
         GridLayout.LayoutParams cellParams = new GridLayout.LayoutParams(GridLayout.spec(r), GridLayout.spec(c));
         cellParams.height = Config.cellHeight;
         cellParams.width = Config.cellWidth;
+        dayView.setTag(cellDate);
         dayView.setLayoutParams(cellParams);
-        dayView.setText(String.valueOf(cellDate.getDayOfMonth()));
+        dayView.setDayNumber(cellDate.getDayOfMonth());
         dayView.setTimeType(getTimeType(cellDate));
         dayView.setDayType(Utils.isWeekendByColumnNumber(c) ? CellBaseView.DayType.WEEKEND : CellBaseView.DayType.NO_WEEKEND);
         dayView.setMark(Marks.getMark(cellDate), Config.cellHeight);
@@ -99,6 +100,13 @@ public class MonthPageView extends FrameLayout {
       return DayCellView.TimeType.FUTURE;
     } else {
       return DayCellView.TimeType.CURRENT;
+    }
+  }
+
+  public void updateMarks() {
+    for (int c = Utils.dayLabelExtraChildCount(); c < gridLayout.getChildCount(); c++) {
+      DayCellView dayCellView = (DayCellView) gridLayout.getChildAt(c);
+      dayCellView.setMarkSetup(Marks.getMark((DateTime) dayCellView.getTag()));
     }
   }
 }

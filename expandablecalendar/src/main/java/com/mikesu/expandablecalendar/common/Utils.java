@@ -32,6 +32,10 @@ public class Utils {
     return Config.USE_DAY_LABELS ? 1 : 0;
   }
 
+  public static int dayLabelExtraChildCount() {
+    return Config.USE_DAY_LABELS ? 7 : 0;
+  }
+
   public static boolean isMonthView() {
     return Config.currentVisibleViewPager == Config.CurrentVisibleViewPager.MONTH;
   }

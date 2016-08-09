@@ -11,6 +11,8 @@ public class MarkSetup {
   private boolean selected;
 
   public MarkSetup() {
+    this.today = false;
+    this.selected = false;
   }
 
   public MarkSetup(boolean today, boolean selected) {
@@ -32,5 +34,9 @@ public class MarkSetup {
 
   public void setSelected(boolean selected) {
     this.selected = selected;
+  }
+
+  public boolean canBeDeleted() {
+    return !today && !selected;
   }
 }
