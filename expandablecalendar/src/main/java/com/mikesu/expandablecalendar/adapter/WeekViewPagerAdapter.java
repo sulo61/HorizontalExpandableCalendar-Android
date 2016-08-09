@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import com.mikesu.expandablecalendar.common.Config;
 import com.mikesu.expandablecalendar.common.Utils;
 import com.mikesu.expandablecalendar.view.page.WeekPageView;
-import java.util.Random;
 import org.joda.time.DateTime;
 
 /**
@@ -39,12 +38,10 @@ public class WeekViewPagerAdapter extends PagerAdapter {
     WeekPageView weekPageView = new WeekPageView(context);
     container.addView(weekPageView, 0);
 
-    // tmp colors
     weekPageView.setBackgroundColor(Color.rgb(
-        new Random().nextInt(50) + 200,
-        new Random().nextInt(50) + 200,
-        new Random().nextInt(50) + 200));
-    // tmp colors
+        Utils.getRandomColor(),
+        Utils.getRandomColor(),
+        Utils.getRandomColor()));
 
     weekPageView.setup(new DateTime().withDayOfWeek(1).plusWeeks(-Config.weeksBetweenStartAndInit).plusWeeks(position - 1));
 

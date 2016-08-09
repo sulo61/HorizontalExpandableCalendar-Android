@@ -27,4 +27,12 @@ public class Utils {
   public static int getRandomColor() {
     return new Random().nextInt(40) + 215;
   }
+
+  public static int dayLabelExtraRow() {
+    return Config.USE_DAY_LABELS ? 1 : 0;
+  }
+
+  public static boolean isMonthView() {
+    return Config.currentVisibleViewPager == Config.CurrentVisibleViewPager.MONTH;
+  }
 }

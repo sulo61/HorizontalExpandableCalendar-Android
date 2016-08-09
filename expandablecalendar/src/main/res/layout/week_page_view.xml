@@ -4,6 +4,4 @@
     android:id="@+id/grid_layout"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_gravity="center"
-    android:columnCount="7"
-    android:rowCount="1"/>
+    android:layout_gravity="center"/>

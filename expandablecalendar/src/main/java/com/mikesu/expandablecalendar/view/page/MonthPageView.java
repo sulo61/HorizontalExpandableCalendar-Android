@@ -46,7 +46,7 @@ public class MonthPageView extends FrameLayout {
     inflate(getContext(), R.layout.month_page_view, this);
     gridLayout = (GridLayout) findViewById(R.id.grid_layout);
     gridLayout.setColumnCount(Config.COLUMNS);
-    gridLayout.setRowCount(Config.MONTH_ROWS + (dayLabelExtraValue()));
+    gridLayout.setRowCount(Config.MONTH_ROWS + (Utils.dayLabelExtraRow()));
   }
 
   public void setup(DateTime pageDate) {
@@ -71,7 +71,7 @@ public class MonthPageView extends FrameLayout {
 
       }
     }
-    for (int r = dayLabelExtraValue(); r < Config.MONTH_ROWS + (dayLabelExtraValue()); r++) {
+    for (int r = Utils.dayLabelExtraRow(); r < Config.MONTH_ROWS + (Utils.dayLabelExtraRow()); r++) {
       for (int c = 0; c < Config.COLUMNS; c++) {
         DayView dayView = new DayView(getContext());
 
@@ -88,10 +88,6 @@ public class MonthPageView extends FrameLayout {
         cellDate = cellDate.plusDays(1);
       }
     }
-  }
-
-  private int dayLabelExtraValue() {
-    return Config.USE_DAY_LABELS ? 1 : 0;
   }
 
   private DayView.TimeType getTimeType(DateTime cellTime) {
