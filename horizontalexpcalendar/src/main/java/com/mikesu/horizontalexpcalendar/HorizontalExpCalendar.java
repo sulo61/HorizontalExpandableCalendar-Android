@@ -96,7 +96,6 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
     });
 
 
-
     initVariables();
     setValuesFromAttr(attributeSet);
     setupCellWidth();
@@ -190,26 +189,36 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
       public void onClick(View view) {
         switch (Config.currentViewPager) {
           case MONTH:
-            scrollToDate(Config.scrollDate, false, true, false);
-            monthViewPager.setVisibility(View.GONE);
-            weekViewPager.setVisibility(View.VISIBLE);
-            Config.currentViewPager = Config.ViewPagerType.WEEK;
-            setHeightToCenterContainer(weekViewPagerHeight);
-            weekPagerAdapter.updateMarks();
+            switchToWeekView();
             break;
           case WEEK:
-            scrollToDate(Config.scrollDate, true, false, false);
-            monthViewPager.setVisibility(View.VISIBLE);
-            weekViewPager.setVisibility(View.GONE);
-            Config.currentViewPager = Config.ViewPagerType.MONTH;
-            setHeightToCenterContainer(monthViewPagerHeight);
-            monthPagerAdapter.updateMarks();
+            switchToMonthView();
             break;
           default:
             Log.e(TAG, "switchViewButton click, unknown type of currentViewPager");
         }
       }
     });
+  }
+
+  private void switchToMonthView() {
+    monthViewPager.setVisibility(View.VISIBLE);
+    weekViewPager.setVisibility(View.GONE);
+    Config.currentViewPager = Config.ViewPagerType.MONTH;
+    Config.scrollDate = Config.scrollDate.withDayOfMonth(1);
+    scrollToDate(Config.scrollDate, true, false, false);
+    setHeightToCenterContainer(monthViewPagerHeight);
+    monthPagerAdapter.updateMarks();
+  }
+
+  private void switchToWeekView() {
+    monthViewPager.setVisibility(View.GONE);
+    weekViewPager.setVisibility(View.VISIBLE);
+    Config.currentViewPager = Config.ViewPagerType.WEEK;
+    Config.scrollDate = Config.scrollDate.withDayOfMonth(1);
+    scrollToDate(Config.scrollDate, false, true, false);
+    setHeightToCenterContainer(weekViewPagerHeight);
+    weekPagerAdapter.updateMarks();
   }
 
   private void initMonthViewPager() {
@@ -274,7 +283,7 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
       setMonthViewPagerPosition(Utils.monthsBetween(Config.START_DATE, dateTime), animate);
     }
     if (scrollWeekPager) {
-      setWeekViewPagerPosition(Utils.weeksBetween(Config.START_DATE, dateTime.withDayOfMonth(1)), animate);
+      setWeekViewPagerPosition(Utils.weeksBetween(Config.START_DATE, dateTime.withDayOfWeek(Config.START_DATE.getDayOfWeek())), animate);
     }
   }
 

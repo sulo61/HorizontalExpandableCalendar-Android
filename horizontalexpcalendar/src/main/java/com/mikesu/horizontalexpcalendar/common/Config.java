@@ -12,8 +12,8 @@ public class Config {
 
   // TODO: TO CONFIGURE
   public static final DateTime INIT_DATE = new DateTime(); // today
-  private static final int RANGE_MONTHS_BEFORE_INIT = 4;
-  private static final int RANGE_MONTHS_AFTER_INIT = 4;
+  private static final int RANGE_MONTHS_BEFORE_INIT = 1;
+  private static final int RANGE_MONTHS_AFTER_INIT = 1;
   public static final int CELL_WEEKEND_BACKGROUND = Color.parseColor("#11000000");
   public static final int CELL_NON_WEEKEND_BACKGROUND = Color.TRANSPARENT;
   public static final boolean USE_DAY_LABELS = true;
@@ -22,7 +22,7 @@ public class Config {
   private static DateTime getStartDate() {
     DateTime START_BACK_BY_RANGE = INIT_DATE.plusMonths(-RANGE_MONTHS_BEFORE_INIT);
     DateTime START_BACK_TO_FIRST_DAY_OF_MONTH = START_BACK_BY_RANGE.plusDays(-START_BACK_BY_RANGE.getDayOfMonth() + 1);
-    return START_BACK_TO_FIRST_DAY_OF_MONTH.plusDays(-START_BACK_TO_FIRST_DAY_OF_MONTH.getDayOfWeek() - 1);
+    return START_BACK_TO_FIRST_DAY_OF_MONTH.plusDays(-START_BACK_TO_FIRST_DAY_OF_MONTH.getDayOfWeek() + 1);
   }
 
   private static DateTime getEndDate() {
