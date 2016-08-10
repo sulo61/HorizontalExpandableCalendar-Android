@@ -7,6 +7,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -16,6 +17,7 @@ import com.mikesu.horizontalexpcalendar.common.Marks;
 import com.mikesu.horizontalexpcalendar.common.Utils;
 import com.mikesu.horizontalexpcalendar.listener.SmallPageChangeListener;
 import com.mikesu.horizontalexpcalendar.view.page.PageView;
+import java.util.Random;
 import org.joda.time.DateTime;
 
 /**
@@ -28,6 +30,13 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
   private static final String TAG = HorizontalExpCalendar.class.getName();
 
   private TextView titleTextView;
+
+  // tmp
+  private Button prevDays;
+  private Button randDays;
+  private Button nextDays;
+  private int randNumber = 1;
+  private DateTime randDate = new DateTime();
 
   private ViewPager monthViewPager;
   private CalendarAdapter monthPagerAdapter;
@@ -55,6 +64,38 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
 
   private void init(AttributeSet attributeSet) {
     inflate(getContext(), R.layout.horizontal_exp_calendar, this);
+
+    //tmp
+    prevDays = (Button) findViewById(R.id.prev_x_days);
+    randDays = (Button) findViewById(R.id.rand_days);
+    nextDays = (Button) findViewById(R.id.next_x_days);
+
+    final Random random = new Random();
+
+    prevDays.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        randDate = randDate.plusDays(-randNumber);
+        scrollToDate(randDate, true);
+      }
+    });
+    randDays.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        randNumber = random.nextInt(50);
+        prevDays.setText("prev " + randNumber);
+        nextDays.setText("next " + randNumber);
+      }
+    });
+    nextDays.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        randDate = randDate.plusDays(randNumber);
+        scrollToDate(randDate, true);
+      }
+    });
+
+
 
     initVariables();
     setValuesFromAttr(attributeSet);
@@ -222,12 +263,18 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
     ((LinearLayout.LayoutParams) findViewById(R.id.center_container).getLayoutParams()).height = height;
   }
 
+  private void scrollToDate(DateTime dateTime, boolean animate) {
+    onDayClick(dateTime);
+    boolean isMonthView = Utils.isMonthView();
+    scrollToDate(dateTime, isMonthView, !isMonthView, animate);
+  }
+
   private void scrollToDate(DateTime dateTime, boolean scrollMonthPager, boolean scrollWeekPager, boolean animate) {
     if (scrollMonthPager) {
       setMonthViewPagerPosition(Utils.monthsBetween(Config.START_DATE, dateTime), animate);
     }
     if (scrollWeekPager) {
-      setWeekViewPagerPosition(Utils.weeksBetween(Config.START_DATE, dateTime.plusDays(-1)), animate);
+      setWeekViewPagerPosition(Utils.weeksBetween(Config.START_DATE, dateTime.withDayOfMonth(1)), animate);
     }
   }
 
