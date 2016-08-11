@@ -34,9 +34,9 @@ public class CalendarAdapter extends PagerAdapter {
   public int getCount() {
     switch (viewPagerType) {
       case MONTH:
-        return Utils.monthsBetween(Config.START_DATE, Config.END_DATE);
+        return Utils.monthPositionFromDate(Config.END_DATE);
       case WEEK:
-        return Utils.weeksBetween(Config.START_DATE, Config.END_DATE);
+        return Utils.weekPositionFromDate(Config.END_DATE);
       default:
         return 0;
     }

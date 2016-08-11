@@ -10,12 +10,14 @@ import org.joda.time.DateTime;
 
 public class Utils {
 
-  public static int monthsBetween(DateTime date1, DateTime date2) {
-    return date2.getMonthOfYear() - date1.withDayOfWeek(7).getMonthOfYear();
+  public static int monthPositionFromDate(DateTime dateTo) {
+    DateTime dateFrom = Config.START_DATE.withDayOfWeek(7);
+    return ((dateTo.getYear() - dateFrom.getYear()) * 12) + (dateTo.getMonthOfYear() - dateFrom.getMonthOfYear());
+//    return Months.monthsBetween(dateFrom, dateTo).getMonths();
   }
 
-  public static int weeksBetween(DateTime date1, DateTime date2) {
-    return date2.getWeekOfWeekyear() - date1.getWeekOfWeekyear();
+  public static int weekPositionFromDate(DateTime dateTo) {
+    return dateTo.getWeekOfWeekyear() - Config.START_DATE.getWeekOfWeekyear();
   }
 
   public static boolean isWeekendByColumnNumber(int column) {

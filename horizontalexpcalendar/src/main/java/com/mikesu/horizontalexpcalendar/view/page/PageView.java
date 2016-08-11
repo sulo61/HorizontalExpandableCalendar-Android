@@ -60,7 +60,7 @@ public class PageView extends FrameLayout implements View.OnClickListener {
   }
 
   private void addCellsToGrid() {
-    DateTime cellDate = pageDate.plusDays(-pageDate.getDayOfWeek() + 1);
+    DateTime cellDate = pageDate.withDayOfMonth(1).plusDays(-pageDate.withDayOfMonth(1).getDayOfWeek() + 1);
     if (Config.USE_DAY_LABELS) {
       for (int l = 0; l < Config.COLUMNS; l++) {
         LabelCellView label = new LabelCellView(getContext());

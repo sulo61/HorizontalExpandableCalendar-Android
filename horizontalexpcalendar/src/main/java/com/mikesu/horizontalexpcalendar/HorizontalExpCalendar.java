@@ -223,7 +223,7 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
     monthViewPager = (ViewPager) findViewById(R.id.month_view_pager);
     monthPagerAdapter = new CalendarAdapter(getContext(), Config.ViewPagerType.MONTH, this);
     monthViewPager.setAdapter(monthPagerAdapter);
-    monthViewPager.setCurrentItem(Utils.monthsBetween(Config.START_DATE, Config.INIT_DATE));
+    monthViewPager.setCurrentItem(Utils.monthPositionFromDate(Config.INIT_DATE));
     monthViewPager.addOnPageChangeListener(new SmallPageChangeListener() {
       @Override
       public void scrollStateChanged(int state) {
@@ -242,7 +242,7 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
     weekViewPager = (ViewPager) findViewById(R.id.week_view_pager);
     weekPagerAdapter = new CalendarAdapter(getContext(), Config.ViewPagerType.WEEK, this);
     weekViewPager.setAdapter(weekPagerAdapter);
-    setWeekViewPagerPosition(Utils.weeksBetween(Config.START_DATE, Config.INIT_DATE), false);
+    setWeekViewPagerPosition(Utils.weekPositionFromDate(Config.INIT_DATE), false);
     weekViewPager.addOnPageChangeListener(new SmallPageChangeListener() {
       @Override
       public void scrollStateChanged(int state) {
@@ -270,10 +270,10 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
 
   private void scrollToDate(DateTime dateTime, boolean scrollMonthPager, boolean scrollWeekPager, boolean animate) {
     if (scrollMonthPager) {
-      setMonthViewPagerPosition(Utils.monthsBetween(Config.START_DATE, dateTime), animate);
+      setMonthViewPagerPosition(Utils.monthPositionFromDate(dateTime), animate);
     }
     if (scrollWeekPager) {
-      setWeekViewPagerPosition(Utils.weeksBetween(Config.START_DATE, dateTime), animate);
+      setWeekViewPagerPosition(Utils.weekPositionFromDate(dateTime), animate);
     }
   }
 
