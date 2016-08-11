@@ -95,8 +95,6 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
       }
     });
 
-
-    initVariables();
     setValuesFromAttr(attributeSet);
     setupCellWidth();
 
@@ -225,18 +223,19 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
     monthViewPager = (ViewPager) findViewById(R.id.month_view_pager);
     monthPagerAdapter = new CalendarAdapter(getContext(), Config.ViewPagerType.MONTH, this);
     monthViewPager.setAdapter(monthPagerAdapter);
-    monthViewPager.setCurrentItem(Config.monthsBetweenStartAndInit);
+    monthViewPager.setCurrentItem(Utils.monthsBetween(Config.START_DATE, Config.INIT_DATE));
     monthViewPager.addOnPageChangeListener(new SmallPageChangeListener() {
       @Override
       public void scrollStateChanged(int state) {
-        if (Utils.isMonthView()) {
-          if (state == ViewPager.SCROLL_STATE_IDLE) {
-            Config.scrollDate = Config.INIT_DATE
-                .plusMonths(-Config.monthsBetweenStartAndInit)
-                .plusMonths(monthViewPager.getCurrentItem());
-            refreshTitleTextView();
-          }
-        }
+//        if (Utils.isMonthView()) {
+//          if (state == ViewPager.SCROLL_STATE_IDLE) {
+//            Config.scrollDate = Config.INIT_DATE
+//                .plusMonths(-Config.monthsBetweenStartAndInit)
+//                .plusMonths(monthViewPager.getCurrentItem())
+//                .withDayOfMonth(1);
+//            refreshTitleTextView();
+//          }
+//        }
       }
     });
     monthViewPager.setVisibility(Utils.isMonthView() ? VISIBLE : GONE);
@@ -246,27 +245,23 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
     weekViewPager = (ViewPager) findViewById(R.id.week_view_pager);
     weekPagerAdapter = new CalendarAdapter(getContext(), Config.ViewPagerType.WEEK, this);
     weekViewPager.setAdapter(weekPagerAdapter);
-    setWeekViewPagerPosition(Config.weeksBetweenStartAndInit, false);
+    setWeekViewPagerPosition(Utils.weeksBetween(Config.START_DATE, Config.INIT_DATE), false);
     weekViewPager.addOnPageChangeListener(new SmallPageChangeListener() {
       @Override
       public void scrollStateChanged(int state) {
-        if (!Utils.isMonthView()) {
-          if (state == ViewPager.SCROLL_STATE_IDLE) {
-            Config.scrollDate = Config.INIT_DATE
-                .plusWeeks(-Config.weeksBetweenStartAndInit)
-                .plusWeeks(weekViewPager.getCurrentItem());
-            refreshTitleTextView();
-          }
-        }
+//        if (!Utils.isMonthView()) {
+//          if (state == ViewPager.SCROLL_STATE_IDLE) {
+//            Config.scrollDate = Config.INIT_DATE
+//                .plusWeeks(-Config.weeksBetweenStartAndInit)
+//                .plusWeeks(weekViewPager.getCurrentItem());
+//            refreshTitleTextView();
+//          }
+//        }
       }
     });
     weekViewPager.setVisibility(!Utils.isMonthView() ? VISIBLE : GONE);
   }
 
-  private void initVariables() {
-    Config.monthsBetweenStartAndInit = Utils.monthsBetween(Config.START_DATE, Config.INIT_DATE);
-    Config.weeksBetweenStartAndInit = Utils.weeksBetween(Config.START_DATE, Config.INIT_DATE);
-  }
 
   private void setHeightToCenterContainer(int height) {
     ((LinearLayout.LayoutParams) findViewById(R.id.center_container).getLayoutParams()).height = height;
@@ -280,10 +275,10 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
 
   private void scrollToDate(DateTime dateTime, boolean scrollMonthPager, boolean scrollWeekPager, boolean animate) {
     if (scrollMonthPager) {
-      setMonthViewPagerPosition(Utils.monthsBetween(Config.START_DATE, dateTime), animate);
+      setMonthViewPagerPosition(Utils.monthsBetween(Config.START_DATE, dateTime.withDayOfMonth(Config.START_DATE.getDayOfMonth())), animate);
     }
     if (scrollWeekPager) {
-      setWeekViewPagerPosition(Utils.weeksBetween(Config.START_DATE, dateTime.withDayOfWeek(Config.START_DATE.getDayOfWeek())), animate);
+      setWeekViewPagerPosition(Utils.weeksBetween(Config.START_DATE, dateTime.plusDays(1)), animate);
     }
   }
 
