@@ -300,6 +300,7 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
 
   @Override
   public void onDayClick(DateTime dateTime) {
+    randDate = dateTime.toDateTime();
     Marks.refreshMarkSelected(dateTime);
     updateMarks();
   }

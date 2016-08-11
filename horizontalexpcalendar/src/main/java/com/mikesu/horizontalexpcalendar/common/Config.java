@@ -12,8 +12,8 @@ public class Config {
 
   // TODO: TO CONFIGURE
   public static final DateTime INIT_DATE = new DateTime().withDayOfMonth(1);
-  private static final int RANGE_MONTHS_BEFORE_INIT = 6;
-  private static final int RANGE_MONTHS_AFTER_INIT = 6;
+  private static final int RANGE_MONTHS_BEFORE_INIT = 3;
+  private static final int RANGE_MONTHS_AFTER_INIT = 3;
   public static final int CELL_WEEKEND_BACKGROUND = Color.parseColor("#11000000");
   public static final int CELL_NON_WEEKEND_BACKGROUND = Color.TRANSPARENT;
   public static final boolean USE_DAY_LABELS = true;

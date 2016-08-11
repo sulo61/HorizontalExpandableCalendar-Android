@@ -17,7 +17,14 @@ public class Utils {
   }
 
   public static int weekPositionFromDate(DateTime dateTo) {
+    int weeksFromYearsBefore = 0;
+    DateTime dateFrom = Config.START_DATE.toDateTime();
+    while (dateFrom.getYear() < dateTo.getYear()) {
+      weeksFromYearsBefore += dateFrom.weekOfWeekyear().getMaximumValue();
+      dateFrom = dateFrom.plusYears(1);
+    }
     return dateTo.getWeekOfWeekyear() - Config.START_DATE.getWeekOfWeekyear();
+//    return weeksFromYearsBefore + dateTo.getWeekOfWeekyear() - Config.START_DATE.getWeekOfWeekyear();
   }
 
   public static boolean isWeekendByColumnNumber(int column) {
