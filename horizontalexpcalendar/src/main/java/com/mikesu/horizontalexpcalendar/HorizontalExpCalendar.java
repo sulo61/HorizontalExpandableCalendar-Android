@@ -227,15 +227,12 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
     monthViewPager.addOnPageChangeListener(new SmallPageChangeListener() {
       @Override
       public void scrollStateChanged(int state) {
-//        if (Utils.isMonthView()) {
-//          if (state == ViewPager.SCROLL_STATE_IDLE) {
-//            Config.scrollDate = Config.INIT_DATE
-//                .plusMonths(-Config.monthsBetweenStartAndInit)
-//                .plusMonths(monthViewPager.getCurrentItem())
-//                .withDayOfMonth(1);
-//            refreshTitleTextView();
-//          }
-//        }
+        if (Utils.isMonthView()) {
+          if (state == ViewPager.SCROLL_STATE_IDLE) {
+            Config.scrollDate = Utils.getDateByMonthPosition(monthViewPager.getCurrentItem());
+            refreshTitleTextView();
+          }
+        }
       }
     });
     monthViewPager.setVisibility(Utils.isMonthView() ? VISIBLE : GONE);
@@ -249,14 +246,12 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
     weekViewPager.addOnPageChangeListener(new SmallPageChangeListener() {
       @Override
       public void scrollStateChanged(int state) {
-//        if (!Utils.isMonthView()) {
-//          if (state == ViewPager.SCROLL_STATE_IDLE) {
-//            Config.scrollDate = Config.INIT_DATE
-//                .plusWeeks(-Config.weeksBetweenStartAndInit)
-//                .plusWeeks(weekViewPager.getCurrentItem());
-//            refreshTitleTextView();
-//          }
-//        }
+        if (!Utils.isMonthView()) {
+          if (state == ViewPager.SCROLL_STATE_IDLE) {
+            Config.scrollDate = Utils.getDateByWeekPosition(weekViewPager.getCurrentItem());
+            refreshTitleTextView();
+          }
+        }
       }
     });
     weekViewPager.setVisibility(!Utils.isMonthView() ? VISIBLE : GONE);
@@ -275,10 +270,10 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
 
   private void scrollToDate(DateTime dateTime, boolean scrollMonthPager, boolean scrollWeekPager, boolean animate) {
     if (scrollMonthPager) {
-      setMonthViewPagerPosition(Utils.monthsBetween(Config.START_DATE, dateTime.withDayOfMonth(Config.START_DATE.getDayOfMonth())), animate);
+      setMonthViewPagerPosition(Utils.monthsBetween(Config.START_DATE, dateTime), animate);
     }
     if (scrollWeekPager) {
-      setWeekViewPagerPosition(Utils.weeksBetween(Config.START_DATE, dateTime.plusDays(1)), animate);
+      setWeekViewPagerPosition(Utils.weeksBetween(Config.START_DATE, dateTime), animate);
     }
   }
 

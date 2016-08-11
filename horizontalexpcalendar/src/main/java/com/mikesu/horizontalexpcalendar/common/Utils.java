@@ -2,8 +2,6 @@ package com.mikesu.horizontalexpcalendar.common;
 
 import java.util.Random;
 import org.joda.time.DateTime;
-import org.joda.time.Months;
-import org.joda.time.Weeks;
 
 /**
  * Created by MikeSu on 08/08/16.
@@ -13,11 +11,11 @@ import org.joda.time.Weeks;
 public class Utils {
 
   public static int monthsBetween(DateTime date1, DateTime date2) {
-    return Months.monthsBetween(date1, date2).getMonths();
+    return date2.getMonthOfYear() - date1.withDayOfWeek(7).getMonthOfYear();
   }
 
   public static int weeksBetween(DateTime date1, DateTime date2) {
-    return Weeks.weeksBetween(date1, date2).getWeeks();
+    return date2.getWeekOfWeekyear() - date1.getWeekOfWeekyear();
   }
 
   public static boolean isWeekendByColumnNumber(int column) {
@@ -38,5 +36,13 @@ public class Utils {
 
   public static boolean isMonthView() {
     return Config.currentViewPager == Config.ViewPagerType.MONTH;
+  }
+
+  public static DateTime getDateByMonthPosition(int position) {
+    return Config.START_DATE.withDayOfWeek(7).plusMonths(position);
+  }
+
+  public static DateTime getDateByWeekPosition(int position) {
+    return Config.START_DATE.withDayOfWeek(7).plusWeeks(position);
   }
 }

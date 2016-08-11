@@ -62,11 +62,11 @@ public class CalendarAdapter extends PagerAdapter {
     switch (viewPagerType) {
       case MONTH:
 //        pageView.setup(new DateTime().withDayOfMonth(1).plusMonths(-Config.monthsBetweenStartAndInit).plusMonths(position));
-        pageView.setup(Config.START_DATE.withDayOfWeek(7).plusMonths(position));
+        pageView.setup(Utils.getDateByMonthPosition(position));
         break;
       case WEEK:
 //        pageView.setup(new DateTime().withDayOfWeek(1).plusWeeks(-Config.weeksBetweenStartAndInit).plusWeeks(position));
-        pageView.setup(Config.START_DATE.withDayOfWeek(7).plusWeeks(position));
+        pageView.setup(Utils.getDateByWeekPosition(position));
         break;
       default:
         Log.e(CalendarAdapter.class.getName(), "instantiateItem, unknown view pager type");
