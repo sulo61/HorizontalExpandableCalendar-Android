@@ -223,9 +223,11 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
   }
 
   public void scrollToDate(DateTime dateTime, boolean animate) {
-    onDayClick(dateTime);
     boolean isMonthView = Utils.isMonthView();
     scrollToDate(dateTime, isMonthView, !isMonthView, animate);
+
+    Marks.refreshMarkSelected(dateTime);
+    updateMarks();
   }
 
   private void scrollToDate(DateTime dateTime, boolean scrollMonthPager, boolean scrollWeekPager, boolean animate) {
@@ -260,7 +262,6 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
 
   @Override
   public void onDayClick(DateTime dateTime) {
-    Marks.refreshMarkSelected(dateTime);
-    updateMarks();
+    scrollToDate(dateTime, true);
   }
 }
