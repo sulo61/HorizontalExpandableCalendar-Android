@@ -71,7 +71,7 @@ public class DayCellView extends BaseCellView {
     if (this.timeType == TimeType.CURRENT) {
       text.setTextColor(Color.BLACK);
     } else {
-      text.setTextColor(Color.GRAY);
+      text.setTextColor(Color.LTGRAY);
     }
   }
 

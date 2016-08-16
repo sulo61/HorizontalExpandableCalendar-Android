@@ -10,14 +10,14 @@ import org.joda.time.DateTime;
 
 public class Config {
 
-  // TODO: TO CONFIGURE
+  /* CONFIGURATION */
   public static final DateTime INIT_DATE = new DateTime(); // today
-  private static final int RANGE_MONTHS_BEFORE_INIT = 1;
-  private static final int RANGE_MONTHS_AFTER_INIT = 1;
-  public static final int CELL_WEEKEND_BACKGROUND = Color.parseColor("#11000000");
-  public static final int CELL_NON_WEEKEND_BACKGROUND = Color.TRANSPARENT;
+  private static final int RANGE_MONTHS_BEFORE_INIT = 2;
+  private static final int RANGE_MONTHS_AFTER_INIT = 2;
+  public static final int CELL_WEEKEND_BACKGROUND = Color.parseColor("#2233CCFF");
+  public static final int CELL_NON_WEEKEND_BACKGROUND = Color.WHITE;
   public static final boolean USE_DAY_LABELS = true;
-  // TODO: END CONFIGURATION
+  /* END CONFIGURATION */
 
   private static DateTime getStartDate() {
     DateTime START_BACK_BY_RANGE = INIT_DATE.plusMonths(-RANGE_MONTHS_BEFORE_INIT);

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical">
@@ -7,31 +8,38 @@
     <RelativeLayout
         android:id="@+id/top_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        tools:layout_height="50dp">
 
         <TextView
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/white"
             android:gravity="center"
-            android:padding="16dp"
-            android:textColor="@android:color/black"/>
+            android:textColor="@android:color/black"
+            android:textStyle="bold"
+            tools:text="DATE"/>
 
         <Button
-            android:id="@+id/scroll_to_init_button"
-            android:layout_width="58dp"
-            android:layout_height="36dp"
+            android:id="@+id/scroll_to_today_button"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:text="INIT"/>
+            android:layout_margin="6dp"
+            android:background="#11000000"
+            android:text="TODAY"
+            android:textSize="10sp"/>
 
     </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/center_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="#FFFFFF"
+        tools:layout_height="200dp">
 
         <android.support.v4.view.ViewPager
             android:id="@+id/month_view_pager"
@@ -48,47 +56,32 @@
     <RelativeLayout
         android:id="@+id/bottom_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        tools:layout_height="50dp">
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:orientation="vertical"
-            android:layout_height="match_parent">
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true">
 
             <Button
-                android:id="@+id/change_calendar_view_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Switch view"/>
+                android:id="@+id/collapse_button"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_margin="6dp"
+                android:background="#11000000"
+                android:text="COLLAPSE"
+                android:textSize="10sp"/>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="3">
-
-                <Button
-                    android:id="@+id/prev_x_days"
-                    android:text="prev 1"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"/>
-
-                <Button
-                    android:id="@+id/rand_days"
-                    android:text="RAND"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"/>
-
-                <Button
-                    android:id="@+id/next_x_days"
-                    android:text="next 1"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"/>
-
-            </LinearLayout>
+            <Button
+                android:id="@+id/expand_button"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_margin="6dp"
+                android:background="#11000000"
+                android:text="EXPAND"
+                android:textSize="10sp"/>
 
         </LinearLayout>
 

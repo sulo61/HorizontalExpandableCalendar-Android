@@ -1,7 +1,6 @@
 package com.mikesu.horizontalexpcalendar.adapter;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.v4.view.PagerAdapter;
 import android.util.Log;
 import android.view.View;
@@ -54,11 +53,6 @@ public class CalendarAdapter extends PagerAdapter {
     visiblePages.add(pageView);
 
     container.addView(pageView, 0);
-
-    pageView.setBackgroundColor(Color.rgb(
-        Utils.getRandomColor(),
-        Utils.getRandomColor(),
-        Utils.getRandomColor()));
 
     switch (viewPagerType) {
       case MONTH:
