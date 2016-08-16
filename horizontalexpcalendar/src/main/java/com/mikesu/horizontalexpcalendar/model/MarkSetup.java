@@ -9,6 +9,7 @@ public class MarkSetup {
 
   private boolean today;
   private boolean selected;
+  private boolean custom;
 
   public MarkSetup() {
     this.today = false;
@@ -36,7 +37,15 @@ public class MarkSetup {
     this.selected = selected;
   }
 
+  public boolean isCustom() {
+    return custom;
+  }
+
+  public void setCustom(boolean custom) {
+    this.custom = custom;
+  }
+
   public boolean canBeDeleted() {
-    return !today && !selected;
+    return !today && !selected && !custom;
   }
 }

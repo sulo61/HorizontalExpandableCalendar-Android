@@ -20,4 +20,12 @@
         android:background="@drawable/mark_selected"
         android:visibility="gone"/>
 
+    <View
+        android:id="@+id/mark_custom"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:background="@drawable/mark_custom"
+        android:visibility="gone"/>
+
 </FrameLayout>

@@ -19,10 +19,13 @@ public class DayCellView extends BaseCellView {
   private TextView text;
   private TimeType timeType;
   private FrameLayout markContainer;
-  private View markToday;
-  private View markSelected;
+
   private MarkSetup markSetup;
   private long markTimestamp;
+
+  private View markToday;
+  private View markSelected;
+  private View markCustom;
 
   public DayCellView(Context context) {
     super(context);
@@ -50,6 +53,7 @@ public class DayCellView extends BaseCellView {
     markContainer = (FrameLayout) findViewById(R.id.mark_container);
     markToday = findViewById(R.id.mark_today_view);
     markSelected = findViewById(R.id.mark_selected_view);
+    markCustom = findViewById(R.id.mark_custom);
   }
 
   public void setTimeType(TimeType timeType) {
@@ -80,10 +84,19 @@ public class DayCellView extends BaseCellView {
   }
 
   public void setMark(MarkSetup markSetup, int size) {
+    setSize(size);
+    setMarkSetup(markSetup);
+  }
+
+  private void setSize(int size) {
     LayoutParams markParams = (LayoutParams) markContainer.getLayoutParams();
     markParams.height = size;
     markParams.width = size;
-    setMarkSetup(markSetup);
+
+    LayoutParams markCustomParams = (LayoutParams) markCustom.getLayoutParams();
+    int markCustomPercentSize = (int) (size * 0.2f);
+    markCustomParams.height = markCustomPercentSize;
+    markCustomParams.width = markCustomPercentSize;
   }
 
   public void setMarkSetup(MarkSetup markSetup) {
@@ -98,6 +111,7 @@ public class DayCellView extends BaseCellView {
       markContainer.setVisibility(VISIBLE);
       markToday.setVisibility(markSetup.isToday() ? VISIBLE : GONE);
       markSelected.setVisibility(markSetup.isSelected() ? VISIBLE : GONE);
+      markCustom.setVisibility(markSetup.isCustom() ? VISIBLE : GONE);
     }
   }
 
