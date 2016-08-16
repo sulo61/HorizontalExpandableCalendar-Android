@@ -17,6 +17,10 @@ public class Marks {
   private static Map<String, MarkSetup> marksMap;
   private static boolean locked = false;
 
+  public static final float MARK_CUSTOM1_SIZE_PROPORTION_TO_CELL = 0.15f;
+  public static final float MARK_CUSTOM2_HEIGHT_PROPORTION_TO_CELL = 0.5f;
+  public static final float MARK_CUSTOM2_WIDTH_PROPORTION_TO_CELL = 0.08f;
+
   public static void init() {
     marksMap = new HashMap<>();
   }

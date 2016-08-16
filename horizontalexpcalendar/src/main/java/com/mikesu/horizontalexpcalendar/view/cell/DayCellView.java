@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import com.mikesu.horizontalexpcalendar.R;
-import com.mikesu.horizontalexpcalendar.common.Config;
+import com.mikesu.horizontalexpcalendar.common.Marks;
 import com.mikesu.horizontalexpcalendar.model.MarkSetup;
 
 /**
@@ -20,10 +20,8 @@ public class DayCellView extends BaseCellView {
   private TextView text;
   private TimeType timeType;
   private FrameLayout markContainer;
-
+  
   private MarkSetup markSetup;
-  private long markTimestamp;
-
   private View markToday;
   private View markSelected;
   private View markCustom1;
@@ -82,10 +80,6 @@ public class DayCellView extends BaseCellView {
     }
   }
 
-  public MarkSetup getMarkSetup() {
-    return markSetup;
-  }
-
   public void setMark(MarkSetup markSetup, int size) {
     setSize(size);
     setMarkSetup(markSetup);
@@ -102,15 +96,15 @@ public class DayCellView extends BaseCellView {
 
   private void setupCustom1Mark(int size) {
     LayoutParams markCustomParams = (LayoutParams) markCustom1.getLayoutParams();
-    int markCustomPercentSize = (int) (size * Config.MARK_CUSTOM1_SIZE_PROPORTION_TO_CELL);
+    int markCustomPercentSize = (int) (size * Marks.MARK_CUSTOM1_SIZE_PROPORTION_TO_CELL);
     markCustomParams.height = markCustomPercentSize;
     markCustomParams.width = markCustomPercentSize;
   }
 
   private void setupCustom2Mark(int size) {
     LayoutParams markCustomParams = (LayoutParams) markCustom2.getLayoutParams();
-    markCustomParams.height = (int) (size * Config.MARK_CUSTOM2_HEIGHT_PROPORTION_TO_CELL);
-    markCustomParams.width = (int) (size * Config.MARK_CUSTOM2_WIDTH_PROPORTION_TO_CELL);
+    markCustomParams.height = (int) (size * Marks.MARK_CUSTOM2_HEIGHT_PROPORTION_TO_CELL);
+    markCustomParams.width = (int) (size * Marks.MARK_CUSTOM2_WIDTH_PROPORTION_TO_CELL);
   }
 
   public void setMarkSetup(MarkSetup markSetup) {
@@ -129,9 +123,4 @@ public class DayCellView extends BaseCellView {
       markCustom2.setVisibility(markSetup.isCustom2() ? VISIBLE : GONE);
     }
   }
-
-  public long getMarkTimestamp() {
-    return markTimestamp;
-  }
-
 }
