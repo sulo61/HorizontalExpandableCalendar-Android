@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import com.mikesu.horizontalexpcalendar.R;
+import com.mikesu.horizontalexpcalendar.common.Config;
 import com.mikesu.horizontalexpcalendar.model.MarkSetup;
 
 /**
@@ -25,7 +26,8 @@ public class DayCellView extends BaseCellView {
 
   private View markToday;
   private View markSelected;
-  private View markCustom;
+  private View markCustom1;
+  private View markCustom2;
 
   public DayCellView(Context context) {
     super(context);
@@ -53,7 +55,8 @@ public class DayCellView extends BaseCellView {
     markContainer = (FrameLayout) findViewById(R.id.mark_container);
     markToday = findViewById(R.id.mark_today_view);
     markSelected = findViewById(R.id.mark_selected_view);
-    markCustom = findViewById(R.id.mark_custom);
+    markCustom1 = findViewById(R.id.mark_custom1);
+    markCustom2 = findViewById(R.id.mark_custom2);
   }
 
   public void setTimeType(TimeType timeType) {
@@ -93,10 +96,21 @@ public class DayCellView extends BaseCellView {
     markParams.height = size;
     markParams.width = size;
 
-    LayoutParams markCustomParams = (LayoutParams) markCustom.getLayoutParams();
-    int markCustomPercentSize = (int) (size * 0.2f);
+    setupCustom1Mark(size);
+    setupCustom2Mark(size);
+  }
+
+  private void setupCustom1Mark(int size) {
+    LayoutParams markCustomParams = (LayoutParams) markCustom1.getLayoutParams();
+    int markCustomPercentSize = (int) (size * Config.MARK_CUSTOM1_SIZE_PROPORTION_TO_CELL);
     markCustomParams.height = markCustomPercentSize;
     markCustomParams.width = markCustomPercentSize;
+  }
+
+  private void setupCustom2Mark(int size) {
+    LayoutParams markCustomParams = (LayoutParams) markCustom2.getLayoutParams();
+    markCustomParams.height = (int) (size * Config.MARK_CUSTOM2_HEIGHT_PROPORTION_TO_CELL);
+    markCustomParams.width = (int) (size * Config.MARK_CUSTOM2_WIDTH_PROPORTION_TO_CELL);
   }
 
   public void setMarkSetup(MarkSetup markSetup) {
@@ -111,7 +125,8 @@ public class DayCellView extends BaseCellView {
       markContainer.setVisibility(VISIBLE);
       markToday.setVisibility(markSetup.isToday() ? VISIBLE : GONE);
       markSelected.setVisibility(markSetup.isSelected() ? VISIBLE : GONE);
-      markCustom.setVisibility(markSetup.isCustom() ? VISIBLE : GONE);
+      markCustom1.setVisibility(markSetup.isCustom1() ? VISIBLE : GONE);
+      markCustom2.setVisibility(markSetup.isCustom2() ? VISIBLE : GONE);
     }
   }
 

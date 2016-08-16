@@ -14,9 +14,12 @@ public class Config {
   public static final DateTime INIT_DATE = new DateTime(); // today
   private static final int RANGE_MONTHS_BEFORE_INIT = 2;
   private static final int RANGE_MONTHS_AFTER_INIT = 2;
-  public static final int CELL_WEEKEND_BACKGROUND = Color.parseColor("#2233CCFF");
+  public static final int CELL_WEEKEND_BACKGROUND = Color.parseColor("#22FF9900");
   public static final int CELL_NON_WEEKEND_BACKGROUND = Color.WHITE;
   public static final boolean USE_DAY_LABELS = true;
+  public static final float MARK_CUSTOM1_SIZE_PROPORTION_TO_CELL = 0.15f;
+  public static final float MARK_CUSTOM2_HEIGHT_PROPORTION_TO_CELL = 0.5f;
+  public static final float MARK_CUSTOM2_WIDTH_PROPORTION_TO_CELL = 0.08f;
   /* END CONFIGURATION */
 
   private static DateTime getStartDate() {

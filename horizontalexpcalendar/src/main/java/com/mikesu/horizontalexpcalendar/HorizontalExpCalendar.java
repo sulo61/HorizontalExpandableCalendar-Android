@@ -59,6 +59,18 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
     Marks.init();
     Marks.markToday();
     Marks.refreshMarkSelected(Config.selectionDate);
+    renderCustomMarks();
+  }
+
+  private void renderCustomMarks() {
+    // custom1
+    Marks.refreshCustomMark(new DateTime().minusDays(5), Marks.CustomMarks.CUSTOM1, true);
+    Marks.refreshCustomMark(new DateTime().plusDays(1), Marks.CustomMarks.CUSTOM1, true);
+    Marks.refreshCustomMark(new DateTime().plusDays(4), Marks.CustomMarks.CUSTOM1, true);
+    // custom2
+    Marks.refreshCustomMark(new DateTime().minusDays(7), Marks.CustomMarks.CUSTOM2, true);
+    Marks.refreshCustomMark(new DateTime().plusDays(1), Marks.CustomMarks.CUSTOM2, true);
+    Marks.refreshCustomMark(new DateTime().plusDays(10), Marks.CustomMarks.CUSTOM2, true);
   }
 
   private void setCellHeight() {

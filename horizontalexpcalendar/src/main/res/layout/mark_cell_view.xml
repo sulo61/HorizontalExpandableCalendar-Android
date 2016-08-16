@@ -21,11 +21,21 @@
         android:visibility="gone"/>
 
     <View
-        android:id="@+id/mark_custom"
+        android:id="@+id/mark_custom1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:background="@drawable/mark_custom"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_marginBottom="3dp"
+        android:background="@drawable/mark_custom1"
+        android:visibility="gone"/>
+
+    <View
+        android:id="@+id/mark_custom2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical|left"
+        android:layout_marginLeft="7dp"
+        android:background="@drawable/mark_custom2"
         android:visibility="gone"/>
 
 </FrameLayout>

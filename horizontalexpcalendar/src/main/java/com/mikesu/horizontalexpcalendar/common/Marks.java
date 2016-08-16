@@ -1,5 +1,6 @@
 package com.mikesu.horizontalexpcalendar.common;
 
+import android.util.Log;
 import com.mikesu.horizontalexpcalendar.model.MarkSetup;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,6 +13,7 @@ import org.joda.time.DateTime;
 
 public class Marks {
 
+  private static final String TAG = Marks.class.getName();
   private static Map<String, MarkSetup> marksMap;
   private static boolean locked = false;
 
@@ -26,7 +28,7 @@ public class Marks {
     lock();
     MarkSetup markSetup = getMark(new DateTime());
     if (markSetup == null) {
-      addMark(new DateTime(), new MarkSetup(true, false));
+      addNewMark(new DateTime(), new MarkSetup(true, false));
     } else {
       markSetup.setToday(true);
     }
@@ -58,12 +60,40 @@ public class Marks {
     unlock();
   }
 
+  public static void refreshCustomMark(DateTime dateTime, CustomMarks customMarks, boolean mark) {
+    if (isLocked()) {
+      return;
+    }
+    lock();
+    MarkSetup markSetup = getMark(dateTime);
+    if (markSetup == null) {
+      markSetup = new MarkSetup();
+      addNewMark(dateTime, markSetup);
+    }
+    switch (customMarks) {
+      case CUSTOM1:
+        markSetup.setCustom1(mark);
+        break;
+      case CUSTOM2:
+        markSetup.setCustom2(mark);
+      default:
+        Log.e(TAG, "markCustom, unknown case");
+    }
+
+    if (mark) {
+      if (markSetup.canBeDeleted()) {
+        marksMap.remove(dateTimeToStringKey(dateTime));
+      }
+    }
+
+    unlock();
+  }
 
   public static void clear() {
     marksMap.clear();
   }
 
-  public static void addMark(DateTime dateTime, MarkSetup markSetup) {
+  private static void addNewMark(DateTime dateTime, MarkSetup markSetup) {
     marksMap.put(dateTimeToStringKey(dateTime), markSetup);
   }
 
@@ -85,6 +115,11 @@ public class Marks {
 
   public static boolean isLocked() {
     return locked;
+  }
+
+  public enum CustomMarks {
+    CUSTOM1,
+    CUSTOM2
   }
 
 }
