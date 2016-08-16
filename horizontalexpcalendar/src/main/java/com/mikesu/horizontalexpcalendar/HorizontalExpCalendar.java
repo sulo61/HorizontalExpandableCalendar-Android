@@ -24,8 +24,6 @@ import org.joda.time.DateTime;
 
 public class HorizontalExpCalendar extends RelativeLayout implements PageView.PageViewListener {
 
-  private static final String TAG = HorizontalExpCalendar.class.getName();
-
   private TextView titleTextView;
 
   private ViewPager monthViewPager;
@@ -55,7 +53,6 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
   private void init(AttributeSet attributeSet) {
     inflate(getContext(), R.layout.horizontal_exp_calendar, this);
 
-    initVariables();
     setValuesFromAttr(attributeSet);
     setupCellWidth();
 
@@ -186,15 +183,13 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
     monthViewPager = (ViewPager) findViewById(R.id.month_view_pager);
     monthPagerAdapter = new CalendarAdapter(getContext(), Config.ViewPagerType.MONTH, this);
     monthViewPager.setAdapter(monthPagerAdapter);
-    monthViewPager.setCurrentItem(Config.monthsBetweenStartAndInit);
+    monthViewPager.setCurrentItem(Utils.monthPositionFromDate(Config.INIT_DATE));
     monthViewPager.addOnPageChangeListener(new SmallPageChangeListener() {
       @Override
       public void scrollStateChanged(int state) {
         if (Utils.isMonthView()) {
           if (state == ViewPager.SCROLL_STATE_IDLE) {
-            Config.scrollDate = Config.INIT_DATE
-                .plusMonths(-Config.monthsBetweenStartAndInit)
-                .plusMonths(monthViewPager.getCurrentItem());
+            Config.scrollDate = Utils.getDateByMonthPosition(monthViewPager.getCurrentItem());
             refreshTitleTextView();
           }
         }
@@ -207,15 +202,13 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
     weekViewPager = (ViewPager) findViewById(R.id.week_view_pager);
     weekPagerAdapter = new CalendarAdapter(getContext(), Config.ViewPagerType.WEEK, this);
     weekViewPager.setAdapter(weekPagerAdapter);
-    setWeekViewPagerPosition(Config.weeksBetweenStartAndInit, false);
+    setWeekViewPagerPosition(Utils.weekPositionFromDate(Config.INIT_DATE), false);
     weekViewPager.addOnPageChangeListener(new SmallPageChangeListener() {
       @Override
       public void scrollStateChanged(int state) {
         if (!Utils.isMonthView()) {
           if (state == ViewPager.SCROLL_STATE_IDLE) {
-            Config.scrollDate = Config.INIT_DATE
-                .plusWeeks(-Config.weeksBetweenStartAndInit)
-                .plusWeeks(weekViewPager.getCurrentItem());
+            Config.scrollDate = Utils.getDateByWeekPosition(weekViewPager.getCurrentItem());
             refreshTitleTextView();
           }
         }
@@ -224,10 +217,6 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
     weekViewPager.setVisibility(!Utils.isMonthView() ? VISIBLE : GONE);
   }
 
-  private void initVariables() {
-    Config.monthsBetweenStartAndInit = Utils.monthsBetween(Config.START_DATE, Config.INIT_DATE);
-    Config.weeksBetweenStartAndInit = Utils.weeksBetween(Config.START_DATE, Config.INIT_DATE);
-  }
 
   private void setHeightToCenterContainer(int height) {
     ((LinearLayout.LayoutParams) findViewById(R.id.center_container).getLayoutParams()).height = height;
@@ -241,10 +230,10 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
 
   private void scrollToDate(DateTime dateTime, boolean scrollMonthPager, boolean scrollWeekPager, boolean animate) {
     if (scrollMonthPager) {
-      setMonthViewPagerPosition(Utils.monthsBetween(Config.START_DATE, dateTime), animate);
+      setMonthViewPagerPosition(Utils.monthPositionFromDate(dateTime), animate);
     }
     if (scrollWeekPager) {
-      setWeekViewPagerPosition(Utils.weeksBetween(Config.START_DATE, dateTime.withDayOfWeek(Config.START_DATE.getDayOfWeek())), animate);
+      setWeekViewPagerPosition(Utils.weekPositionFromDate(dateTime), animate);
     }
   }
 

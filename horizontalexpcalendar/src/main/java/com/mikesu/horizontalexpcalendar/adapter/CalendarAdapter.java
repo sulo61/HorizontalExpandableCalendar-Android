@@ -10,7 +10,6 @@ import com.mikesu.horizontalexpcalendar.common.Utils;
 import com.mikesu.horizontalexpcalendar.view.page.PageView;
 import java.util.ArrayList;
 import java.util.List;
-import org.joda.time.DateTime;
 
 /**
  * Created by MikeSu on 09.08.2016.
@@ -34,9 +33,9 @@ public class CalendarAdapter extends PagerAdapter {
   public int getCount() {
     switch (viewPagerType) {
       case MONTH:
-        return Utils.monthsBetween(Config.START_DATE, Config.END_DATE);
+        return Utils.monthPositionFromDate(Config.END_DATE);
       case WEEK:
-        return Utils.weeksBetween(Config.START_DATE, Config.END_DATE);
+        return Utils.weekPositionFromDate(Config.END_DATE);
       default:
         return 0;
     }
@@ -56,10 +55,12 @@ public class CalendarAdapter extends PagerAdapter {
 
     switch (viewPagerType) {
       case MONTH:
-        pageView.setup(new DateTime().withDayOfMonth(1).plusMonths(-Config.monthsBetweenStartAndInit).plusMonths(position));
+//        pageView.setup(new DateTime().withDayOfMonth(1).plusMonths(-Config.monthsBetweenStartAndInit).plusMonths(position));
+        pageView.setup(Utils.getDateByMonthPosition(position));
         break;
       case WEEK:
-        pageView.setup(new DateTime().withDayOfWeek(1).plusWeeks(-Config.weeksBetweenStartAndInit).plusWeeks(position));
+//        pageView.setup(new DateTime().withDayOfWeek(1).plusWeeks(-Config.weeksBetweenStartAndInit).plusWeeks(position));
+        pageView.setup(Utils.getDateByWeekPosition(position));
         break;
       default:
         Log.e(CalendarAdapter.class.getName(), "instantiateItem, unknown view pager type");

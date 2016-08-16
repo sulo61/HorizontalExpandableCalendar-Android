@@ -28,7 +28,7 @@ public class Config {
   private static DateTime getEndDate() {
     DateTime END_FORWARD_BY_RANGE = INIT_DATE.plusMonths(RANGE_MONTHS_AFTER_INIT + 1);
     DateTime END_BACK_TO_FIRST_DAY_OF_MONTH = END_FORWARD_BY_RANGE.plusDays(-END_FORWARD_BY_RANGE.getDayOfMonth() + 1);
-    return END_BACK_TO_FIRST_DAY_OF_MONTH.plusDays(7 - END_BACK_TO_FIRST_DAY_OF_MONTH.getDayOfWeek());
+    return END_BACK_TO_FIRST_DAY_OF_MONTH.plusDays(7 - END_BACK_TO_FIRST_DAY_OF_MONTH.getDayOfWeek() + 1);
   }
 
   public static DateTime START_DATE = getStartDate();
@@ -40,9 +40,7 @@ public class Config {
 
   public static ViewPagerType currentViewPager = ViewPagerType.MONTH;
   public static DateTime scrollDate = INIT_DATE;
-  public static DateTime selectionDate = new DateTime();
-  public static int monthsBetweenStartAndInit = 0;
-  public static int weeksBetweenStartAndInit = 0;
+  public static DateTime selectionDate = new DateTime();//
   public static int cellWidth = 0;
   public static int cellHeight = 0;
 
