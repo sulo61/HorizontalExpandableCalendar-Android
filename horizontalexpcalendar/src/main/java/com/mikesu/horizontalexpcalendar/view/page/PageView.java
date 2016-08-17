@@ -62,25 +62,15 @@ public class PageView extends FrameLayout implements View.OnClickListener {
   private void addCellsToGrid() {
     DateTime cellDate;
     if (viewPagerType == Config.ViewPagerType.MONTH) {
-      cellDate = pageDate.withDayOfMonth(1).plusDays(-pageDate.withDayOfMonth(1).getDayOfWeek() + 1);
+      cellDate = pageDate.withDayOfMonth(1).plusDays(-pageDate.withDayOfMonth(1).getDayOfWeek() + 1 + Utils.firstDayOffset());
     } else {
-      cellDate = pageDate.plusDays(-pageDate.getDayOfWeek() + 1);
+      cellDate = pageDate.plusDays(-pageDate.getDayOfWeek() + 1 + Utils.firstDayOffset());
     }
-    if (Config.USE_DAY_LABELS) {
-      for (int l = 0; l < Config.COLUMNS; l++) {
-        LabelCellView label = new LabelCellView(getContext());
+    addLabels();
+    addDays(cellDate);
+  }
 
-        GridLayout.LayoutParams labelParams = new GridLayout.LayoutParams(GridLayout.spec(0), GridLayout.spec(l));
-        labelParams.height = Config.cellHeight;
-        labelParams.width = Config.cellWidth;
-        label.setLayoutParams(labelParams);
-        label.setText(Constants.NAME_OF_DAYS[l]);
-        label.setDayType(Utils.isWeekendByColumnNumber(l) ? BaseCellView.DayType.WEEKEND : BaseCellView.DayType.NO_WEEKEND);
-
-        gridLayout.addView(label);
-
-      }
-    }
+  private void addDays(DateTime cellDate) {
     for (int r = Utils.dayLabelExtraRow(); r < rows + (Utils.dayLabelExtraRow()); r++) {
       for (int c = 0; c < Config.COLUMNS; c++) {
         DayCellView dayCellView = new DayCellView(getContext());
@@ -102,6 +92,24 @@ public class PageView extends FrameLayout implements View.OnClickListener {
         gridLayout.addView(dayCellView);
 
         cellDate = cellDate.plusDays(1);
+      }
+    }
+  }
+
+  private void addLabels() {
+    if (Config.USE_DAY_LABELS) {
+      for (int l = 0; l < Config.COLUMNS; l++) {
+        LabelCellView label = new LabelCellView(getContext());
+
+        GridLayout.LayoutParams labelParams = new GridLayout.LayoutParams(GridLayout.spec(0), GridLayout.spec(l));
+        labelParams.height = Config.cellHeight;
+        labelParams.width = Config.cellWidth;
+        label.setLayoutParams(labelParams);
+        label.setText(Constants.NAME_OF_DAYS[(l + 1 + Utils.firstDayOffset()) % 7]);
+        label.setDayType(Utils.isWeekendByColumnNumber(l) ? BaseCellView.DayType.WEEKEND : BaseCellView.DayType.NO_WEEKEND);
+
+        gridLayout.addView(label);
+
       }
     }
   }

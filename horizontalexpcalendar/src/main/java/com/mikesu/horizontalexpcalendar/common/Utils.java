@@ -24,7 +24,14 @@ public class Utils {
   }
 
   public static boolean isWeekendByColumnNumber(int column) {
-    return column == 5 || column == 6;
+    switch (Config.FIRST_DAY_OF_WEEK) {
+      case SUNDAY:
+        return (column == 0 || column == 6);
+      case MONDAY:
+        return (column == 5 || column == 6);
+      default:
+        return false;
+    }
   }
 
   public static int getRandomColor() {
@@ -59,5 +66,15 @@ public class Utils {
   public static boolean isTheSameWeek(DateTime dateTime) {
     return (Config.scrollDate.getYear() == dateTime.getYear()) &&
         (Config.scrollDate.getWeekOfWeekyear() == dateTime.getWeekOfWeekyear());
+  }
+
+  public static int firstDayOffset() {
+    switch (Config.FIRST_DAY_OF_WEEK) {
+      case SUNDAY:
+        return -1;
+      case MONDAY:
+        return 0;
+    }
+    return 0;
   }
 }

@@ -6,5 +6,5 @@ package com.mikesu.horizontalexpcalendar.common;
  */
 
 public class Constants {
-  public static final String[] NAME_OF_DAYS = new String[]{"MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"};
+  public static final String[] NAME_OF_DAYS = new String[]{"SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"};
 }
