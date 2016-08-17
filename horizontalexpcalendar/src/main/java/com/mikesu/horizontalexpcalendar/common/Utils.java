@@ -58,12 +58,12 @@ public class Utils {
     return Config.START_DATE.withDayOfWeek(7).plusWeeks(position);
   }
 
-  public static boolean isTheSameMonth(DateTime dateTime) {
+  public static boolean isTheSameMonthToScrollDate(DateTime dateTime) {
     return (Config.scrollDate.getYear() == dateTime.getYear()) &&
         (Config.scrollDate.getMonthOfYear() == dateTime.getMonthOfYear());
   }
 
-  public static boolean isTheSameWeek(DateTime dateTime) {
+  public static boolean isTheSameWeekToScrollDate(DateTime dateTime) {
     return (Config.scrollDate.getYear() == dateTime.getYear()) &&
         (Config.scrollDate.getWeekOfWeekyear() == dateTime.getWeekOfWeekyear());
   }

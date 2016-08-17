@@ -198,7 +198,11 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
     monthViewPager.setVisibility(View.GONE);
     weekViewPager.setVisibility(View.VISIBLE);
     Config.currentViewPager = Config.ViewPagerType.WEEK;
-    Config.scrollDate = Config.scrollDate.withDayOfMonth(1);
+    if (Config.SCROLL_TO_SELECTED_AFTER_COLLAPSE && Utils.isTheSameMonthToScrollDate(Config.selectionDate)) {
+      Config.scrollDate = Config.selectionDate.plusDays(-Utils.firstDayOffset());
+    } else {
+      Config.scrollDate = Config.scrollDate.withDayOfMonth(1);
+    }
     scrollToDate(Config.scrollDate, false, true, false);
     setHeightToCenterContainer(weekViewPagerHeight);
     weekPagerAdapter.updateMarks();
@@ -257,10 +261,10 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
   }
 
   public void scrollToDate(DateTime dateTime, boolean animate) {
-    if (Config.currentViewPager == Config.ViewPagerType.MONTH && Utils.isTheSameMonth(dateTime)) {
+    if (Config.currentViewPager == Config.ViewPagerType.MONTH && Utils.isTheSameMonthToScrollDate(dateTime)) {
       return;
     }
-    if (Config.currentViewPager == Config.ViewPagerType.WEEK && Utils.isTheSameWeek(dateTime)) {
+    if (Config.currentViewPager == Config.ViewPagerType.WEEK && Utils.isTheSameWeekToScrollDate(dateTime)) {
       return;
     }
 
