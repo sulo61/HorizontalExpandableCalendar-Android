@@ -11,8 +11,8 @@ import org.joda.time.DateTime;
 public class Config {
 
   /* CONFIGURATION */
-  private static final int RANGE_MONTHS_BEFORE_INIT = 2;
-  private static final int RANGE_MONTHS_AFTER_INIT = 2;
+  private static final int RANGE_MONTHS_BEFORE_INIT = 1;
+  private static final int RANGE_MONTHS_AFTER_INIT = 3;
   private static final ViewPagerType INIT_VIEW = ViewPagerType.MONTH;
   public static final DateTime INIT_DATE = new DateTime(); // today
   public static final int CELL_WEEKEND_BACKGROUND = Color.parseColor("#22FF9900");
@@ -24,13 +24,13 @@ public class Config {
   private static DateTime getStartDate() {
     DateTime START_BACK_BY_RANGE = INIT_DATE.plusMonths(-RANGE_MONTHS_BEFORE_INIT);
     DateTime START_BACK_TO_FIRST_DAY_OF_MONTH = START_BACK_BY_RANGE.plusDays(-START_BACK_BY_RANGE.getDayOfMonth() + 1);
-    return START_BACK_TO_FIRST_DAY_OF_MONTH.plusDays(-START_BACK_TO_FIRST_DAY_OF_MONTH.getDayOfWeek() + 1 + Utils.firstDayOffset());
+    return START_BACK_TO_FIRST_DAY_OF_MONTH.plusDays(-START_BACK_TO_FIRST_DAY_OF_MONTH.getDayOfWeek() + 1);
   }
 
   private static DateTime getEndDate() {
     DateTime END_FORWARD_BY_RANGE = INIT_DATE.plusMonths(RANGE_MONTHS_AFTER_INIT + 1);
     DateTime END_BACK_TO_FIRST_DAY_OF_MONTH = END_FORWARD_BY_RANGE.plusDays(-END_FORWARD_BY_RANGE.getDayOfMonth() + 1);
-    return END_BACK_TO_FIRST_DAY_OF_MONTH.plusDays(7 - END_BACK_TO_FIRST_DAY_OF_MONTH.getDayOfWeek() + 1 + Utils.firstDayOffset());
+    return END_BACK_TO_FIRST_DAY_OF_MONTH.plusDays(7 - END_BACK_TO_FIRST_DAY_OF_MONTH.getDayOfWeek() + 1);
   }
 
   public static DateTime START_DATE = getStartDate();
