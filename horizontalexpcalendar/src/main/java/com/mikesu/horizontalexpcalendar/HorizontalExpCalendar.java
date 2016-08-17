@@ -34,6 +34,8 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
   private CalendarAdapter weekPagerAdapter;
   private int weekViewPagerHeight;
 
+  private HorizontalExpCalListener horizontalExpCalListener;
+
   public HorizontalExpCalendar(Context context, AttributeSet attrs) {
     super(context, attrs);
     init(attrs);
@@ -42,6 +44,14 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
   public HorizontalExpCalendar(Context context, AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
     init(attrs);
+  }
+
+  public void setHorizontalExpCalListener(HorizontalExpCalListener horizontalExpCalListener) {
+    this.horizontalExpCalListener = horizontalExpCalListener;
+  }
+
+  public void removeHorizontalExpCalListener() {
+    this.horizontalExpCalListener = null;
   }
 
   @Override
@@ -179,6 +189,9 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
     scrollToDate(Config.scrollDate, true, false, false);
     setHeightToCenterContainer(monthViewPagerHeight);
     monthPagerAdapter.updateMarks();
+    if (horizontalExpCalListener != null) {
+      horizontalExpCalListener.onChangeViewPager(Config.ViewPagerType.MONTH);
+    }
   }
 
   private void switchToWeekView() {
@@ -189,6 +202,9 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
     scrollToDate(Config.scrollDate, false, true, false);
     setHeightToCenterContainer(weekViewPagerHeight);
     weekPagerAdapter.updateMarks();
+    if (horizontalExpCalListener != null) {
+      horizontalExpCalListener.onChangeViewPager(Config.ViewPagerType.WEEK);
+    }
   }
 
   private void initMonthViewPager() {
@@ -203,6 +219,9 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
           if (state == ViewPager.SCROLL_STATE_IDLE) {
             Config.scrollDate = Utils.getDateByMonthPosition(monthViewPager.getCurrentItem());
             refreshTitleTextView();
+            if (horizontalExpCalListener != null) {
+              horizontalExpCalListener.onCalendarScroll(Config.scrollDate.withDayOfMonth(1));
+            }
           }
         }
       }
@@ -222,6 +241,9 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
           if (state == ViewPager.SCROLL_STATE_IDLE) {
             Config.scrollDate = Utils.getDateByWeekPosition(weekViewPager.getCurrentItem());
             refreshTitleTextView();
+            if (horizontalExpCalListener != null) {
+              horizontalExpCalListener.onCalendarScroll(Config.scrollDate.withDayOfWeek(1));
+            }
           }
         }
       }
@@ -282,5 +304,17 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
 
     Marks.refreshMarkSelected(dateTime);
     updateMarks();
+
+    if (horizontalExpCalListener != null) {
+      horizontalExpCalListener.onDateSelected(dateTime);
+    }
+  }
+
+  public interface HorizontalExpCalListener {
+    void onCalendarScroll(DateTime dateTime);
+
+    void onDateSelected(DateTime dateTime);
+
+    void onChangeViewPager(Config.ViewPagerType viewPagerType);
   }
 }
