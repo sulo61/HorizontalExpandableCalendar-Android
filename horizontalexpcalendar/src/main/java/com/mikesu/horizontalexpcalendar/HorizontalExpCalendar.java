@@ -1,6 +1,5 @@
 package com.mikesu.horizontalexpcalendar;
 
-import android.animation.Animator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.support.v4.view.ViewPager;
@@ -12,15 +11,11 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.mikesu.horizontalexpcalendar.adapter.CalendarAdapter;
-import com.mikesu.horizontalexpcalendar.animator.CalendarAnimation;
+import com.mikesu.horizontalexpcalendar.common.Animations;
 import com.mikesu.horizontalexpcalendar.common.Config;
-import com.mikesu.horizontalexpcalendar.common.Constants;
 import com.mikesu.horizontalexpcalendar.common.Marks;
 import com.mikesu.horizontalexpcalendar.common.Utils;
-import com.mikesu.horizontalexpcalendar.listener.SmallAnimationListener;
 import com.mikesu.horizontalexpcalendar.listener.SmallPageChangeListener;
-import com.mikesu.horizontalexpcalendar.view.cell.BaseCellView;
-import com.mikesu.horizontalexpcalendar.view.cell.DayCellView;
 import com.mikesu.horizontalexpcalendar.view.page.PageView;
 import org.joda.time.DateTime;
 
@@ -29,7 +24,7 @@ import org.joda.time.DateTime;
  * www.michalsulek.pl
  */
 
-public class HorizontalExpCalendar extends RelativeLayout implements PageView.PageViewListener {
+public class HorizontalExpCalendar extends RelativeLayout implements PageView.PageViewListener, Animations.AnimationsListener {
 
   private TextView titleTextView;
   private RelativeLayout centerContainer;
@@ -37,20 +32,12 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
 
   private ViewPager monthViewPager;
   private CalendarAdapter monthPagerAdapter;
-  private int monthViewPagerHeight;
 
   private ViewPager weekViewPager;
   private CalendarAdapter weekPagerAdapter;
-  private int weekViewPagerHeight;
 
+  private Animations animations;
   private HorizontalExpCalListener horizontalExpCalListener;
-
-  private CalendarAnimation decreasingAlphaAnimation;
-  private CalendarAnimation increasingAlphaAnimation;
-  private CalendarAnimation decreasingSizeAnimation;
-  private CalendarAnimation increasingSizeAnimation;
-  private int animContainerExpandedMargin;
-  private int animContainerCollapsedMargin;
 
   public HorizontalExpCalendar(Context context, AttributeSet attrs) {
     super(context, attrs);
@@ -92,27 +79,6 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
     initAnimation();
   }
 
-  private void initAnimation() {
-    decreasingAlphaAnimation = new CalendarAnimation();
-    decreasingAlphaAnimation.setFloatValues(Constants.ANIMATION_DECREASING_VALUES[0], Constants.ANIMATION_DECREASING_VALUES[1]);
-    decreasingAlphaAnimation.setDuration(Constants.ANIMATION_ALPHA_DURATION);
-
-    increasingAlphaAnimation = new CalendarAnimation();
-    increasingAlphaAnimation.setFloatValues(Constants.ANIMATION_INCREASING_VALUES[0], Constants.ANIMATION_INCREASING_VALUES[1]);
-    increasingAlphaAnimation.setDuration(Constants.ANIMATION_ALPHA_DURATION);
-
-    decreasingSizeAnimation = new CalendarAnimation();
-    decreasingSizeAnimation.setFloatValues(Constants.ANIMATION_DECREASING_VALUES[0], Constants.ANIMATION_DECREASING_VALUES[1]);
-    decreasingSizeAnimation.setDuration(Constants.ANIMATION_SIZE_DURATION);
-
-    increasingSizeAnimation = new CalendarAnimation();
-    increasingSizeAnimation.setFloatValues(Constants.ANIMATION_INCREASING_VALUES[0], Constants.ANIMATION_INCREASING_VALUES[1]);
-    increasingSizeAnimation.setDuration(Constants.ANIMATION_SIZE_DURATION);
-
-    animContainerExpandedMargin = 0;
-    animContainerCollapsedMargin = 0;
-  }
-
   private void renderCustomMarks() {
     // custom1
     Marks.refreshCustomMark(new DateTime().minusDays(5), Marks.CustomMarks.CUSTOM1, true);
@@ -125,7 +91,7 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
   }
 
   private void setCellHeight() {
-    Config.cellHeight = monthViewPagerHeight / (Config.MONTH_ROWS + Utils.dayLabelExtraRow());
+    Config.cellHeight = Config.monthViewPagerHeight / (Config.MONTH_ROWS + Utils.dayLabelExtraRow());
   }
 
   private void setupCellWidth() {
@@ -148,9 +114,8 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
       typedArray.recycle();
     }
 
-    setHeightToCenterContainer(Utils.isMonthView() ? monthViewPagerHeight : weekViewPagerHeight);
+    setHeightToCenterContainer(Utils.isMonthView() ? Config.monthViewPagerHeight : Config.weekViewPagerHeight);
   }
-
 
   private void setupBottomContainerFromAttr(TypedArray typedArray) {
     if (typedArray.hasValue(R.styleable.HorizontalExpCalendar_bottom_container_height)) {
@@ -162,12 +127,12 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
 
   private void setupMiddleContainerFromAttr(TypedArray typedArray) {
     if (typedArray.hasValue(R.styleable.HorizontalExpCalendar_center_container_expanded_height)) {
-      monthViewPagerHeight = typedArray.getDimensionPixelSize(
+      Config.monthViewPagerHeight = typedArray.getDimensionPixelSize(
           R.styleable.HorizontalExpCalendar_center_container_expanded_height, LinearLayout.LayoutParams.WRAP_CONTENT);
 
       setCellHeight();
 
-      weekViewPagerHeight = Config.cellHeight * (Config.USE_DAY_LABELS ? 2 : 1);
+      Config.weekViewPagerHeight = Config.cellHeight * (Config.USE_DAY_LABELS ? 2 : 1);
     }
   }
 
@@ -177,6 +142,10 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
           typedArray.getDimensionPixelSize(R.styleable.HorizontalExpCalendar_top_container_height,
               LinearLayout.LayoutParams.WRAP_CONTENT);
     }
+  }
+
+  private void initAnimation() {
+    animations = new Animations(getContext(), HorizontalExpCalendar.this);
   }
 
   private void setupViews() {
@@ -227,21 +196,10 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
     });
   }
 
-
   private void switchToView(final Config.ViewPagerType switchTo) {
     Config.currentViewPager = switchTo;
-    clearAnimationsListener();
-    startHidePagerAnimation();
-  }
-
-  private DayCellView.TimeType getTimeType(DateTime cellTime) {
-    if (cellTime.getMonthOfYear() < Config.scrollDate.getMonthOfYear()) {
-      return DayCellView.TimeType.PAST;
-    } else if (cellTime.getMonthOfYear() > Config.scrollDate.getMonthOfYear()) {
-      return DayCellView.TimeType.FUTURE;
-    } else {
-      return DayCellView.TimeType.CURRENT;
-    }
+    animations.clearAnimationsListener();
+    animations.startHidePagerAnimation();
   }
 
   private void initMonthViewPager() {
@@ -288,16 +246,6 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
     weekViewPager.setVisibility(!Utils.isMonthView() ? VISIBLE : GONE);
   }
 
-
-  private void setHeightToCenterContainer(int height) {
-    ((LinearLayout.LayoutParams) centerContainer.getLayoutParams()).height = height;
-    centerContainer.requestLayout();
-  }
-
-  private void setTopMarginToAnimationContainer(int margin) {
-    ((RelativeLayout.LayoutParams) animateContainer.getLayoutParams()).topMargin = margin;
-  }
-
   public void scrollToDate(DateTime dateTime, boolean animate) {
     if (Config.currentViewPager == Config.ViewPagerType.MONTH && Utils.isTheSameMonthToScrollDate(dateTime)) {
       return;
@@ -308,15 +256,6 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
 
     boolean isMonthView = Utils.isMonthView();
     scrollToDate(dateTime, isMonthView, !isMonthView, animate);
-  }
-
-  private void scrollToDate(DateTime dateTime, boolean scrollMonthPager, boolean scrollWeekPager, boolean animate) {
-    if (scrollMonthPager) {
-      setMonthViewPagerPosition(Utils.monthPositionFromDate(dateTime), animate);
-    }
-    if (scrollWeekPager) {
-      setWeekViewPagerPosition(Utils.weekPositionFromDate(dateTime), animate);
-    }
   }
 
   private void setWeekViewPagerPosition(int position, boolean animate) {
@@ -340,6 +279,43 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
   }
 
   @Override
+  public void scrollToDate(DateTime dateTime, boolean scrollMonthPager, boolean scrollWeekPager, boolean animate) {
+    if (scrollMonthPager) {
+      setMonthViewPagerPosition(Utils.monthPositionFromDate(dateTime), animate);
+    }
+    if (scrollWeekPager) {
+      setWeekViewPagerPosition(Utils.weekPositionFromDate(dateTime), animate);
+    }
+  }
+
+  @Override
+  public void animateContainerAddView(View view) {
+    animateContainer.addView(view);
+  }
+
+  @Override
+  public void animateContainerRemoveViews() {
+    animateContainer.removeAllViews();
+  }
+
+  @Override
+  public void updateWeekMarks() {
+    weekPagerAdapter.updateMarks();
+  }
+
+  @Override
+  public void updateMonthMarks() {
+    monthPagerAdapter.updateMarks();
+  }
+
+  @Override
+  public void changeViewPager(Config.ViewPagerType viewPagerType) {
+    if (horizontalExpCalListener != null) {
+      horizontalExpCalListener.onChangeViewPager(viewPagerType);
+    }
+  }
+
+  @Override
   public void onDayClick(DateTime dateTime) {
     scrollToDate(dateTime, true);
 
@@ -351,7 +327,41 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
     }
   }
 
-  // START INTERFACES
+  @Override
+  public void setHeightToCenterContainer(int height) {
+    ((LinearLayout.LayoutParams) centerContainer.getLayoutParams()).height = height;
+    centerContainer.requestLayout();
+  }
+
+  @Override
+  public void setTopMarginToAnimationContainer(int margin) {
+    ((RelativeLayout.LayoutParams) animateContainer.getLayoutParams()).topMargin = margin;
+  }
+
+  @Override
+  public void setWeekPagerVisibility(int visibility) {
+    weekViewPager.setVisibility(visibility);
+  }
+
+  @Override
+  public void setMonthPagerVisibility(int visibility) {
+    monthViewPager.setVisibility(visibility);
+  }
+
+  @Override
+  public void setAnimatedContainerVisibility(int visibility) {
+    animateContainer.setVisibility(visibility);
+  }
+
+  @Override
+  public void setMonthPagerAlpha(float alpha) {
+    monthViewPager.setAlpha(alpha);
+  }
+
+  @Override
+  public void setWeekPagerAlpha(float alpha) {
+    weekViewPager.setAlpha(alpha);
+  }
 
   public interface HorizontalExpCalListener {
     void onCalendarScroll(DateTime dateTime);
@@ -360,190 +370,4 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
 
     void onChangeViewPager(Config.ViewPagerType viewPagerType);
   }
-
-  // END INTERFACES
-
-  // START ANIMATIONS
-
-  private void startDecreaseSizeAnimation() {
-    decreasingSizeAnimation.setListener(new SmallAnimationListener() {
-      @Override
-      public void animationStart(Animator animation) {
-        setHeightToCenterContainer(monthViewPagerHeight);
-      }
-
-      @Override
-      public void animationEnd(Animator animation) {
-        setHeightToCenterContainer(weekViewPagerHeight);
-        clearAnimationsListener();
-        startShowPagerAnimation();
-      }
-
-      @Override
-      public void animationUpdate(Object value) {
-        setHeightToCenterContainer(getAnimationCenterContainerHeight((float) value));
-        setTopMarginToAnimationContainer(
-            (int) ((animContainerExpandedMargin - animContainerCollapsedMargin) * (float) value) + animContainerCollapsedMargin);
-      }
-    });
-  }
-
-  private void startIncreaseSizeAnimation() {
-    increasingSizeAnimation.setListener(new SmallAnimationListener() {
-      @Override
-      public void animationStart(Animator animation) {
-        setHeightToCenterContainer(weekViewPagerHeight);
-      }
-
-      @Override
-      public void animationEnd(Animator animation) {
-        setHeightToCenterContainer(monthViewPagerHeight);
-        clearAnimationsListener();
-        startShowPagerAnimation();
-      }
-
-      @Override
-      public void animationUpdate(Object value) {
-        setHeightToCenterContainer(getAnimationCenterContainerHeight((float) value));
-        setTopMarginToAnimationContainer(
-            (int) ((animContainerExpandedMargin - animContainerCollapsedMargin) * (float) value) + animContainerCollapsedMargin);
-      }
-    });
-  }
-
-  private void startHidePagerAnimation() {
-    decreasingAlphaAnimation.setListener(new SmallAnimationListener() {
-      @Override
-      public void animationStart(Animator animation) {
-        if (Utils.isMonthView()) {
-          monthViewPager.setVisibility(GONE);
-          weekViewPager.setVisibility(VISIBLE);
-        } else {
-          monthViewPager.setVisibility(VISIBLE);
-          weekViewPager.setVisibility(GONE);
-        }
-
-        animateContainer.setVisibility(VISIBLE);
-        addCellsToAnimateContainer();
-        animContainerExpandedMargin =
-            Config.cellHeight * Utils.getWeekOfMonth(Config.scrollDate) - 1 + Utils.dayLabelExtraRow();
-        animContainerCollapsedMargin = Config.cellHeight * (Utils.dayLabelExtraRow());
-        setTopMarginToAnimationContainer(animContainerExpandedMargin);
-      }
-
-      @Override
-      public void animationEnd(Animator animation) {
-        monthViewPager.setVisibility(GONE);
-        weekViewPager.setVisibility(GONE);
-        clearAnimationsListener();
-        if (Utils.isMonthView()) {
-          startIncreaseSizeAnimation();
-        } else {
-          startDecreaseSizeAnimation();
-        }
-      }
-
-      @Override
-      public void animationUpdate(Object value) {
-        if (Utils.isMonthView()) {
-          weekViewPager.setAlpha((Float) value);
-        } else {
-          monthViewPager.setAlpha((Float) value);
-        }
-      }
-    });
-  }
-
-  private void startShowPagerAnimation() {
-    increasingAlphaAnimation.setListener(new SmallAnimationListener() {
-      @Override
-      public void animationStart(Animator animation) {
-        if (Utils.isMonthView()) {
-          monthViewPager.setVisibility(VISIBLE);
-          weekViewPager.setVisibility(GONE);
-        } else {
-          monthViewPager.setVisibility(GONE);
-          weekViewPager.setVisibility(VISIBLE);
-        }
-
-        if (!Utils.isMonthView() && Config.SCROLL_TO_SELECTED_AFTER_COLLAPSE && Utils.isTheSameMonthToScrollDate(Config.selectionDate)) {
-          Config.scrollDate = Config.selectionDate.plusDays(-Utils.firstDayOffset());
-        } else {
-          Config.scrollDate = Config.scrollDate.withDayOfMonth(1);
-        }
-
-        if (Utils.isMonthView()) {
-          scrollToDate(Config.scrollDate, true, false, false);
-          setHeightToCenterContainer(monthViewPagerHeight);
-          if (horizontalExpCalListener != null) {
-            horizontalExpCalListener.onChangeViewPager(Config.ViewPagerType.MONTH);
-          }
-        } else {
-          scrollToDate(Config.scrollDate, false, true, false);
-          setHeightToCenterContainer(weekViewPagerHeight);
-          if (horizontalExpCalListener != null) {
-            horizontalExpCalListener.onChangeViewPager(Config.ViewPagerType.WEEK);
-          }
-        }
-        weekPagerAdapter.updateMarks();
-      }
-
-      @Override
-      public void animationEnd(Animator animation) {
-        clearAnimationsListener();
-        animateContainer.setVisibility(VISIBLE);
-        animateContainer.removeAllViews();
-        if (Utils.isMonthView()) {
-          monthViewPager.setVisibility(VISIBLE);
-          weekViewPager.setVisibility(GONE);
-        } else {
-          monthViewPager.setVisibility(GONE);
-          weekViewPager.setVisibility(VISIBLE);
-        }
-      }
-
-      @Override
-      public void animationUpdate(Object value) {
-        if (Utils.isMonthView()) {
-          monthViewPager.setAlpha((Float) value);
-        } else {
-          weekViewPager.setAlpha((Float) value);
-        }
-      }
-    });
-  }
-
-  private int getAnimationCenterContainerHeight(float value) {
-    return (int) ((((monthViewPagerHeight - weekViewPagerHeight) * value)) + weekViewPagerHeight);
-  }
-
-  private void clearAnimationsListener() {
-    decreasingAlphaAnimation.removeAllListeners();
-    increasingAlphaAnimation.removeAllListeners();
-    decreasingSizeAnimation.removeAllListeners();
-    increasingSizeAnimation.removeAllListeners();
-  }
-
-  private void addCellsToAnimateContainer() {
-    animateContainer.removeAllViews();
-    DateTime animateInitDate = Config.scrollDate.withDayOfWeek(1).plusDays(Utils.firstDayOffset());
-    for (int d = 0; d < 7; d++) {
-      DateTime cellDate = animateInitDate.plusDays(d);
-
-      DayCellView dayCellView = new DayCellView(getContext());
-
-      GridLayout.LayoutParams cellParams = new GridLayout.LayoutParams(GridLayout.spec(0), GridLayout.spec(d));
-      cellParams.height = Config.cellHeight;
-      cellParams.width = Config.cellWidth;
-      dayCellView.setLayoutParams(cellParams);
-      dayCellView.setDayNumber(cellDate.getDayOfMonth());
-      dayCellView.setDayType(Utils.isWeekendByColumnNumber(d) ? BaseCellView.DayType.WEEKEND : BaseCellView.DayType.NO_WEEKEND);
-      dayCellView.setMark(Marks.getMark(cellDate), Config.cellHeight);
-      dayCellView.setTimeType(getTimeType(cellDate));
-
-      animateContainer.addView(dayCellView);
-    }
-  }
-
-  // END ANIMATIONS
 }

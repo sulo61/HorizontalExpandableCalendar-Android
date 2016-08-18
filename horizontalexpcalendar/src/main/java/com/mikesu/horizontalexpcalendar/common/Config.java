@@ -46,6 +46,8 @@ public class Config {
   public static DateTime selectionDate = new DateTime();//
   public static int cellWidth = 0;
   public static int cellHeight = 0;
+  public static int monthViewPagerHeight;
+  public static int weekViewPagerHeight;
 
   public enum ViewPagerType {
     MONTH,
