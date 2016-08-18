@@ -77,4 +77,8 @@ public class Utils {
     }
     return 0;
   }
+
+  public static int getWeekOfMonth(DateTime dateTime) {
+    return ((dateTime.getDayOfMonth() + dateTime.withDayOfMonth(1).getDayOfWeek() - 2 + firstDayOffset()) / 7) + 1;
+  }
 }

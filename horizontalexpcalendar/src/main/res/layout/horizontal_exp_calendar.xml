@@ -51,6 +51,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
+        <include
+            android:id="@+id/animate_container"
+            layout="@layout/animate_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            tools:layout_height="50dp"/>
+
     </RelativeLayout>
 
     <RelativeLayout
