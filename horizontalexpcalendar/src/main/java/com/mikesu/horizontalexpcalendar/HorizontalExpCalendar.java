@@ -219,6 +219,10 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
     Config.currentViewPager = switchTo;
 
     removeAnimationsListener();
+    startHidePagerAnimation();
+  }
+
+  private void startHidePagerAnimation() {
     decreasingAnimation.setListener(new SmallAnimationListener() {
       @Override
       public void animationStart(Animator animation) {
@@ -237,61 +241,7 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
         weekViewPager.setVisibility(GONE);
 
         removeAnimationsListener();
-        increasingAnimation.setListener(new SmallAnimationListener() {
-          @Override
-          public void animationStart(Animator animation) {
-            if (Utils.isMonthView()) {
-              monthViewPager.setVisibility(VISIBLE);
-              weekViewPager.setVisibility(GONE);
-            } else {
-              monthViewPager.setVisibility(GONE);
-              weekViewPager.setVisibility(VISIBLE);
-            }
-
-            if (!Utils.isMonthView() && Config.SCROLL_TO_SELECTED_AFTER_COLLAPSE && Utils.isTheSameMonthToScrollDate(Config.selectionDate)) {
-              Config.scrollDate = Config.selectionDate.plusDays(-Utils.firstDayOffset());
-            } else {
-              Config.scrollDate = Config.scrollDate.withDayOfMonth(1);
-            }
-
-            if (Utils.isMonthView()) {
-              scrollToDate(Config.scrollDate, true, false, false);
-              setHeightToCenterContainer(monthViewPagerHeight);
-              if (horizontalExpCalListener != null) {
-                horizontalExpCalListener.onChangeViewPager(Config.ViewPagerType.MONTH);
-              }
-            } else {
-//        addCellsToAnimateContainer();
-//        animateContainerParams.topMargin = Config.cellHeight * Utils.getWeekOfMonth(Config.scrollDate);
-              scrollToDate(Config.scrollDate, false, true, false);
-              setHeightToCenterContainer(weekViewPagerHeight);
-              if (horizontalExpCalListener != null) {
-                horizontalExpCalListener.onChangeViewPager(Config.ViewPagerType.WEEK);
-              }
-            }
-            weekPagerAdapter.updateMarks();
-          }
-
-          @Override
-          public void animationEnd(Animator animation) {
-            if (Utils.isMonthView()) {
-              monthViewPager.setVisibility(VISIBLE);
-              weekViewPager.setVisibility(GONE);
-            } else {
-              monthViewPager.setVisibility(GONE);
-              weekViewPager.setVisibility(VISIBLE);
-            }
-          }
-
-          @Override
-          public void animationUpdate(Object value) {
-            if (Utils.isMonthView()) {
-              monthViewPager.setAlpha((Float) value);
-            } else {
-              weekViewPager.setAlpha((Float) value);
-            }
-          }
-        });
+        startShowPagerAnimation();
       }
 
       @Override
@@ -301,6 +251,64 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
         } else {
           monthViewPager.setAlpha((Float) value);
 
+        }
+      }
+    });
+  }
+
+  private void startShowPagerAnimation() {
+    increasingAnimation.setListener(new SmallAnimationListener() {
+      @Override
+      public void animationStart(Animator animation) {
+        if (Utils.isMonthView()) {
+          monthViewPager.setVisibility(VISIBLE);
+          weekViewPager.setVisibility(GONE);
+        } else {
+          monthViewPager.setVisibility(GONE);
+          weekViewPager.setVisibility(VISIBLE);
+        }
+
+        if (!Utils.isMonthView() && Config.SCROLL_TO_SELECTED_AFTER_COLLAPSE && Utils.isTheSameMonthToScrollDate(Config.selectionDate)) {
+          Config.scrollDate = Config.selectionDate.plusDays(-Utils.firstDayOffset());
+        } else {
+          Config.scrollDate = Config.scrollDate.withDayOfMonth(1);
+        }
+
+        if (Utils.isMonthView()) {
+          scrollToDate(Config.scrollDate, true, false, false);
+          setHeightToCenterContainer(monthViewPagerHeight);
+          if (horizontalExpCalListener != null) {
+            horizontalExpCalListener.onChangeViewPager(Config.ViewPagerType.MONTH);
+          }
+        } else {
+//        addCellsToAnimateContainer();
+//        animateContainerParams.topMargin = Config.cellHeight * Utils.getWeekOfMonth(Config.scrollDate);
+          scrollToDate(Config.scrollDate, false, true, false);
+          setHeightToCenterContainer(weekViewPagerHeight);
+          if (horizontalExpCalListener != null) {
+            horizontalExpCalListener.onChangeViewPager(Config.ViewPagerType.WEEK);
+          }
+        }
+        weekPagerAdapter.updateMarks();
+      }
+
+      @Override
+      public void animationEnd(Animator animation) {
+        if (Utils.isMonthView()) {
+          monthViewPager.setVisibility(VISIBLE);
+          weekViewPager.setVisibility(GONE);
+        } else {
+          monthViewPager.setVisibility(GONE);
+          weekViewPager.setVisibility(VISIBLE);
+        }
+      }
+
+      @Override
+      public void animationUpdate(Object value) {
+        if (Utils.isMonthView()) {
+          monthViewPager.setAlpha((Float) value);
+        } else {
+          weekViewPager.setAlpha((Float) value);
         }
       }
     });
