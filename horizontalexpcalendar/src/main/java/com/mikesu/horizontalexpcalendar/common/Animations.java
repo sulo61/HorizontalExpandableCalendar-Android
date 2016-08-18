@@ -125,8 +125,7 @@ public class Animations {
 
         animationsListener.setAnimatedContainerVisibility(View.VISIBLE);
         addCellsToAnimateContainer();
-        animContainerExpandedMargin =
-            Config.cellHeight * Utils.getWeekOfMonth(Config.scrollDate) - 1 + Utils.dayLabelExtraRow();
+        animContainerExpandedMargin = Config.cellHeight * Utils.getWeekOfMonth(Config.scrollDate) - 1 + Utils.dayLabelExtraRow();
         animContainerCollapsedMargin = Config.cellHeight * (Utils.dayLabelExtraRow());
         animationsListener.setTopMarginToAnimationContainer(animContainerExpandedMargin);
       }
@@ -204,7 +203,7 @@ public class Animations {
         if (Utils.isMonthView()) {
           animationsListener.setMonthPagerAlpha((float) value);
         } else {
-          animationsListener.setMonthPagerAlpha((float) value);
+          animationsListener.setWeekPagerAlpha((float) value);
         }
       }
     });
