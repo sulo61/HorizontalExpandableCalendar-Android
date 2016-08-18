@@ -61,6 +61,107 @@ public class Animations {
     animContainerCollapsedMargin = 0;
   }
 
+  public void startHidePagerAnimation() {
+    if (animationsListener == null) {
+      Log.e(TAG, "startHidePagerAnimation, animationsListener is null");
+      return;
+    }
+    decreasingAlphaAnimation.setListener(new SmallAnimationListener() {
+      @Override
+      public void animationStart(Animator animation) {
+        if (Utils.isMonthView()) {
+          animationsListener.setMonthPagerVisibility(View.GONE);
+          animationsListener.setWeekPagerVisibility(View.VISIBLE);
+        } else {
+          animationsListener.setMonthPagerVisibility(View.VISIBLE);
+          animationsListener.setWeekPagerVisibility(View.GONE);
+        }
+
+        animationsListener.setAnimatedContainerVisibility(View.VISIBLE);
+        addCellsToAnimateContainer();
+        animContainerExpandedMargin = Config.cellHeight * Utils.getWeekOfMonth(Config.scrollDate) - 1 + Utils.dayLabelExtraRow();
+        animContainerCollapsedMargin = Config.cellHeight * (Utils.dayLabelExtraRow());
+        animationsListener.setTopMarginToAnimationContainer(Utils.isMonthView() ? animContainerCollapsedMargin : animContainerExpandedMargin);
+      }
+
+      @Override
+      public void animationEnd(Animator animation) {
+        animationsListener.setMonthPagerVisibility(View.GONE);
+        animationsListener.setWeekPagerVisibility(View.GONE);
+        clearAnimationsListener();
+        if (Utils.isMonthView()) {
+          startIncreaseSizeAnimation();
+        } else {
+          startDecreaseSizeAnimation();
+        }
+      }
+
+      @Override
+      public void animationUpdate(Object value) {
+        if (Utils.isMonthView()) {
+          animationsListener.setWeekPagerAlpha((float) value);
+        } else {
+          animationsListener.setMonthPagerAlpha((float) value);
+        }
+      }
+    });
+  }
+
+  public void startShowPagerAnimation() {
+    increasingAlphaAnimation.setListener(new SmallAnimationListener() {
+      @Override
+      public void animationStart(Animator animation) {
+        if (Utils.isMonthView()) {
+          animationsListener.setMonthPagerVisibility(View.VISIBLE);
+          animationsListener.setWeekPagerVisibility(View.GONE);
+        } else {
+          animationsListener.setMonthPagerVisibility(View.GONE);
+          animationsListener.setWeekPagerVisibility(View.VISIBLE);
+        }
+
+        if (Config.SCROLL_TO_SELECTED_AFTER_COLLAPSE && Utils.isTheSameMonthToScrollDate(Config.selectionDate)) {
+          Config.scrollDate = Config.selectionDate.plusDays(-Utils.firstDayOffset());
+        } else {
+          Config.scrollDate = Config.scrollDate.withDayOfMonth(1);
+        }
+
+        if (Utils.isMonthView()) {
+          animationsListener.scrollToDate(Config.scrollDate, true, false, false);
+          animationsListener.setHeightToCenterContainer(Config.monthViewPagerHeight);
+          animationsListener.changeViewPager(Config.ViewPagerType.MONTH);
+        } else {
+          animationsListener.scrollToDate(Config.scrollDate, false, true, false);
+          animationsListener.setHeightToCenterContainer(Config.weekViewPagerHeight);
+          animationsListener.changeViewPager(Config.ViewPagerType.WEEK);
+        }
+        animationsListener.updateMarks();
+      }
+
+      @Override
+      public void animationEnd(Animator animation) {
+        clearAnimationsListener();
+        animationsListener.setAnimatedContainerVisibility(View.GONE);
+        animationsListener.animateContainerRemoveViews();
+        if (Utils.isMonthView()) {
+          animationsListener.setMonthPagerVisibility(View.VISIBLE);
+          animationsListener.setWeekPagerVisibility(View.GONE);
+        } else {
+          animationsListener.setMonthPagerVisibility(View.GONE);
+          animationsListener.setWeekPagerVisibility(View.VISIBLE);
+        }
+      }
+
+      @Override
+      public void animationUpdate(Object value) {
+        if (Utils.isMonthView()) {
+          animationsListener.setMonthPagerAlpha((float) value);
+        } else {
+          animationsListener.setWeekPagerAlpha((float) value);
+        }
+      }
+    });
+  }
+
   public void startDecreaseSizeAnimation() {
     decreasingSizeAnimation.setListener(new SmallAnimationListener() {
       @Override
@@ -103,108 +204,6 @@ public class Animations {
         animationsListener.setHeightToCenterContainer(getAnimationCenterContainerHeight((float) value));
         animationsListener.setTopMarginToAnimationContainer(
             (int) ((animContainerExpandedMargin - animContainerCollapsedMargin) * (float) value) + animContainerCollapsedMargin);
-      }
-    });
-  }
-
-  public void startHidePagerAnimation() {
-    if (animationsListener == null) {
-      Log.e(TAG, "startHidePagerAnimation, animationsListener is null");
-      return;
-    }
-    decreasingAlphaAnimation.setListener(new SmallAnimationListener() {
-      @Override
-      public void animationStart(Animator animation) {
-        if (Utils.isMonthView()) {
-          animationsListener.setMonthPagerVisibility(View.GONE);
-          animationsListener.setWeekPagerVisibility(View.VISIBLE);
-        } else {
-          animationsListener.setMonthPagerVisibility(View.VISIBLE);
-          animationsListener.setWeekPagerVisibility(View.GONE);
-        }
-
-        animationsListener.setAnimatedContainerVisibility(View.VISIBLE);
-        addCellsToAnimateContainer();
-        animContainerExpandedMargin = Config.cellHeight * Utils.getWeekOfMonth(Config.scrollDate) - 1 + Utils.dayLabelExtraRow();
-        animContainerCollapsedMargin = Config.cellHeight * (Utils.dayLabelExtraRow());
-        animationsListener.setTopMarginToAnimationContainer(animContainerExpandedMargin);
-      }
-
-      @Override
-      public void animationEnd(Animator animation) {
-        animationsListener.setMonthPagerVisibility(View.GONE);
-        animationsListener.setWeekPagerVisibility(View.GONE);
-        clearAnimationsListener();
-        if (Utils.isMonthView()) {
-          startIncreaseSizeAnimation();
-        } else {
-          startDecreaseSizeAnimation();
-        }
-      }
-
-      @Override
-      public void animationUpdate(Object value) {
-        if (Utils.isMonthView()) {
-          animationsListener.setWeekPagerAlpha((float) value);
-        } else {
-          animationsListener.setMonthPagerAlpha((float) value);
-        }
-      }
-    });
-  }
-
-  public void startShowPagerAnimation() {
-    increasingAlphaAnimation.setListener(new SmallAnimationListener() {
-      @Override
-      public void animationStart(Animator animation) {
-        if (Utils.isMonthView()) {
-          animationsListener.setMonthPagerVisibility(View.VISIBLE);
-          animationsListener.setWeekPagerVisibility(View.GONE);
-        } else {
-          animationsListener.setMonthPagerVisibility(View.GONE);
-          animationsListener.setWeekPagerVisibility(View.VISIBLE);
-        }
-
-        if (!Utils.isMonthView() && Config.SCROLL_TO_SELECTED_AFTER_COLLAPSE && Utils.isTheSameMonthToScrollDate(Config.selectionDate)) {
-          Config.scrollDate = Config.selectionDate.plusDays(-Utils.firstDayOffset());
-        } else {
-          Config.scrollDate = Config.scrollDate.withDayOfMonth(1);
-        }
-
-        if (Utils.isMonthView()) {
-          animationsListener.scrollToDate(Config.scrollDate, true, false, false);
-          animationsListener.setHeightToCenterContainer(Config.monthViewPagerHeight);
-          animationsListener.changeViewPager(Config.ViewPagerType.MONTH);
-          animationsListener.updateMonthMarks();
-        } else {
-          animationsListener.scrollToDate(Config.scrollDate, false, true, false);
-          animationsListener.setHeightToCenterContainer(Config.weekViewPagerHeight);
-          animationsListener.changeViewPager(Config.ViewPagerType.WEEK);
-          animationsListener.updateWeekMarks();
-        }
-      }
-
-      @Override
-      public void animationEnd(Animator animation) {
-        clearAnimationsListener();
-        animationsListener.setAnimatedContainerVisibility(View.VISIBLE);
-        animationsListener.animateContainerRemoveViews();
-        if (Utils.isMonthView()) {
-          animationsListener.setMonthPagerVisibility(View.VISIBLE);
-          animationsListener.setWeekPagerVisibility(View.GONE);
-        } else {
-          animationsListener.setMonthPagerVisibility(View.GONE);
-          animationsListener.setWeekPagerVisibility(View.VISIBLE);
-        }
-      }
-
-      @Override
-      public void animationUpdate(Object value) {
-        if (Utils.isMonthView()) {
-          animationsListener.setMonthPagerAlpha((float) value);
-        } else {
-          animationsListener.setWeekPagerAlpha((float) value);
-        }
       }
     });
   }
@@ -272,9 +271,7 @@ public class Animations {
 
     void animateContainerRemoveViews();
 
-    void updateWeekMarks();
-
-    void updateMonthMarks();
+    void updateMarks();
 
     void changeViewPager(Config.ViewPagerType viewPagerType);
   }

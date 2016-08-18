@@ -271,14 +271,6 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
     titleTextView.setText(String.format("%s - %s", Config.scrollDate.getYear(), Config.scrollDate.getMonthOfYear()));
   }
 
-  private void updateMarks() {
-    if (Config.currentViewPager == Config.ViewPagerType.MONTH) {
-      monthPagerAdapter.updateMarks();
-    } else {
-      weekPagerAdapter.updateMarks();
-    }
-  }
-
   @Override
   public void scrollToDate(DateTime dateTime, boolean scrollMonthPager, boolean scrollWeekPager, boolean animate) {
     if (scrollMonthPager) {
@@ -300,13 +292,12 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
   }
 
   @Override
-  public void updateWeekMarks() {
-    weekPagerAdapter.updateMarks();
-  }
-
-  @Override
-  public void updateMonthMarks() {
-    monthPagerAdapter.updateMarks();
+  public void updateMarks() {
+    if (Config.currentViewPager == Config.ViewPagerType.MONTH) {
+      monthPagerAdapter.updateMarks();
+    } else {
+      weekPagerAdapter.updateMarks();
+    }
   }
 
   @Override

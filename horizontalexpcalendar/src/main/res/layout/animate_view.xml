@@ -4,6 +4,5 @@
             android:layout_height="match_parent"
             android:columnCount="7"
             android:orientation="horizontal"
-            android:rowCount="1"
-            android:visibility="gone">
+            android:rowCount="1">
 </GridLayout>
