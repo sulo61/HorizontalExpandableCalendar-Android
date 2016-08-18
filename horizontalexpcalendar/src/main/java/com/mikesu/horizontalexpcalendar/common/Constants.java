@@ -11,5 +11,6 @@ public class Constants {
 
   public static final float[] ANIMATION_INCREASING_VALUES = new float[]{0.0f, 1.0f};
   public static final float[] ANIMATION_DECREASING_VALUES = new float[]{1.0f, 0.0f};
-  public static final int ANIMATION_ALPHA_DURATION = 500;
+  public static final int ANIMATION_ALPHA_DURATION = 300;
+  public static final int ANIMATION_SIZE_DURATION = 200;
 }

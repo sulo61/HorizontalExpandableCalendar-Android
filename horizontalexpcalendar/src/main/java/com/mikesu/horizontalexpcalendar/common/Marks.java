@@ -81,7 +81,7 @@ public class Marks {
       case CUSTOM2:
         markSetup.setCustom2(mark);
       default:
-        Log.e(TAG, "markCustom, unknown case");
+        Log.e(TAG, "markCustom, unknown case: " + customMarks.name());
     }
 
     if (mark) {

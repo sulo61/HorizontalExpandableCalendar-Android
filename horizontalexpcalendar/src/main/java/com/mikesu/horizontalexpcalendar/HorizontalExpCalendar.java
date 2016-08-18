@@ -46,8 +46,10 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
 
   private HorizontalExpCalListener horizontalExpCalListener;
 
-  private CalendarAnimation decreasingAnimation;
-  private CalendarAnimation increasingAnimation;
+  private CalendarAnimation decreasingAlphaAnimation;
+  private CalendarAnimation increasingAlphaAnimation;
+  private CalendarAnimation decreasingSizeAnimation;
+  private CalendarAnimation increasingSizeAnimation;
 
   public HorizontalExpCalendar(Context context, AttributeSet attrs) {
     super(context, attrs);
@@ -90,13 +92,21 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
   }
 
   private void initAnimation() {
-    decreasingAnimation = new CalendarAnimation();
-    decreasingAnimation.setFloatValues(Constants.ANIMATION_DECREASING_VALUES[0], Constants.ANIMATION_DECREASING_VALUES[1]);
-    decreasingAnimation.setDuration(Constants.ANIMATION_ALPHA_DURATION);
+    decreasingAlphaAnimation = new CalendarAnimation();
+    decreasingAlphaAnimation.setFloatValues(Constants.ANIMATION_DECREASING_VALUES[0], Constants.ANIMATION_DECREASING_VALUES[1]);
+    decreasingAlphaAnimation.setDuration(Constants.ANIMATION_ALPHA_DURATION);
 
-    increasingAnimation = new CalendarAnimation();
-    increasingAnimation.setFloatValues(Constants.ANIMATION_INCREASING_VALUES[0], Constants.ANIMATION_INCREASING_VALUES[1]);
-    increasingAnimation.setDuration(Constants.ANIMATION_ALPHA_DURATION);
+    increasingAlphaAnimation = new CalendarAnimation();
+    increasingAlphaAnimation.setFloatValues(Constants.ANIMATION_INCREASING_VALUES[0], Constants.ANIMATION_INCREASING_VALUES[1]);
+    increasingAlphaAnimation.setDuration(Constants.ANIMATION_ALPHA_DURATION);
+
+    decreasingSizeAnimation = new CalendarAnimation();
+    decreasingSizeAnimation.setFloatValues(Constants.ANIMATION_DECREASING_VALUES[0], Constants.ANIMATION_DECREASING_VALUES[1]);
+    decreasingSizeAnimation.setDuration(Constants.ANIMATION_SIZE_DURATION);
+
+    increasingSizeAnimation = new CalendarAnimation();
+    increasingSizeAnimation.setFloatValues(Constants.ANIMATION_INCREASING_VALUES[0], Constants.ANIMATION_INCREASING_VALUES[1]);
+    increasingSizeAnimation.setDuration(Constants.ANIMATION_SIZE_DURATION);
   }
 
   private void renderCustomMarks() {
@@ -217,13 +227,54 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
 
   private void switchToView(final Config.ViewPagerType switchTo) {
     Config.currentViewPager = switchTo;
-
-    removeAnimationsListener();
+    clearAnimationsListener();
     startHidePagerAnimation();
   }
 
+  private void startDecreaseSizeAnimation() {
+    decreasingSizeAnimation.setListener(new SmallAnimationListener() {
+      @Override
+      public void animationStart(Animator animation) {
+        setHeightToCenterContainer(monthViewPagerHeight);
+      }
+
+      @Override
+      public void animationEnd(Animator animation) {
+        setHeightToCenterContainer(weekViewPagerHeight);
+        clearAnimationsListener();
+        startShowPagerAnimation();
+      }
+
+      @Override
+      public void animationUpdate(Object value) {
+        setHeightToCenterContainer((int) ((monthViewPagerHeight - weekViewPagerHeight) * (float) value) + weekViewPagerHeight);
+      }
+    });
+  }
+
+  private void startIncreaseSizeAnimation() {
+    increasingSizeAnimation.setListener(new SmallAnimationListener() {
+      @Override
+      public void animationStart(Animator animation) {
+        setHeightToCenterContainer(weekViewPagerHeight);
+      }
+
+      @Override
+      public void animationEnd(Animator animation) {
+        setHeightToCenterContainer(monthViewPagerHeight);
+        clearAnimationsListener();
+        startShowPagerAnimation();
+      }
+
+      @Override
+      public void animationUpdate(Object value) {
+        setHeightToCenterContainer((int) ((monthViewPagerHeight - weekViewPagerHeight) * (float) value) + weekViewPagerHeight);
+      }
+    });
+  }
+
   private void startHidePagerAnimation() {
-    decreasingAnimation.setListener(new SmallAnimationListener() {
+    decreasingAlphaAnimation.setListener(new SmallAnimationListener() {
       @Override
       public void animationStart(Animator animation) {
         if (Utils.isMonthView()) {
@@ -239,9 +290,12 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
       public void animationEnd(Animator animation) {
         monthViewPager.setVisibility(GONE);
         weekViewPager.setVisibility(GONE);
-
-        removeAnimationsListener();
-        startShowPagerAnimation();
+        clearAnimationsListener();
+        if (Utils.isMonthView()) {
+          startIncreaseSizeAnimation();
+        } else {
+          startDecreaseSizeAnimation();
+        }
       }
 
       @Override
@@ -250,14 +304,13 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
           weekViewPager.setAlpha((Float) value);
         } else {
           monthViewPager.setAlpha((Float) value);
-
         }
       }
     });
   }
 
   private void startShowPagerAnimation() {
-    increasingAnimation.setListener(new SmallAnimationListener() {
+    increasingAlphaAnimation.setListener(new SmallAnimationListener() {
       @Override
       public void animationStart(Animator animation) {
         if (Utils.isMonthView()) {
@@ -294,6 +347,7 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
 
       @Override
       public void animationEnd(Animator animation) {
+        clearAnimationsListener();
         if (Utils.isMonthView()) {
           monthViewPager.setVisibility(VISIBLE);
           weekViewPager.setVisibility(GONE);
@@ -314,8 +368,15 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
     });
   }
 
-  private void removeAnimationsListener() {
-    decreasingAnimation.removeAllListeners();
+  private void clearAnimationsListener() {
+//    decreasingAlphaAnimation.removeAllUpdateListeners();
+//    increasingAlphaAnimation.removeAllUpdateListeners();
+//    decreasingSizeAnimation.removeAllUpdateListeners();
+//    increasingSizeAnimation.removeAllUpdateListeners();
+    decreasingAlphaAnimation.removeAllListeners();
+    increasingAlphaAnimation.removeAllListeners();
+    decreasingSizeAnimation.removeAllListeners();
+    increasingSizeAnimation.removeAllListeners();
   }
 
   private void addCellsToAnimateContainer() {
