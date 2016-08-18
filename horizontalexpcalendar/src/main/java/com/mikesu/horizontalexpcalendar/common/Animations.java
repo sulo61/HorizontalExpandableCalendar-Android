@@ -35,6 +35,11 @@ public class Animations {
     initAnimation();
   }
 
+  public void unbind() {
+    this.context = null;
+    this.animationsListener = null;
+  }
+
   public void initAnimation() {
     decreasingAlphaAnimation = new CalendarAnimation();
     decreasingAlphaAnimation.setFloatValues(Constants.ANIMATION_DECREASING_VALUES[0], Constants.ANIMATION_DECREASING_VALUES[1]);

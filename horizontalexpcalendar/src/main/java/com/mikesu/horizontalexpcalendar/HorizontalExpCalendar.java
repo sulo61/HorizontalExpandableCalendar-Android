@@ -59,6 +59,7 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
 
   @Override
   protected void onDetachedFromWindow() {
+    animations.unbind();
     Marks.clear();
     super.onDetachedFromWindow();
   }
