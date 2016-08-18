@@ -2,8 +2,6 @@
 <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:alpha="0.4"
-            android:background="#11ff0000"
             android:columnCount="7"
             android:orientation="horizontal"
             android:rowCount="1"

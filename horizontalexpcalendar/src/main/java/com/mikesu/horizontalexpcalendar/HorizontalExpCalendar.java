@@ -34,7 +34,6 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
   private TextView titleTextView;
   private RelativeLayout centerContainer;
   private GridLayout animateContainer;
-  private RelativeLayout.LayoutParams animateContainerParams;
 
   private ViewPager monthViewPager;
   private CalendarAdapter monthPagerAdapter;
@@ -50,6 +49,8 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
   private CalendarAnimation increasingAlphaAnimation;
   private CalendarAnimation decreasingSizeAnimation;
   private CalendarAnimation increasingSizeAnimation;
+  private int animContainerExpandedMargin;
+  private int animContainerCollapsedMargin;
 
   public HorizontalExpCalendar(Context context, AttributeSet attrs) {
     super(context, attrs);
@@ -107,6 +108,9 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
     increasingSizeAnimation = new CalendarAnimation();
     increasingSizeAnimation.setFloatValues(Constants.ANIMATION_INCREASING_VALUES[0], Constants.ANIMATION_INCREASING_VALUES[1]);
     increasingSizeAnimation.setDuration(Constants.ANIMATION_SIZE_DURATION);
+
+    animContainerExpandedMargin = 0;
+    animContainerCollapsedMargin = 0;
   }
 
   private void renderCustomMarks() {
@@ -186,7 +190,6 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
   private void initAnimateContainer() {
     animateContainer = (GridLayout) findViewById(R.id.animate_container);
     animateContainer.getLayoutParams().height = Config.cellHeight;
-    animateContainerParams = (LayoutParams) animateContainer.getLayoutParams();
   }
 
   private void initTopContainer() {
@@ -229,175 +232,6 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
     Config.currentViewPager = switchTo;
     clearAnimationsListener();
     startHidePagerAnimation();
-  }
-
-  private void startDecreaseSizeAnimation() {
-    decreasingSizeAnimation.setListener(new SmallAnimationListener() {
-      @Override
-      public void animationStart(Animator animation) {
-        setHeightToCenterContainer(monthViewPagerHeight);
-      }
-
-      @Override
-      public void animationEnd(Animator animation) {
-        setHeightToCenterContainer(weekViewPagerHeight);
-        clearAnimationsListener();
-        startShowPagerAnimation();
-      }
-
-      @Override
-      public void animationUpdate(Object value) {
-        setHeightToCenterContainer((int) ((monthViewPagerHeight - weekViewPagerHeight) * (float) value) + weekViewPagerHeight);
-      }
-    });
-  }
-
-  private void startIncreaseSizeAnimation() {
-    increasingSizeAnimation.setListener(new SmallAnimationListener() {
-      @Override
-      public void animationStart(Animator animation) {
-        setHeightToCenterContainer(weekViewPagerHeight);
-      }
-
-      @Override
-      public void animationEnd(Animator animation) {
-        setHeightToCenterContainer(monthViewPagerHeight);
-        clearAnimationsListener();
-        startShowPagerAnimation();
-      }
-
-      @Override
-      public void animationUpdate(Object value) {
-        setHeightToCenterContainer((int) ((monthViewPagerHeight - weekViewPagerHeight) * (float) value) + weekViewPagerHeight);
-      }
-    });
-  }
-
-  private void startHidePagerAnimation() {
-    decreasingAlphaAnimation.setListener(new SmallAnimationListener() {
-      @Override
-      public void animationStart(Animator animation) {
-        if (Utils.isMonthView()) {
-          monthViewPager.setVisibility(GONE);
-          weekViewPager.setVisibility(VISIBLE);
-        } else {
-          monthViewPager.setVisibility(VISIBLE);
-          weekViewPager.setVisibility(GONE);
-        }
-      }
-
-      @Override
-      public void animationEnd(Animator animation) {
-        monthViewPager.setVisibility(GONE);
-        weekViewPager.setVisibility(GONE);
-        clearAnimationsListener();
-        if (Utils.isMonthView()) {
-          startIncreaseSizeAnimation();
-        } else {
-          startDecreaseSizeAnimation();
-        }
-      }
-
-      @Override
-      public void animationUpdate(Object value) {
-        if (Utils.isMonthView()) {
-          weekViewPager.setAlpha((Float) value);
-        } else {
-          monthViewPager.setAlpha((Float) value);
-        }
-      }
-    });
-  }
-
-  private void startShowPagerAnimation() {
-    increasingAlphaAnimation.setListener(new SmallAnimationListener() {
-      @Override
-      public void animationStart(Animator animation) {
-        if (Utils.isMonthView()) {
-          monthViewPager.setVisibility(VISIBLE);
-          weekViewPager.setVisibility(GONE);
-        } else {
-          monthViewPager.setVisibility(GONE);
-          weekViewPager.setVisibility(VISIBLE);
-        }
-
-        if (!Utils.isMonthView() && Config.SCROLL_TO_SELECTED_AFTER_COLLAPSE && Utils.isTheSameMonthToScrollDate(Config.selectionDate)) {
-          Config.scrollDate = Config.selectionDate.plusDays(-Utils.firstDayOffset());
-        } else {
-          Config.scrollDate = Config.scrollDate.withDayOfMonth(1);
-        }
-
-        if (Utils.isMonthView()) {
-          scrollToDate(Config.scrollDate, true, false, false);
-          setHeightToCenterContainer(monthViewPagerHeight);
-          if (horizontalExpCalListener != null) {
-            horizontalExpCalListener.onChangeViewPager(Config.ViewPagerType.MONTH);
-          }
-        } else {
-//        addCellsToAnimateContainer();
-//        animateContainerParams.topMargin = Config.cellHeight * Utils.getWeekOfMonth(Config.scrollDate);
-          scrollToDate(Config.scrollDate, false, true, false);
-          setHeightToCenterContainer(weekViewPagerHeight);
-          if (horizontalExpCalListener != null) {
-            horizontalExpCalListener.onChangeViewPager(Config.ViewPagerType.WEEK);
-          }
-        }
-        weekPagerAdapter.updateMarks();
-      }
-
-      @Override
-      public void animationEnd(Animator animation) {
-        clearAnimationsListener();
-        if (Utils.isMonthView()) {
-          monthViewPager.setVisibility(VISIBLE);
-          weekViewPager.setVisibility(GONE);
-        } else {
-          monthViewPager.setVisibility(GONE);
-          weekViewPager.setVisibility(VISIBLE);
-        }
-      }
-
-      @Override
-      public void animationUpdate(Object value) {
-        if (Utils.isMonthView()) {
-          monthViewPager.setAlpha((Float) value);
-        } else {
-          weekViewPager.setAlpha((Float) value);
-        }
-      }
-    });
-  }
-
-  private void clearAnimationsListener() {
-//    decreasingAlphaAnimation.removeAllUpdateListeners();
-//    increasingAlphaAnimation.removeAllUpdateListeners();
-//    decreasingSizeAnimation.removeAllUpdateListeners();
-//    increasingSizeAnimation.removeAllUpdateListeners();
-    decreasingAlphaAnimation.removeAllListeners();
-    increasingAlphaAnimation.removeAllListeners();
-    decreasingSizeAnimation.removeAllListeners();
-    increasingSizeAnimation.removeAllListeners();
-  }
-
-  private void addCellsToAnimateContainer() {
-    animateContainer.removeAllViews();
-    DateTime animateInitDate = Config.scrollDate.withDayOfWeek(1).plusDays(Utils.firstDayOffset());
-    for (int d = 0; d < 7; d++) {
-      DateTime cellDate = animateInitDate.plusDays(d);
-
-      DayCellView dayCellView = new DayCellView(getContext());
-
-      GridLayout.LayoutParams cellParams = new GridLayout.LayoutParams(GridLayout.spec(0), GridLayout.spec(d));
-      cellParams.height = Config.cellHeight;
-      cellParams.width = Config.cellWidth;
-      dayCellView.setLayoutParams(cellParams);
-      dayCellView.setDayNumber(cellDate.getDayOfMonth());
-      dayCellView.setDayType(Utils.isWeekendByColumnNumber(d) ? BaseCellView.DayType.WEEKEND : BaseCellView.DayType.NO_WEEKEND);
-      dayCellView.setMark(Marks.getMark(cellDate), Config.cellHeight);
-      dayCellView.setTimeType(getTimeType(cellDate));
-
-      animateContainer.addView(dayCellView);
-    }
   }
 
   private DayCellView.TimeType getTimeType(DateTime cellTime) {
@@ -460,6 +294,10 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
     centerContainer.requestLayout();
   }
 
+  private void setTopMarginToAnimationContainer(int margin) {
+    ((RelativeLayout.LayoutParams) animateContainer.getLayoutParams()).topMargin = margin;
+  }
+
   public void scrollToDate(DateTime dateTime, boolean animate) {
     if (Config.currentViewPager == Config.ViewPagerType.MONTH && Utils.isTheSameMonthToScrollDate(dateTime)) {
       return;
@@ -513,6 +351,8 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
     }
   }
 
+  // START INTERFACES
+
   public interface HorizontalExpCalListener {
     void onCalendarScroll(DateTime dateTime);
 
@@ -520,4 +360,190 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
 
     void onChangeViewPager(Config.ViewPagerType viewPagerType);
   }
+
+  // END INTERFACES
+
+  // START ANIMATIONS
+
+  private void startDecreaseSizeAnimation() {
+    decreasingSizeAnimation.setListener(new SmallAnimationListener() {
+      @Override
+      public void animationStart(Animator animation) {
+        setHeightToCenterContainer(monthViewPagerHeight);
+      }
+
+      @Override
+      public void animationEnd(Animator animation) {
+        setHeightToCenterContainer(weekViewPagerHeight);
+        clearAnimationsListener();
+        startShowPagerAnimation();
+      }
+
+      @Override
+      public void animationUpdate(Object value) {
+        setHeightToCenterContainer(getAnimationCenterContainerHeight((float) value));
+        setTopMarginToAnimationContainer(
+            (int) ((animContainerExpandedMargin - animContainerCollapsedMargin) * (float) value) + animContainerCollapsedMargin);
+      }
+    });
+  }
+
+  private void startIncreaseSizeAnimation() {
+    increasingSizeAnimation.setListener(new SmallAnimationListener() {
+      @Override
+      public void animationStart(Animator animation) {
+        setHeightToCenterContainer(weekViewPagerHeight);
+      }
+
+      @Override
+      public void animationEnd(Animator animation) {
+        setHeightToCenterContainer(monthViewPagerHeight);
+        clearAnimationsListener();
+        startShowPagerAnimation();
+      }
+
+      @Override
+      public void animationUpdate(Object value) {
+        setHeightToCenterContainer(getAnimationCenterContainerHeight((float) value));
+        setTopMarginToAnimationContainer(
+            (int) ((animContainerExpandedMargin - animContainerCollapsedMargin) * (float) value) + animContainerCollapsedMargin);
+      }
+    });
+  }
+
+  private void startHidePagerAnimation() {
+    decreasingAlphaAnimation.setListener(new SmallAnimationListener() {
+      @Override
+      public void animationStart(Animator animation) {
+        if (Utils.isMonthView()) {
+          monthViewPager.setVisibility(GONE);
+          weekViewPager.setVisibility(VISIBLE);
+        } else {
+          monthViewPager.setVisibility(VISIBLE);
+          weekViewPager.setVisibility(GONE);
+        }
+
+        animateContainer.setVisibility(VISIBLE);
+        addCellsToAnimateContainer();
+        animContainerExpandedMargin =
+            Config.cellHeight * Utils.getWeekOfMonth(Config.scrollDate) - 1 + Utils.dayLabelExtraRow();
+        animContainerCollapsedMargin = Config.cellHeight * (Utils.dayLabelExtraRow());
+        setTopMarginToAnimationContainer(animContainerExpandedMargin);
+      }
+
+      @Override
+      public void animationEnd(Animator animation) {
+        monthViewPager.setVisibility(GONE);
+        weekViewPager.setVisibility(GONE);
+        clearAnimationsListener();
+        if (Utils.isMonthView()) {
+          startIncreaseSizeAnimation();
+        } else {
+          startDecreaseSizeAnimation();
+        }
+      }
+
+      @Override
+      public void animationUpdate(Object value) {
+        if (Utils.isMonthView()) {
+          weekViewPager.setAlpha((Float) value);
+        } else {
+          monthViewPager.setAlpha((Float) value);
+        }
+      }
+    });
+  }
+
+  private void startShowPagerAnimation() {
+    increasingAlphaAnimation.setListener(new SmallAnimationListener() {
+      @Override
+      public void animationStart(Animator animation) {
+        if (Utils.isMonthView()) {
+          monthViewPager.setVisibility(VISIBLE);
+          weekViewPager.setVisibility(GONE);
+        } else {
+          monthViewPager.setVisibility(GONE);
+          weekViewPager.setVisibility(VISIBLE);
+        }
+
+        if (!Utils.isMonthView() && Config.SCROLL_TO_SELECTED_AFTER_COLLAPSE && Utils.isTheSameMonthToScrollDate(Config.selectionDate)) {
+          Config.scrollDate = Config.selectionDate.plusDays(-Utils.firstDayOffset());
+        } else {
+          Config.scrollDate = Config.scrollDate.withDayOfMonth(1);
+        }
+
+        if (Utils.isMonthView()) {
+          scrollToDate(Config.scrollDate, true, false, false);
+          setHeightToCenterContainer(monthViewPagerHeight);
+          if (horizontalExpCalListener != null) {
+            horizontalExpCalListener.onChangeViewPager(Config.ViewPagerType.MONTH);
+          }
+        } else {
+          scrollToDate(Config.scrollDate, false, true, false);
+          setHeightToCenterContainer(weekViewPagerHeight);
+          if (horizontalExpCalListener != null) {
+            horizontalExpCalListener.onChangeViewPager(Config.ViewPagerType.WEEK);
+          }
+        }
+        weekPagerAdapter.updateMarks();
+      }
+
+      @Override
+      public void animationEnd(Animator animation) {
+        clearAnimationsListener();
+        animateContainer.setVisibility(VISIBLE);
+        animateContainer.removeAllViews();
+        if (Utils.isMonthView()) {
+          monthViewPager.setVisibility(VISIBLE);
+          weekViewPager.setVisibility(GONE);
+        } else {
+          monthViewPager.setVisibility(GONE);
+          weekViewPager.setVisibility(VISIBLE);
+        }
+      }
+
+      @Override
+      public void animationUpdate(Object value) {
+        if (Utils.isMonthView()) {
+          monthViewPager.setAlpha((Float) value);
+        } else {
+          weekViewPager.setAlpha((Float) value);
+        }
+      }
+    });
+  }
+
+  private int getAnimationCenterContainerHeight(float value) {
+    return (int) ((((monthViewPagerHeight - weekViewPagerHeight) * value)) + weekViewPagerHeight);
+  }
+
+  private void clearAnimationsListener() {
+    decreasingAlphaAnimation.removeAllListeners();
+    increasingAlphaAnimation.removeAllListeners();
+    decreasingSizeAnimation.removeAllListeners();
+    increasingSizeAnimation.removeAllListeners();
+  }
+
+  private void addCellsToAnimateContainer() {
+    animateContainer.removeAllViews();
+    DateTime animateInitDate = Config.scrollDate.withDayOfWeek(1).plusDays(Utils.firstDayOffset());
+    for (int d = 0; d < 7; d++) {
+      DateTime cellDate = animateInitDate.plusDays(d);
+
+      DayCellView dayCellView = new DayCellView(getContext());
+
+      GridLayout.LayoutParams cellParams = new GridLayout.LayoutParams(GridLayout.spec(0), GridLayout.spec(d));
+      cellParams.height = Config.cellHeight;
+      cellParams.width = Config.cellWidth;
+      dayCellView.setLayoutParams(cellParams);
+      dayCellView.setDayNumber(cellDate.getDayOfMonth());
+      dayCellView.setDayType(Utils.isWeekendByColumnNumber(d) ? BaseCellView.DayType.WEEKEND : BaseCellView.DayType.NO_WEEKEND);
+      dayCellView.setMark(Marks.getMark(cellDate), Config.cellHeight);
+      dayCellView.setTimeType(getTimeType(cellDate));
+
+      animateContainer.addView(dayCellView);
+    }
+  }
+
+  // END ANIMATIONS
 }
