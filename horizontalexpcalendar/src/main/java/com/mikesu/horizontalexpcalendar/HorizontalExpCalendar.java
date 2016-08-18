@@ -46,8 +46,8 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
 
   private HorizontalExpCalListener horizontalExpCalListener;
 
-  private CalendarAnimation hideAnimation;
-  private CalendarAnimation showAnimation;
+  private CalendarAnimation decreasingAnimation;
+  private CalendarAnimation increasingAnimation;
 
   public HorizontalExpCalendar(Context context, AttributeSet attrs) {
     super(context, attrs);
@@ -90,13 +90,13 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
   }
 
   private void initAnimation() {
-    hideAnimation = new CalendarAnimation();
-    hideAnimation.setFloatValues(Constants.ALPHA_HIDE_VALUES[0], Constants.ALPHA_HIDE_VALUES[1]);
-    hideAnimation.setDuration(Constants.ALPHA_DURATION);
+    decreasingAnimation = new CalendarAnimation();
+    decreasingAnimation.setFloatValues(Constants.ANIMATION_DECREASING_VALUES[0], Constants.ANIMATION_DECREASING_VALUES[1]);
+    decreasingAnimation.setDuration(Constants.ANIMATION_ALPHA_DURATION);
 
-    showAnimation = new CalendarAnimation();
-    showAnimation.setFloatValues(Constants.ALPHA_SHOW_VALUES[0], Constants.ALPHA_SHOW_VALUES[1]);
-    showAnimation.setDuration(Constants.ALPHA_DURATION);
+    increasingAnimation = new CalendarAnimation();
+    increasingAnimation.setFloatValues(Constants.ANIMATION_INCREASING_VALUES[0], Constants.ANIMATION_INCREASING_VALUES[1]);
+    increasingAnimation.setDuration(Constants.ANIMATION_ALPHA_DURATION);
   }
 
   private void renderCustomMarks() {
@@ -199,7 +199,7 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
       @Override
       public void onClick(View view) {
         if (Config.currentViewPager != Config.ViewPagerType.WEEK) {
-          switchToWeekView();
+          switchToView(Config.ViewPagerType.WEEK);
         }
       }
     });
@@ -208,85 +208,106 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
       @Override
       public void onClick(View view) {
         if (Config.currentViewPager != Config.ViewPagerType.MONTH) {
-          switchToMonthView();
+          switchToView(Config.ViewPagerType.MONTH);
         }
       }
     });
   }
 
-  private void switchToMonthView() {
-    Config.currentViewPager = Config.ViewPagerType.MONTH;
-    monthViewPager.setVisibility(View.VISIBLE);
-    weekViewPager.setVisibility(View.GONE);
-    Config.scrollDate = Config.scrollDate.withDayOfMonth(1);
-    scrollToDate(Config.scrollDate, true, false, false);
-    setHeightToCenterContainer(monthViewPagerHeight);
-    monthPagerAdapter.updateMarks();
-    if (horizontalExpCalListener != null) {
-      horizontalExpCalListener.onChangeViewPager(Config.ViewPagerType.MONTH);
-    }
-  }
 
-  private void switchToWeekView() {
-    Config.currentViewPager = Config.ViewPagerType.WEEK;
+  private void switchToView(final Config.ViewPagerType switchTo) {
+    Config.currentViewPager = switchTo;
 
     removeAnimationsListener();
-    hideAnimation.setListener(new SmallAnimationListener() {
+    decreasingAnimation.setListener(new SmallAnimationListener() {
       @Override
-      public void animationStart(Animator animator) {
-        monthViewPager.setVisibility(VISIBLE);
-        weekViewPager.setVisibility(GONE);
+      public void animationStart(Animator animation) {
+        if (Utils.isMonthView()) {
+          monthViewPager.setVisibility(GONE);
+          weekViewPager.setVisibility(VISIBLE);
+        } else {
+          monthViewPager.setVisibility(VISIBLE);
+          weekViewPager.setVisibility(GONE);
+        }
       }
 
       @Override
-      public void animationEnd(Animator animator) {
+      public void animationEnd(Animator animation) {
         monthViewPager.setVisibility(GONE);
         weekViewPager.setVisibility(GONE);
 
         removeAnimationsListener();
-        showAnimation.setListener(new SmallAnimationListener() {
+        increasingAnimation.setListener(new SmallAnimationListener() {
           @Override
           public void animationStart(Animator animation) {
-            monthViewPager.setVisibility(GONE);
-            weekViewPager.setVisibility(VISIBLE);
+            if (Utils.isMonthView()) {
+              monthViewPager.setVisibility(VISIBLE);
+              weekViewPager.setVisibility(GONE);
+            } else {
+              monthViewPager.setVisibility(GONE);
+              weekViewPager.setVisibility(VISIBLE);
+            }
 
-            if (Config.SCROLL_TO_SELECTED_AFTER_COLLAPSE && Utils.isTheSameMonthToScrollDate(Config.selectionDate)) {
+            if (!Utils.isMonthView() && Config.SCROLL_TO_SELECTED_AFTER_COLLAPSE && Utils.isTheSameMonthToScrollDate(Config.selectionDate)) {
               Config.scrollDate = Config.selectionDate.plusDays(-Utils.firstDayOffset());
             } else {
               Config.scrollDate = Config.scrollDate.withDayOfMonth(1);
             }
+
+            if (Utils.isMonthView()) {
+              scrollToDate(Config.scrollDate, true, false, false);
+              setHeightToCenterContainer(monthViewPagerHeight);
+              if (horizontalExpCalListener != null) {
+                horizontalExpCalListener.onChangeViewPager(Config.ViewPagerType.MONTH);
+              }
+            } else {
 //        addCellsToAnimateContainer();
 //        animateContainerParams.topMargin = Config.cellHeight * Utils.getWeekOfMonth(Config.scrollDate);
-            scrollToDate(Config.scrollDate, false, true, false);
-            setHeightToCenterContainer(weekViewPagerHeight);
-            weekPagerAdapter.updateMarks();
-            if (horizontalExpCalListener != null) {
-              horizontalExpCalListener.onChangeViewPager(Config.ViewPagerType.WEEK);
+              scrollToDate(Config.scrollDate, false, true, false);
+              setHeightToCenterContainer(weekViewPagerHeight);
+              if (horizontalExpCalListener != null) {
+                horizontalExpCalListener.onChangeViewPager(Config.ViewPagerType.WEEK);
+              }
             }
+            weekPagerAdapter.updateMarks();
           }
 
           @Override
           public void animationEnd(Animator animation) {
-            monthViewPager.setVisibility(GONE);
-            weekViewPager.setVisibility(VISIBLE);
+            if (Utils.isMonthView()) {
+              monthViewPager.setVisibility(VISIBLE);
+              weekViewPager.setVisibility(GONE);
+            } else {
+              monthViewPager.setVisibility(GONE);
+              weekViewPager.setVisibility(VISIBLE);
+            }
           }
 
           @Override
           public void animationUpdate(Object value) {
-            weekViewPager.setAlpha((Float) value);
+            if (Utils.isMonthView()) {
+              monthViewPager.setAlpha((Float) value);
+            } else {
+              weekViewPager.setAlpha((Float) value);
+            }
           }
         });
       }
 
       @Override
       public void animationUpdate(Object value) {
-        monthViewPager.setAlpha((Float) value);
+        if (Utils.isMonthView()) {
+          weekViewPager.setAlpha((Float) value);
+        } else {
+          monthViewPager.setAlpha((Float) value);
+
+        }
       }
     });
   }
 
   private void removeAnimationsListener() {
-    hideAnimation.removeAllListeners();
+    decreasingAnimation.removeAllListeners();
   }
 
   private void addCellsToAnimateContainer() {
