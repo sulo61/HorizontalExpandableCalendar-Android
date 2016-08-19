@@ -59,13 +59,19 @@ public class Utils {
   }
 
   public static boolean isTheSameMonthToScrollDate(DateTime dateTime) {
-    return (Config.scrollDate.getYear() == dateTime.getYear()) &&
-        (Config.scrollDate.getMonthOfYear() == dateTime.getMonthOfYear());
+    return isTheSameMonth(Config.scrollDate, dateTime);
+  }
+
+  public static boolean isTheSameMonth(DateTime dateTime1, DateTime dateTime2) {
+    return (dateTime1.getYear() == dateTime2.getYear()) && (dateTime1.getMonthOfYear() == dateTime2.getMonthOfYear());
   }
 
   public static boolean isTheSameWeekToScrollDate(DateTime dateTime) {
-    return (Config.scrollDate.getYear() == dateTime.getYear()) &&
-        (Config.scrollDate.getWeekOfWeekyear() == dateTime.getWeekOfWeekyear());
+    return isTheSameWeek(Config.scrollDate, dateTime);
+  }
+
+  public static boolean isTheSameWeek(DateTime dateTime1, DateTime dateTime2) {
+    return (dateTime1.getYear() == dateTime2.getYear()) && (dateTime1.getWeekOfWeekyear() == dateTime2.getWeekOfWeekyear());
   }
 
   public static int firstDayOffset() {

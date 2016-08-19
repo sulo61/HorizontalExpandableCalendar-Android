@@ -214,6 +214,9 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
         if (Utils.isMonthView()) {
           if (state == ViewPager.SCROLL_STATE_IDLE) {
             Config.scrollDate = Utils.getDateByMonthPosition(monthViewPager.getCurrentItem());
+            if (Utils.isTheSameMonthToScrollDate(Config.selectionDate)) {
+              Config.scrollDate = Config.selectionDate.toDateTime();
+            }
             refreshTitleTextView();
             if (horizontalExpCalListener != null) {
               horizontalExpCalListener.onCalendarScroll(Config.scrollDate.withDayOfMonth(1));
@@ -236,6 +239,9 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
         if (!Utils.isMonthView()) {
           if (state == ViewPager.SCROLL_STATE_IDLE) {
             Config.scrollDate = Utils.getDateByWeekPosition(weekViewPager.getCurrentItem());
+            if (Utils.isTheSameWeekToScrollDate(Config.selectionDate)) {
+              Config.scrollDate = Config.selectionDate.toDateTime();
+            }
             refreshTitleTextView();
             if (horizontalExpCalListener != null) {
               horizontalExpCalListener.onCalendarScroll(Config.scrollDate.withDayOfWeek(1));
@@ -326,7 +332,7 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
   }
 
   @Override
-  public void setTopMarginToAnimationContainer(int margin) {
+  public void setTopMarginToAnimContainer(int margin) {
     ((RelativeLayout.LayoutParams) animateContainer.getLayoutParams()).topMargin = margin;
   }
 

@@ -15,6 +15,7 @@ import org.joda.time.DateTime;
  * Created by MikeSu on 18/08/16.
  * www.michalsulek.pl
  */
+
 public class Animations {
 
   private static final String TAG = Animations.class.getName();
@@ -23,8 +24,8 @@ public class Animations {
   private CalendarAnimation increasingAlphaAnimation;
   private CalendarAnimation decreasingSizeAnimation;
   private CalendarAnimation increasingSizeAnimation;
-  private int animContainerExpandedMargin;
-  private int animContainerCollapsedMargin;
+  private int expandedTopMargin;
+  private int collapsedTopMargin;
 
   private AnimationsListener animationsListener;
   private Context context;
@@ -57,8 +58,8 @@ public class Animations {
     increasingSizeAnimation.setFloatValues(Constants.ANIMATION_INCREASING_VALUES[0], Constants.ANIMATION_INCREASING_VALUES[1]);
     increasingSizeAnimation.setDuration(Constants.ANIMATION_SIZE_DURATION);
 
-    animContainerExpandedMargin = 0;
-    animContainerCollapsedMargin = 0;
+    expandedTopMargin = 0;
+    collapsedTopMargin = 0;
   }
 
   public void startHidePagerAnimation() {
@@ -79,9 +80,9 @@ public class Animations {
 
         animationsListener.setAnimatedContainerVisibility(View.VISIBLE);
         addCellsToAnimateContainer();
-        animContainerExpandedMargin = Config.cellHeight * Utils.getWeekOfMonth(Config.scrollDate) - 1 + Utils.dayLabelExtraRow();
-        animContainerCollapsedMargin = Config.cellHeight * (Utils.dayLabelExtraRow());
-        animationsListener.setTopMarginToAnimationContainer(Utils.isMonthView() ? animContainerCollapsedMargin : animContainerExpandedMargin);
+        expandedTopMargin = Config.cellHeight * Utils.getWeekOfMonth(getAnimateContainerDate()) - 1 + Utils.dayLabelExtraRow();
+        collapsedTopMargin = Config.cellHeight * (Utils.dayLabelExtraRow());
+        animationsListener.setTopMarginToAnimContainer(Utils.isMonthView() ? collapsedTopMargin : expandedTopMargin);
       }
 
       @Override
@@ -179,8 +180,8 @@ public class Animations {
       @Override
       public void animationUpdate(Object value) {
         animationsListener.setHeightToCenterContainer(getAnimationCenterContainerHeight((float) value));
-        animationsListener.setTopMarginToAnimationContainer(
-            (int) ((animContainerExpandedMargin - animContainerCollapsedMargin) * (float) value) + animContainerCollapsedMargin);
+        animationsListener.setTopMarginToAnimContainer(
+            (int) ((expandedTopMargin - collapsedTopMargin) * (float) value) + collapsedTopMargin);
       }
     });
   }
@@ -202,8 +203,8 @@ public class Animations {
       @Override
       public void animationUpdate(Object value) {
         animationsListener.setHeightToCenterContainer(getAnimationCenterContainerHeight((float) value));
-        animationsListener.setTopMarginToAnimationContainer(
-            (int) ((animContainerExpandedMargin - animContainerCollapsedMargin) * (float) value) + animContainerCollapsedMargin);
+        animationsListener.setTopMarginToAnimContainer(
+            (int) ((expandedTopMargin - collapsedTopMargin) * (float) value) + collapsedTopMargin);
       }
     });
   }
@@ -219,9 +220,19 @@ public class Animations {
     increasingSizeAnimation.removeAllListeners();
   }
 
+  private DateTime getAnimateContainerDate() {
+    if ((!Utils.isMonthView() && (Utils.isTheSameMonthToScrollDate(Config.selectionDate)))) {
+      return Config.selectionDate;
+    } else {
+      return Config.scrollDate;
+    }
+  }
+
   public void addCellsToAnimateContainer() {
     animationsListener.animateContainerRemoveViews();
-    DateTime animateInitDate = Config.scrollDate.withDayOfWeek(1).plusDays(Utils.firstDayOffset());
+
+    DateTime animateInitDate = getAnimateContainerDate().withDayOfWeek(1).plusDays(Utils.firstDayOffset());
+
     for (int d = 0; d < 7; d++) {
       DateTime cellDate = animateInitDate.plusDays(d);
 
@@ -253,7 +264,7 @@ public class Animations {
   public interface AnimationsListener {
     void setHeightToCenterContainer(int height);
 
-    void setTopMarginToAnimationContainer(int margin);
+    void setTopMarginToAnimContainer(int margin);
 
     void setWeekPagerVisibility(int visibility);
 
