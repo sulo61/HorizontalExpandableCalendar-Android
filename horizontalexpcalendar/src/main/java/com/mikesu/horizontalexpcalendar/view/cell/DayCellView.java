@@ -1,12 +1,12 @@
 package com.mikesu.horizontalexpcalendar.view.cell;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import com.mikesu.horizontalexpcalendar.R;
+import com.mikesu.horizontalexpcalendar.common.Config;
 import com.mikesu.horizontalexpcalendar.common.Marks;
 import com.mikesu.horizontalexpcalendar.model.MarkSetup;
 
@@ -20,7 +20,7 @@ public class DayCellView extends BaseCellView {
   private TextView text;
   private TimeType timeType;
   private FrameLayout markContainer;
-  
+
   private MarkSetup markSetup;
   private View markToday;
   private View markSelected;
@@ -55,6 +55,8 @@ public class DayCellView extends BaseCellView {
     markSelected = findViewById(R.id.mark_selected_view);
     markCustom1 = findViewById(R.id.mark_custom1);
     markCustom2 = findViewById(R.id.mark_custom2);
+
+    text.setTextColor(Config.CELL_TEXT_CURRENT_MONTH_COLOR);
   }
 
   public void setTimeType(TimeType timeType) {
@@ -74,9 +76,9 @@ public class DayCellView extends BaseCellView {
 
   private void setTextColorByTimeType() {
     if (this.timeType == TimeType.CURRENT) {
-      text.setTextColor(Color.BLACK);
+      text.setTextColor(Config.CELL_TEXT_CURRENT_MONTH_COLOR);
     } else {
-      text.setTextColor(Color.LTGRAY);
+      text.setTextColor(Config.CELL_TEXT_ANOTHER_MONTH_COLOR);
     }
   }
 
