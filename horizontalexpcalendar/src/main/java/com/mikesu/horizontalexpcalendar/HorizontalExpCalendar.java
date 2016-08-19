@@ -146,7 +146,7 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
   }
 
   private void initAnimation() {
-    animations = new Animations(getContext(), HorizontalExpCalendar.this);
+    animations = new Animations(getContext(), HorizontalExpCalendar.this, Utils.animateContainerExtraTopOffset(getResources()));
   }
 
   private void setupViews() {
@@ -160,6 +160,8 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
   private void initAnimateContainer() {
     animateContainer = (GridLayout) findViewById(R.id.animate_container);
     animateContainer.getLayoutParams().height = Config.cellHeight;
+    int sideMargin = Utils.animateContainerExtraSideOffset(getResources());
+    animateContainer.setPadding(sideMargin, 0, sideMargin, 0);
   }
 
   private void initTopContainer() {

@@ -29,10 +29,12 @@ public class Animations {
 
   private AnimationsListener animationsListener;
   private Context context;
+  private int extraTopMarginOffset;
 
-  public Animations(Context context, AnimationsListener animationsListener) {
+  public Animations(Context context, AnimationsListener animationsListener, int extraTopMarginOffset) {
     this.context = context;
     this.animationsListener = animationsListener;
+    this.extraTopMarginOffset = extraTopMarginOffset;
     initAnimation();
   }
 
@@ -80,9 +82,10 @@ public class Animations {
 
         animationsListener.setAnimatedContainerVisibility(View.VISIBLE);
         addCellsToAnimateContainer();
-        expandedTopMargin = Config.cellHeight * Utils.getWeekOfMonth(getAnimateContainerDate()) - 1 + Utils.dayLabelExtraRow();
+        expandedTopMargin = Config.cellHeight * Utils.getWeekOfMonth(getAnimateContainerDate()) -
+            1 + Utils.dayLabelExtraRow() + extraTopMarginOffset;
         collapsedTopMargin = Config.cellHeight * (Utils.dayLabelExtraRow());
-        animationsListener.setTopMarginToAnimContainer(Utils.isMonthView() ? collapsedTopMargin : expandedTopMargin);
+        animationsListener.setTopMarginToAnimContainer((Utils.isMonthView() ? collapsedTopMargin : expandedTopMargin));
       }
 
       @Override

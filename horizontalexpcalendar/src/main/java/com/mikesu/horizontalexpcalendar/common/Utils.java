@@ -1,5 +1,6 @@
 package com.mikesu.horizontalexpcalendar.common;
 
+import android.content.res.Resources;
 import java.util.Random;
 import org.joda.time.DateTime;
 
@@ -86,5 +87,45 @@ public class Utils {
 
   public static int getWeekOfMonth(DateTime dateTime) {
     return ((dateTime.getDayOfMonth() + dateTime.withDayOfMonth(1).getDayOfWeek() - 2 + firstDayOffset()) / 7) + 1;
+  }
+
+  public static int animateContainerExtraTopOffset(Resources resources) {
+    float density = resources.getDisplayMetrics().density;
+    if (density >= 4.0) {
+      return 0;
+    }
+    if (density >= 3.0) {
+      return 0;
+    }
+    if (density >= 2.0) {
+      return 1;
+    }
+    if (density >= 1.5) {
+      return 2;
+    }
+    if (density >= 1.0) {
+      return 2;
+    }
+    return 0;
+  }
+
+  public static int animateContainerExtraSideOffset(Resources resources) {
+    float density = resources.getDisplayMetrics().density;
+    if (density >= 4.0) {
+      return 2;
+    }
+    if (density >= 3.0) {
+      return 2;
+    }
+    if (density >= 2.0) {
+      return 2;
+    }
+    if (density >= 1.5) {
+      return 2;
+    }
+    if (density >= 1.0) {
+      return 0;
+    }
+    return 0;
   }
 }
