@@ -11,7 +11,11 @@ public abstract class SmallPageChangeListener implements ViewPager.OnPageChangeL
 
   @Override
   public void onPageScrollStateChanged(int state) {
-    scrollStateChanged(state);
+    if (state == ViewPager.SCROLL_STATE_IDLE) {
+      scrollEnd();
+    } else if (state == ViewPager.SCROLL_STATE_DRAGGING) {
+      scrollStart();
+    }
   }
 
   @Override
@@ -24,5 +28,7 @@ public abstract class SmallPageChangeListener implements ViewPager.OnPageChangeL
     // IGNORE
   }
 
-  public abstract void scrollStateChanged(int state);
+  public abstract void scrollStart();
+
+  public abstract void scrollEnd();
 }
