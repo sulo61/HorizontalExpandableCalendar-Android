@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:orientation="vertical">
+
+    <View
+        android:id="@+id/mark_today_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:background="@drawable/mark_today"
+        android:visibility="gone"/>
+
+    <View
+        android:id="@+id/mark_selected_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:background="@drawable/mark_selected"
+        android:visibility="gone"/>
+
+    <View
+        android:id="@+id/mark_custom1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_marginBottom="3dp"
+        android:background="@drawable/mark_custom1"
+        android:visibility="gone"/>
+
+    <View
+        android:id="@+id/mark_custom2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical|left"
+        android:layout_marginLeft="6dp"
+        android:background="@drawable/mark_custom2"
+        android:visibility="gone"/>
+
+</FrameLayout>
