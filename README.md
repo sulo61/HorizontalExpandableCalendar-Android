@@ -22,6 +22,11 @@ Screenshot below
 -> wiki
 ```
 
+## Dependencies
+```
+module is using: compile 'net.danlew:android.joda:2.9.4.1'
+```
+
 ## License
 ```
 Copyright 2016 Michał Sułek
