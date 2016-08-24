@@ -80,6 +80,7 @@ public class Marks {
         break;
       case CUSTOM2:
         markSetup.setCustom2(mark);
+        break;
       default:
         Log.e(TAG, "markCustom, unknown case: " + customMarks.name());
     }
