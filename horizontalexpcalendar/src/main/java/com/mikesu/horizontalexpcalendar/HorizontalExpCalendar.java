@@ -39,6 +39,8 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
   private Animations animations;
   private HorizontalExpCalListener horizontalExpCalListener;
 
+  private boolean lock;
+
   public HorizontalExpCalendar(Context context, AttributeSet attrs) {
     super(context, attrs);
     init(attrs);
@@ -68,6 +70,7 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
     inflate(getContext(), R.layout.horizontal_exp_calendar, this);
 
     centerContainer = (RelativeLayout) findViewById(R.id.center_container);
+    lock = false;
 
     setValuesFromAttr(attributeSet);
     setupCellWidth();
@@ -169,7 +172,11 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
     findViewById(R.id.scroll_to_today_button).setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View view) {
-        scrollToDate(new DateTime(), true, true, true);
+        if (!isLocked()) {
+          lock();
+          scrollToDate(new DateTime(), true, true, true);
+          unlock();
+        }
       }
     });
   }
@@ -183,8 +190,12 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
     findViewById(R.id.collapse_button).setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View view) {
-        if (Config.currentViewPager != Config.ViewPagerType.WEEK) {
-          switchToView(Config.ViewPagerType.WEEK);
+        if (!isLocked()) {
+          lock();
+          if (Config.currentViewPager != Config.ViewPagerType.WEEK) {
+            switchToView(Config.ViewPagerType.WEEK);
+          }
+          unlock();
         }
       }
     });
@@ -192,8 +203,12 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
     findViewById(R.id.expand_button).setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View view) {
-        if (Config.currentViewPager != Config.ViewPagerType.MONTH) {
-          switchToView(Config.ViewPagerType.MONTH);
+        if (!isLocked()) {
+          lock();
+          if (Config.currentViewPager != Config.ViewPagerType.MONTH) {
+            switchToView(Config.ViewPagerType.MONTH);
+          }
+          unlock();
         }
       }
     });
@@ -212,18 +227,24 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
     monthViewPager.setCurrentItem(Utils.monthPositionFromDate(Config.INIT_DATE));
     monthViewPager.addOnPageChangeListener(new SmallPageChangeListener() {
       @Override
-      public void scrollStateChanged(int state) {
+      public void scrollStart() {
         if (Utils.isMonthView()) {
-          if (state == ViewPager.SCROLL_STATE_IDLE) {
-            Config.scrollDate = Utils.getDateByMonthPosition(monthViewPager.getCurrentItem());
-            if (Utils.isTheSameMonthToScrollDate(Config.selectionDate)) {
-              Config.scrollDate = Config.selectionDate.toDateTime();
-            }
-            refreshTitleTextView();
-            if (horizontalExpCalListener != null) {
-              horizontalExpCalListener.onCalendarScroll(Config.scrollDate.withDayOfMonth(1));
-            }
+          lock();
+        }
+      }
+
+      @Override
+      public void scrollEnd() {
+        if (Utils.isMonthView()) {
+          Config.scrollDate = Utils.getDateByMonthPosition(monthViewPager.getCurrentItem());
+          if (Utils.isTheSameMonthToScrollDate(Config.selectionDate)) {
+            Config.scrollDate = Config.selectionDate.toDateTime();
           }
+          refreshTitleTextView();
+          if (horizontalExpCalListener != null) {
+            horizontalExpCalListener.onCalendarScroll(Config.scrollDate.withDayOfMonth(1));
+          }
+          unlock();
         }
       }
     });
@@ -237,18 +258,24 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
     setWeekViewPagerPosition(Utils.weekPositionFromDate(Config.INIT_DATE), false);
     weekViewPager.addOnPageChangeListener(new SmallPageChangeListener() {
       @Override
-      public void scrollStateChanged(int state) {
+      public void scrollStart() {
         if (!Utils.isMonthView()) {
-          if (state == ViewPager.SCROLL_STATE_IDLE) {
-            Config.scrollDate = Utils.getDateByWeekPosition(weekViewPager.getCurrentItem());
-            if (Utils.isTheSameWeekToScrollDate(Config.selectionDate)) {
-              Config.scrollDate = Config.selectionDate.toDateTime();
-            }
-            refreshTitleTextView();
-            if (horizontalExpCalListener != null) {
-              horizontalExpCalListener.onCalendarScroll(Config.scrollDate.withDayOfWeek(1));
-            }
+          lock();
+        }
+      }
+
+      @Override
+      public void scrollEnd() {
+        if (!Utils.isMonthView()) {
+          Config.scrollDate = Utils.getDateByWeekPosition(weekViewPager.getCurrentItem());
+          if (Utils.isTheSameWeekToScrollDate(Config.selectionDate)) {
+            Config.scrollDate = Config.selectionDate.toDateTime();
           }
+          refreshTitleTextView();
+          if (horizontalExpCalListener != null) {
+            horizontalExpCalListener.onCalendarScroll(Config.scrollDate.withDayOfWeek(1));
+          }
+          unlock();
         }
       }
     });
@@ -277,6 +304,18 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
 
   private void refreshTitleTextView() {
     titleTextView.setText(String.format("%s - %s", Config.scrollDate.getYear(), Config.scrollDate.getMonthOfYear()));
+  }
+
+  private void lock() {
+    lock = true;
+  }
+
+  private void unlock() {
+    lock = false;
+  }
+
+  private boolean isLocked() {
+    return lock;
   }
 
   @Override
