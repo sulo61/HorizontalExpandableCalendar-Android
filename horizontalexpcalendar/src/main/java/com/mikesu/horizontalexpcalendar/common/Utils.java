@@ -1,8 +1,10 @@
 package com.mikesu.horizontalexpcalendar.common;
 
 import android.content.res.Resources;
-import java.util.Random;
+
 import org.joda.time.DateTime;
+
+import java.util.Random;
 
 /**
  * Created by MikeSu on 08/08/16.
@@ -18,10 +20,12 @@ public class Utils {
 
   public static int weekPositionFromDate(DateTime dateTo) {
     DateTime dateFrom = Config.START_DATE.toDateTime();
-    while (dateFrom.getYear() < dateTo.getYear()) {
-      dateFrom = dateFrom.plusYears(1);
+    int weeksBetween = 0;
+    while (dateFrom.isBefore(dateTo)) {
+      weeksBetween++;
+      dateFrom = dateFrom.plusWeeks(1);
     }
-    return dateTo.getWeekOfWeekyear() - Config.START_DATE.getWeekOfWeekyear();
+    return weeksBetween - 1;
   }
 
   public static boolean isWeekendByColumnNumber(int column) {
