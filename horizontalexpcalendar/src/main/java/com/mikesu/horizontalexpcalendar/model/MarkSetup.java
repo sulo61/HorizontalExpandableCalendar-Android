@@ -31,7 +31,7 @@ public class MarkSetup {
     this.today = today;
     this.selected = selected;
     this.custom1 = custom1;
-    this.custom2 = custom1;
+    this.custom2 = custom2;
   }
 
   public boolean isToday() {
