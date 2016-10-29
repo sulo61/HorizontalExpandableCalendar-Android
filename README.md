@@ -10,7 +10,7 @@ https://youtu.be/wiMT5O0hk9Q
 
 ## Installation
 
-Copy horizontalexpcalendar (1) module from this repository into your project's root directory project (2), then add dependency 
+Copy horizontalexpcalendar (1) module from this repository into your project's root directory project (2), then add dependency
 ```
 compile project(':horizontalexpcalendar')
 ```
