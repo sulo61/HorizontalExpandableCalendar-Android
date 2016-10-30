@@ -124,7 +124,7 @@ public class Animations {
         }
 
         if (Config.SCROLL_TO_SELECTED_AFTER_COLLAPSE && Utils.isTheSameMonthToScrollDate(Config.selectionDate)) {
-          Config.scrollDate = Config.selectionDate.plusDays(-Utils.firstDayOffset());
+          Config.scrollDate = Config.selectionDate;
         } else {
           Config.scrollDate = Config.scrollDate.withDayOfMonth(1);
         }
@@ -234,10 +234,10 @@ public class Animations {
   public void addCellsToAnimateContainer() {
     animationsListener.animateContainerRemoveViews();
 
-    DateTime animateInitDate = getAnimateContainerDate().withDayOfWeek(1).plusDays(Utils.firstDayOffset());
+    DateTime animateInitDate = getAnimateContainerDate().minusDays(Utils.firstDayOffset()).withDayOfWeek(1);
 
     for (int d = 0; d < 7; d++) {
-      DateTime cellDate = animateInitDate.plusDays(d);
+      DateTime cellDate = animateInitDate.plusDays(d + Utils.firstDayOffset());
 
       DayCellView dayCellView = new DayCellView(context);
 

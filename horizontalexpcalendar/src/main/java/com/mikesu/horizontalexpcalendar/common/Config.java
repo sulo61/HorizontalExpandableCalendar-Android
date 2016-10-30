@@ -45,7 +45,7 @@ public class Config {
 
   public static ViewPagerType currentViewPager = INIT_VIEW;
   public static DateTime scrollDate = INIT_DATE;
-  public static DateTime selectionDate = new DateTime();//
+  public static DateTime selectionDate = new DateTime();
   public static int cellWidth = 0;
   public static int cellHeight = 0;
   public static int monthViewPagerHeight;
