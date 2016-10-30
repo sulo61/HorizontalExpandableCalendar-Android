@@ -19,6 +19,7 @@ public class Utils {
   public static int weekPositionFromDate(DateTime dateTo) {
     DateTime dateFrom = Config.START_DATE.toDateTime();
     DateTime dateToWithFixedSeconds = dateTo
+        .minusDays(firstDayOffset())
         .withSecondOfMinute(dateFrom.getSecondOfMinute())
         .withMillisOfSecond(dateFrom.getMillisOfSecond());
     int weeksBetween = 0;
@@ -61,7 +62,7 @@ public class Utils {
   }
 
   public static DateTime getDateByWeekPosition(int position) {
-    return Config.START_DATE.withDayOfWeek(7).plusWeeks(position);
+    return Config.START_DATE.withDayOfWeek(7 + firstDayOffset()).plusWeeks(position);
   }
 
   public static boolean isTheSameMonthToScrollDate(DateTime dateTime) {
@@ -77,9 +78,7 @@ public class Utils {
   }
 
   public static boolean isTheSameWeek(DateTime dateTime1, DateTime dateTime2) {
-    DateTime secondDateMovedByFirstDayOfWeek = new DateTime(dateTime2).minusDays(firstDayOffset());
-    return (dateTime1.getYear() == secondDateMovedByFirstDayOfWeek.getYear()) &&
-        (dateTime1.getWeekOfWeekyear() == secondDateMovedByFirstDayOfWeek.getWeekOfWeekyear());
+    return (dateTime1.getYear() == dateTime2.getYear()) && (dateTime1.getWeekOfWeekyear() == dateTime2.getWeekOfWeekyear());
   }
 
   public static int firstDayOffset() {
@@ -93,7 +92,6 @@ public class Utils {
   }
 
   public static int getWeekOfMonth(DateTime dateTime) {
-//    return ((dateTime.getDayOfMonth() + dateTime.withDayOfMonth(1).getDayOfWeek() - 2 + firstDayOffset()) / 7) + 1;
     return ((dateTime.getDayOfMonth() + dateTime.withDayOfMonth(1).getDayOfWeek() - 2 - firstDayOffset()) / 7) + 1;
   }
 
