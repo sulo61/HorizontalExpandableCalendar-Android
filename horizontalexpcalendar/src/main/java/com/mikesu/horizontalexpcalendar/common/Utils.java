@@ -78,7 +78,10 @@ public class Utils {
   }
 
   public static boolean isTheSameWeek(DateTime dateTime1, DateTime dateTime2) {
-    return (dateTime1.getYear() == dateTime2.getYear()) && (dateTime1.getWeekOfWeekyear() == dateTime2.getWeekOfWeekyear());
+    DateTime firstDateMovedByFirstDayOfWeek = dateTime1.minusDays(firstDayOffset());
+    DateTime secondDateMovedByFirstDayOfWeek = dateTime2.minusDays(firstDayOffset());
+    return (firstDateMovedByFirstDayOfWeek.getYear() == secondDateMovedByFirstDayOfWeek.getYear()) &&
+        (firstDateMovedByFirstDayOfWeek.getWeekOfWeekyear() == secondDateMovedByFirstDayOfWeek.getWeekOfWeekyear());
   }
 
   public static int firstDayOffset() {

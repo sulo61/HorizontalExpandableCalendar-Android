@@ -268,8 +268,8 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
       public void scrollEnd() {
         if (!Utils.isMonthView()) {
           Config.scrollDate = Utils.getDateByWeekPosition(weekViewPager.getCurrentItem());
-          if (Utils.isTheSameWeekToScrollDate(Config.selectionDate)) {
-            Config.scrollDate = Config.selectionDate.toDateTime();
+          if (Utils.weekPositionFromDate(Config.scrollDate) == Utils.weekPositionFromDate(Config.selectionDate)) {
+            Config.scrollDate =  Config.selectionDate;
           }
           refreshTitleTextView();
           if (horizontalExpCalListener != null) {
@@ -286,7 +286,7 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
     if (Config.currentViewPager == Config.ViewPagerType.MONTH && Utils.isTheSameMonthToScrollDate(dateTime)) {
       return;
     }
-    if (Config.currentViewPager == Config.ViewPagerType.WEEK && Utils.isTheSameWeekToScrollDate(dateTime)) {
+    if (Config.currentViewPager == Config.ViewPagerType.WEEK && Utils.isTheSameWeekToScrollDate(dateTime) && Utils.isTheSameMonthToScrollDate(dateTime)) {
       return;
     }
 
