@@ -123,10 +123,16 @@ public class Animations {
           animationsListener.setWeekPagerVisibility(View.VISIBLE);
         }
 
-        if (Config.SCROLL_TO_SELECTED_AFTER_COLLAPSE && Utils.isTheSameMonthToScrollDate(Config.selectionDate)) {
-          Config.scrollDate = Config.selectionDate;
+        if (Utils.isMonthView()) {
+          if (Utils.isTheSameWeekToScrollDate(Config.selectionDate)) {
+            Config.scrollDate = Config.selectionDate;
+          }
         } else {
-          Config.scrollDate = Config.scrollDate.withDayOfMonth(1);
+          if (Config.SCROLL_TO_SELECTED_AFTER_COLLAPSE && Utils.isTheSameMonthToScrollDate(Config.selectionDate)) {
+            Config.scrollDate = Config.selectionDate;
+          } else {
+            Config.scrollDate = Config.scrollDate.withDayOfMonth(1);
+          }
         }
 
         if (Utils.isMonthView()) {
@@ -224,10 +230,18 @@ public class Animations {
   }
 
   private DateTime getAnimateContainerDate() {
-    if ((!Utils.isMonthView() && (Utils.isTheSameMonthToScrollDate(Config.selectionDate)))) {
-      return Config.selectionDate;
+    if (!Utils.isMonthView()) {
+      if (Utils.isTheSameMonthToScrollDate(Config.selectionDate)) {
+        return Config.selectionDate;
+      } else {
+        return Config.scrollDate;
+      }
     } else {
-      return Config.scrollDate;
+      if (Utils.isTheSameWeekToScrollDate(Config.selectionDate)) {
+        return Config.selectionDate;
+      } else {
+        return Config.scrollDate;
+      }
     }
   }
 
