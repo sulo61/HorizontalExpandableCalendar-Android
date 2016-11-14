@@ -82,8 +82,8 @@ public class Animations {
 
         animationsListener.setAnimatedContainerVisibility(View.VISIBLE);
         addCellsToAnimateContainer();
-        expandedTopMargin = Config.cellHeight * Utils.getWeekOfMonth(getAnimateContainerDate()) -
-            1 + Utils.dayLabelExtraRow() + extraTopMarginOffset;
+        expandedTopMargin = Config.cellHeight * (Utils.getWeekOfMonth(getAnimateContainerDate()) -
+            1 + Utils.dayLabelExtraRow()) + extraTopMarginOffset;
         collapsedTopMargin = Config.cellHeight * (Utils.dayLabelExtraRow());
         animationsListener.setTopMarginToAnimContainer((Utils.isMonthView() ? collapsedTopMargin : expandedTopMargin));
       }
