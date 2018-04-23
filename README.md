@@ -7,6 +7,8 @@
 ```
 https://youtu.be/wiMT5O0hk9Q
 ```
+[![Screen1](https://i.imgur.com/8U7sU9i.png)](https://i.imgur.com/8U7sU9i.png)
+[![Screen2](https://i.imgur.com/m6QVDhy.png)](https://i.imgur.com/m6QVDhy.png)
 
 ## Installation
 
