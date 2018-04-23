@@ -43,7 +43,7 @@ public class Animations {
     this.animationsListener = null;
   }
 
-  public void initAnimation() {
+  private void initAnimation() {
     decreasingAlphaAnimation = new CalendarAnimation();
     decreasingAlphaAnimation.setFloatValues(Constants.ANIMATION_DECREASING_VALUES[0], Constants.ANIMATION_DECREASING_VALUES[1]);
     decreasingAlphaAnimation.setDuration(Constants.ANIMATION_ALPHA_DURATION);
@@ -65,13 +65,15 @@ public class Animations {
   }
 
   public void startHidePagerAnimation() {
-    if (animationsListener == null) {
-      Log.e(TAG, "startHidePagerAnimation, animationsListener is null");
+    if (animationsListener == null || decreasingAlphaAnimation == null) {
+      Log.e(TAG, "startHidePagerAnimation, animationsListener or decreasingAlphaAnimation is null");
       return;
     }
     decreasingAlphaAnimation.setListener(new SmallAnimationListener() {
       @Override
       public void animationStart(Animator animation) {
+        if (animationsListener == null) return;
+
         if (Utils.isMonthView()) {
           animationsListener.setMonthPagerVisibility(View.GONE);
           animationsListener.setWeekPagerVisibility(View.VISIBLE);
@@ -90,6 +92,8 @@ public class Animations {
 
       @Override
       public void animationEnd(Animator animation) {
+        if (animationsListener == null) return;
+
         animationsListener.setMonthPagerVisibility(View.GONE);
         animationsListener.setWeekPagerVisibility(View.GONE);
         clearAnimationsListener();
@@ -102,6 +106,8 @@ public class Animations {
 
       @Override
       public void animationUpdate(Object value) {
+        if (animationsListener == null) return;
+
         if (Utils.isMonthView()) {
           animationsListener.setWeekPagerAlpha((float) value);
         } else {
@@ -111,10 +117,12 @@ public class Animations {
     });
   }
 
-  public void startShowPagerAnimation() {
+  private void startShowPagerAnimation() {
     increasingAlphaAnimation.setListener(new SmallAnimationListener() {
       @Override
       public void animationStart(Animator animation) {
+        if (animationsListener == null) return;
+
         if (Utils.isMonthView()) {
           animationsListener.setMonthPagerVisibility(View.VISIBLE);
           animationsListener.setWeekPagerVisibility(View.GONE);
@@ -150,6 +158,7 @@ public class Animations {
       @Override
       public void animationEnd(Animator animation) {
         clearAnimationsListener();
+        if (animationsListener == null) return;
         animationsListener.setAnimatedContainerVisibility(View.GONE);
         animationsListener.animateContainerRemoveViews();
         if (Utils.isMonthView()) {
@@ -163,6 +172,7 @@ public class Animations {
 
       @Override
       public void animationUpdate(Object value) {
+        if (animationsListener == null) return;
         if (Utils.isMonthView()) {
           animationsListener.setMonthPagerAlpha((float) value);
         } else {
@@ -172,15 +182,17 @@ public class Animations {
     });
   }
 
-  public void startDecreaseSizeAnimation() {
+  private void startDecreaseSizeAnimation() {
     decreasingSizeAnimation.setListener(new SmallAnimationListener() {
       @Override
       public void animationStart(Animator animation) {
+        if (animationsListener == null) return;
         animationsListener.setHeightToCenterContainer(Config.monthViewPagerHeight);
       }
 
       @Override
       public void animationEnd(Animator animation) {
+        if (animationsListener == null) return;
         animationsListener.setHeightToCenterContainer(Config.weekViewPagerHeight);
         clearAnimationsListener();
         startShowPagerAnimation();
@@ -188,6 +200,7 @@ public class Animations {
 
       @Override
       public void animationUpdate(Object value) {
+        if (animationsListener == null) return;
         animationsListener.setHeightToCenterContainer(getAnimationCenterContainerHeight((float) value));
         animationsListener.setTopMarginToAnimContainer(
             (int) ((expandedTopMargin - collapsedTopMargin) * (float) value) + collapsedTopMargin);
@@ -195,15 +208,17 @@ public class Animations {
     });
   }
 
-  public void startIncreaseSizeAnimation() {
+  private void startIncreaseSizeAnimation() {
     increasingSizeAnimation.setListener(new SmallAnimationListener() {
       @Override
       public void animationStart(Animator animation) {
+        if (animationsListener == null) return;
         animationsListener.setHeightToCenterContainer(Config.weekViewPagerHeight);
       }
 
       @Override
       public void animationEnd(Animator animation) {
+        if (animationsListener == null) return;
         animationsListener.setHeightToCenterContainer(Config.monthViewPagerHeight);
         clearAnimationsListener();
         startShowPagerAnimation();
@@ -211,6 +226,7 @@ public class Animations {
 
       @Override
       public void animationUpdate(Object value) {
+        if (animationsListener == null) return;
         animationsListener.setHeightToCenterContainer(getAnimationCenterContainerHeight((float) value));
         animationsListener.setTopMarginToAnimContainer(
             (int) ((expandedTopMargin - collapsedTopMargin) * (float) value) + collapsedTopMargin);
@@ -218,7 +234,7 @@ public class Animations {
     });
   }
 
-  public int getAnimationCenterContainerHeight(float value) {
+  private int getAnimationCenterContainerHeight(float value) {
     return (int) ((((Config.monthViewPagerHeight - Config.weekViewPagerHeight) * value)) + Config.weekViewPagerHeight);
   }
 
@@ -245,7 +261,7 @@ public class Animations {
     }
   }
 
-  public void addCellsToAnimateContainer() {
+  private void addCellsToAnimateContainer() {
     animationsListener.animateContainerRemoveViews();
 
     DateTime animateInitDate = getAnimateContainerDate().minusDays(Utils.firstDayOffset()).withDayOfWeek(1);

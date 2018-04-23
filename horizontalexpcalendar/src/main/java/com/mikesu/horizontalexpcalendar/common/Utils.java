@@ -58,7 +58,7 @@ public class Utils {
   }
 
   public static DateTime getDateByMonthPosition(int position) {
-    return Config.START_DATE.withDayOfWeek(7 + firstDayOffset()).plusMonths(position);
+    return Config.START_DATE.withDayOfWeek(7 + firstDayOffset()).withDayOfMonth(1).plusMonths(position);
   }
 
   public static DateTime getDateByWeekPosition(int position) {

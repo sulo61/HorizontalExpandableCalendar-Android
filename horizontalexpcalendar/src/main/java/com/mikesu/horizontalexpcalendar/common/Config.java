@@ -1,6 +1,8 @@
 package com.mikesu.horizontalexpcalendar.common;
 
 import android.graphics.Color;
+import android.util.Log;
+
 import org.joda.time.DateTime;
 
 /**
@@ -12,14 +14,14 @@ public class Config {
 
   /* CONFIGURATION */
   private static final ViewPagerType INIT_VIEW = ViewPagerType.MONTH;
-  private static final int RANGE_MONTHS_BEFORE_INIT = 1;
-  private static final int RANGE_MONTHS_AFTER_INIT = 3;
+  private static final int RANGE_MONTHS_BEFORE_INIT = 12;
+  private static final int RANGE_MONTHS_AFTER_INIT = 18;
   public static final DateTime INIT_DATE = new DateTime();
   public static final FirstDay FIRST_DAY_OF_WEEK = FirstDay.MONDAY;
-  public static final int CELL_WEEKEND_BACKGROUND = Color.parseColor("#FFF9DB");
+  public static final int CELL_WEEKEND_BACKGROUND = Color.WHITE;
   public static final int CELL_NON_WEEKEND_BACKGROUND = Color.WHITE;
   public static final int CELL_TEXT_CURRENT_MONTH_COLOR = Color.BLACK;
-  public static final int CELL_TEXT_ANOTHER_MONTH_COLOR = Color.LTGRAY;
+  public static final int CELL_TEXT_ANOTHER_MONTH_COLOR = Color.parseColor("#c3c6cd");
   public static final boolean USE_DAY_LABELS = true;
   public static final boolean SCROLL_TO_SELECTED_AFTER_COLLAPSE = true;
   /* END CONFIGURATION */

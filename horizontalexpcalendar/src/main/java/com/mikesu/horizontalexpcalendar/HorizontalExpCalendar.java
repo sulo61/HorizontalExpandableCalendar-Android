@@ -1,5 +1,6 @@
 package com.mikesu.horizontalexpcalendar;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.support.v4.view.ViewPager;
@@ -10,6 +11,7 @@ import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 import com.mikesu.horizontalexpcalendar.adapter.CalendarAdapter;
 import com.mikesu.horizontalexpcalendar.common.Animations;
 import com.mikesu.horizontalexpcalendar.common.Config;
@@ -17,10 +19,11 @@ import com.mikesu.horizontalexpcalendar.common.Marks;
 import com.mikesu.horizontalexpcalendar.common.Utils;
 import com.mikesu.horizontalexpcalendar.listener.SmallPageChangeListener;
 import com.mikesu.horizontalexpcalendar.view.page.PageView;
+
 import org.joda.time.DateTime;
 
 /**
- * Created by MikeSu on 04/08/16.
+ * Created by MikeSu on 23/04/18.
  * www.michalsulek.pl
  */
 
@@ -98,7 +101,7 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
     Config.cellHeight = Config.monthViewPagerHeight / (Config.MONTH_ROWS + Utils.dayLabelExtraRow());
   }
 
-  private void setupCellWidth() {
+  public void setupCellWidth() {
     getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
       @Override
       public void onGlobalLayout() {
@@ -115,24 +118,26 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
       setupTopContainerFromAttr(typedArray);
       setupMiddleContainerFromAttr(typedArray);
       setupBottomContainerFromAttr(typedArray);
+      setupExpandedFromAttr(typedArray);
       typedArray.recycle();
     }
 
     setHeightToCenterContainer(Utils.isMonthView() ? Config.monthViewPagerHeight : Config.weekViewPagerHeight);
   }
 
+  @SuppressLint("WrongViewCast")
   private void setupBottomContainerFromAttr(TypedArray typedArray) {
     if (typedArray.hasValue(R.styleable.HorizontalExpCalendar_bottom_container_height)) {
       ((LinearLayout.LayoutParams) findViewById(R.id.bottom_container).getLayoutParams()).height =
-          typedArray.getDimensionPixelSize(R.styleable.HorizontalExpCalendar_bottom_container_height,
-              LinearLayout.LayoutParams.WRAP_CONTENT);
+              typedArray.getDimensionPixelSize(R.styleable.HorizontalExpCalendar_bottom_container_height,
+                      LinearLayout.LayoutParams.WRAP_CONTENT);
     }
   }
 
   private void setupMiddleContainerFromAttr(TypedArray typedArray) {
     if (typedArray.hasValue(R.styleable.HorizontalExpCalendar_center_container_expanded_height)) {
       Config.monthViewPagerHeight = typedArray.getDimensionPixelSize(
-          R.styleable.HorizontalExpCalendar_center_container_expanded_height, LinearLayout.LayoutParams.WRAP_CONTENT);
+              R.styleable.HorizontalExpCalendar_center_container_expanded_height, LinearLayout.LayoutParams.WRAP_CONTENT);
 
       setCellHeight();
 
@@ -140,11 +145,19 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
     }
   }
 
+  @SuppressLint("WrongViewCast")
   private void setupTopContainerFromAttr(TypedArray typedArray) {
     if (typedArray.hasValue(R.styleable.HorizontalExpCalendar_top_container_height)) {
       ((LinearLayout.LayoutParams) findViewById(R.id.top_container).getLayoutParams()).height =
-          typedArray.getDimensionPixelSize(R.styleable.HorizontalExpCalendar_top_container_height,
-              LinearLayout.LayoutParams.WRAP_CONTENT);
+              typedArray.getDimensionPixelSize(R.styleable.HorizontalExpCalendar_top_container_height,
+                      LinearLayout.LayoutParams.WRAP_CONTENT);
+    }
+  }
+
+  private void setupExpandedFromAttr(TypedArray typedArray) {
+    if (typedArray.hasValue(R.styleable.HorizontalExpCalendar_expanded)) {
+      Config.currentViewPager = typedArray.getBoolean(R.styleable.HorizontalExpCalendar_expanded, true) ?
+              Config.ViewPagerType.MONTH : Config.ViewPagerType.WEEK;
     }
   }
 
@@ -190,31 +203,50 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
     findViewById(R.id.collapse_button).setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View view) {
-        if (!isLocked()) {
-          lock();
-          if (Config.currentViewPager != Config.ViewPagerType.WEEK) {
-            switchToView(Config.ViewPagerType.WEEK);
-          }
-          unlock();
-        }
+        collapse();
       }
     });
 
     findViewById(R.id.expand_button).setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View view) {
-        if (!isLocked()) {
-          lock();
-          if (Config.currentViewPager != Config.ViewPagerType.MONTH) {
-            switchToView(Config.ViewPagerType.MONTH);
-          }
-          unlock();
-        }
+        expand();
       }
     });
   }
 
+  public void collapse() {
+    if (!isLocked()) {
+      lock();
+      if (Config.currentViewPager != Config.ViewPagerType.WEEK) {
+        switchToView(Config.ViewPagerType.WEEK);
+      }
+      unlock();
+      if (horizontalExpCalListener != null) {
+        horizontalExpCalListener.onCalendarScroll(Config.scrollDate.withDayOfWeek(1));
+      }
+    }
+  }
+
+  public boolean isExpanded() {
+    return Config.currentViewPager == Config.ViewPagerType.MONTH;
+  }
+
+  public void expand() {
+    if (!isLocked()) {
+      lock();
+      if (Config.currentViewPager != Config.ViewPagerType.MONTH) {
+        switchToView(Config.ViewPagerType.MONTH);
+      }
+      unlock();
+      if (horizontalExpCalListener != null) {
+        horizontalExpCalListener.onCalendarScroll(Config.scrollDate.withDayOfWeek(7));
+      }
+    }
+  }
+
   private void switchToView(final Config.ViewPagerType switchTo) {
+    if (monthViewPager == null || weekPagerAdapter == null) return;
     Config.currentViewPager = switchTo;
     animations.clearAnimationsListener();
     animations.startHidePagerAnimation();
@@ -326,6 +358,20 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
 
   private boolean isLocked() {
     return lock;
+  }
+
+  public void setVisible() {
+    setVisibility(View.VISIBLE);
+    if (Config.cellWidth == 0) {
+      setupCellWidth();
+    }
+    if (Config.cellHeight == 0) {
+      setCellHeight();
+    }
+  }
+
+  public void setGone() {
+    setVisibility(View.GONE);
   }
 
   @Override
