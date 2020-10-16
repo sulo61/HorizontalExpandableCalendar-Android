@@ -17,6 +17,8 @@ import com.mikesu.horizontalexpcalendar.view.cell.LabelCellView;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
+import java.time.temporal.WeekFields;
+import java.util.Locale;
 
 /**
  * Created by MikeSu on 09.08.2016.
@@ -53,7 +55,7 @@ public class PageView extends FrameLayout implements View.OnClickListener {
 
   private void initViews() {
     inflate(getContext(), R.layout.page_view, this);
-    gridLayout = (GridLayout) findViewById(R.id.grid_layout);
+    gridLayout = findViewById(R.id.grid_layout);
     gridLayout.setColumnCount(Config.COLUMNS);
     gridLayout.setRowCount(rows + (Utils.dayLabelExtraRow()));
   }

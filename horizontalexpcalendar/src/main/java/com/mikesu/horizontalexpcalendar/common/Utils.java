@@ -5,7 +5,9 @@ import android.content.res.Resources;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
 import java.util.Random;
 
 /**
@@ -16,19 +18,11 @@ import java.util.Random;
 public class Utils {
 
   public static int monthPositionFromDate(@NotNull LocalDate dateTo) {
-    LocalDate dateFrom = Config.START_DATE.with(ChronoField.DAY_OF_WEEK,7);
-    return ((dateTo.getYear() - dateFrom.getYear()) * 12) + (dateTo.getMonthValue() - dateFrom.getMonthValue());
+    return (int) ChronoUnit.MONTHS.between (Config.START_DATE, dateTo);
   }
 
   public static int weekPositionFromDate(@NotNull LocalDate dateTo) {
-    LocalDate dateFrom = Config.START_DATE;
-    LocalDate dateToWithFixedSeconds = dateTo.minusDays(firstDayOffset());
-    int weeksBetween = 0;
-    while (dateFrom.isBefore(dateToWithFixedSeconds.plusDays(1))) {
-      weeksBetween++;
-      dateFrom = dateFrom.plusWeeks(1);
-    }
-    return weeksBetween - 1;
+    return (int) ChronoUnit.WEEKS.between(Config.START_DATE, dateTo);
   }
 
   public static boolean isWeekendByColumnNumber(int column) {

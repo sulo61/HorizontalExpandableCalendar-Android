@@ -26,7 +26,7 @@ public class Config {
   /* END CONFIGURATION */
 
   private static LocalDate getStartDate() {
-    LocalDate START_BACK_BY_RANGE = INIT_DATE.plusMonths(-RANGE_MONTHS_BEFORE_INIT);
+    LocalDate START_BACK_BY_RANGE = INIT_DATE.minusMonths(RANGE_MONTHS_BEFORE_INIT);
     LocalDate START_BACK_TO_FIRST_DAY_OF_MONTH = START_BACK_BY_RANGE.plusDays(-START_BACK_BY_RANGE.getDayOfMonth() + 1);
     return START_BACK_TO_FIRST_DAY_OF_MONTH.plusDays(-START_BACK_TO_FIRST_DAY_OF_MONTH.getDayOfWeek().getValue() + 1);
   }
