@@ -1,7 +1,7 @@
 package com.mikesu.expandablecalendarandroid;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import com.mikesu.horizontalexpcalendar.HorizontalExpCalendar;
 import com.mikesu.horizontalexpcalendar.common.Config;
