@@ -51,8 +51,8 @@ public class DayCellView extends BaseCellView {
     private void initView() {
         inflate(getContext(), R.layout.day_cell_view, this);
 
-        text = (TextView) findViewById(R.id.text);
-        markContainer = (FrameLayout) findViewById(R.id.mark_container);
+        text = findViewById(R.id.text);
+        markContainer = findViewById(R.id.mark_container);
         markToday = findViewById(R.id.mark_today_view);
         markSelected = findViewById(R.id.mark_selected_view);
         markCustom1 = findViewById(R.id.mark_custom1);

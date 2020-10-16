@@ -23,7 +23,7 @@ import java.time.temporal.ChronoField;
 
 public class Animations {
 
-  private static final String TAG = Animations.class.getName();
+  private static final String TAG = "Animations";
 
   private CalendarAnimation decreasingAlphaAnimation;
   private CalendarAnimation increasingAlphaAnimation;

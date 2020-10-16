@@ -37,7 +37,7 @@ public class LabelCellView extends BaseCellView {
   private void initView() {
     inflate(getContext(), R.layout.label_cell_view, this);
 
-    text = (TextView) findViewById(R.id.text);
+    text = findViewById(R.id.text);
   }
 
   public void setText(String text) {

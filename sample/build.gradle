@@ -36,7 +36,7 @@ dependencies {
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation project(':horizontalexpcalendar')
+    implementation project(':library')
 
     //multi dex
     implementation 'androidx.multidex:multidex:2.0.1'

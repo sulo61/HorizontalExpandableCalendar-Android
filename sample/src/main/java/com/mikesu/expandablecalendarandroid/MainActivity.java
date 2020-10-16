@@ -3,7 +3,7 @@ package com.mikesu.expandablecalendarandroid;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
-import com.mikesu.horizontalexpcalendar.HorizontalExpCalendar;
+import com.mikesu.horizontalexpcalendar.CalendarView;
 import com.mikesu.horizontalexpcalendar.common.Config;
 
 import java.time.LocalDate;
@@ -14,16 +14,16 @@ import java.time.LocalDate;
  */
 public class MainActivity extends AppCompatActivity {
 
-  private static final String TAG = MainActivity.class.getName();
-  private HorizontalExpCalendar horizontalExpCalendar;
+  private static final String TAG = "MainActivity";
+  private CalendarView calendarView;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
 
-    horizontalExpCalendar = (HorizontalExpCalendar) findViewById(R.id.calendar);
-    horizontalExpCalendar.setHorizontalExpCalListener(new HorizontalExpCalendar.HorizontalExpCalListener() {
+    calendarView = findViewById(R.id.calendar);
+    calendarView.setHorizontalExpCalListener(new CalendarView.HorizontalExpCalListener() {
       @Override
       public void onCalendarScroll(LocalDate dateTime) {
         Log.i(TAG, "onCalendarScroll: " + dateTime.toString());

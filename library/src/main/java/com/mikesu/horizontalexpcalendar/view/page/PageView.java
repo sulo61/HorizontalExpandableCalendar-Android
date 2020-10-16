@@ -17,8 +17,6 @@ import com.mikesu.horizontalexpcalendar.view.cell.LabelCellView;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
-import java.time.temporal.WeekFields;
-import java.util.Locale;
 
 /**
  * Created by MikeSu on 09.08.2016.

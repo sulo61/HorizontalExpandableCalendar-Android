@@ -30,7 +30,7 @@ import java.time.temporal.ChronoField;
  * www.michalsulek.pl
  */
 
-public class HorizontalExpCalendar extends RelativeLayout implements PageView.PageViewListener, Animations.AnimationsListener {
+public class CalendarView extends RelativeLayout implements PageView.PageViewListener, Animations.AnimationsListener {
 
   private TextView titleTextView;
   private RelativeLayout centerContainer;
@@ -47,12 +47,12 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
 
   private boolean lock;
 
-  public HorizontalExpCalendar(Context context, AttributeSet attrs) {
+  public CalendarView(Context context, AttributeSet attrs) {
     super(context, attrs);
     init(attrs);
   }
 
-  public HorizontalExpCalendar(Context context, AttributeSet attrs, int defStyleAttr) {
+  public CalendarView(Context context, AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
     init(attrs);
   }
@@ -75,7 +75,7 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
   private void init(AttributeSet attributeSet) {
     inflate(getContext(), R.layout.horizontal_exp_calendar, this);
 
-    centerContainer = (RelativeLayout) findViewById(R.id.center_container);
+    centerContainer = findViewById(R.id.center_container);
     lock = false;
 
     setValuesFromAttr(attributeSet);
@@ -108,7 +108,7 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
     getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
       @Override
       public void onGlobalLayout() {
-        HorizontalExpCalendar.this.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+        CalendarView.this.getViewTreeObserver().removeOnGlobalLayoutListener(this);
         Config.cellWidth = getMeasuredWidth() / Config.COLUMNS;
         setupViews();
       }
@@ -163,7 +163,7 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
   }
 
   private void initAnimation() {
-    animations = new Animations(getContext(), HorizontalExpCalendar.this, Utils.animateContainerExtraTopOffset(getResources()));
+    animations = new Animations(getContext(), CalendarView.this, Utils.animateContainerExtraTopOffset(getResources()));
   }
 
   private void setupViews() {
@@ -175,22 +175,19 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
   }
 
   private void initAnimateContainer() {
-    animateContainer = (GridLayout) findViewById(R.id.animate_container);
+    animateContainer = findViewById(R.id.animate_container);
     animateContainer.getLayoutParams().height = Config.cellHeight;
     int sideMargin = Utils.animateContainerExtraSideOffset(getResources());
     animateContainer.setPadding(sideMargin, 0, sideMargin, 0);
   }
 
   private void initTopContainer() {
-    titleTextView = (TextView) findViewById(R.id.title);
-    findViewById(R.id.scroll_to_today_button).setOnClickListener(new OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        if (!isLocked()) {
-          lock();
-          scrollToDate(LocalDate.now(), true, true, true);
-          unlock();
-        }
+    titleTextView = findViewById(R.id.title);
+    findViewById(R.id.scroll_to_today_button).setOnClickListener(view -> {
+      if (!isLocked()) {
+        lock();
+        scrollToDate(LocalDate.now(), true, true, true);
+        unlock();
       }
     });
   }
@@ -201,19 +198,9 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
   }
 
   private void initBottomContainer() {
-    findViewById(R.id.collapse_button).setOnClickListener(new OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        collapse();
-      }
-    });
+    findViewById(R.id.collapse_button).setOnClickListener(view -> collapse());
 
-    findViewById(R.id.expand_button).setOnClickListener(new OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        expand();
-      }
-    });
+    findViewById(R.id.expand_button).setOnClickListener(view -> expand());
   }
 
   public void collapse() {
@@ -254,7 +241,7 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
   }
 
   private void initMonthViewPager() {
-    monthViewPager = (ViewPager) findViewById(R.id.month_view_pager);
+    monthViewPager = findViewById(R.id.month_view_pager);
     monthPagerAdapter = new CalendarAdapter(getContext(), Config.ViewPagerType.MONTH, this);
     monthViewPager.setAdapter(monthPagerAdapter);
     monthViewPager.setCurrentItem(Utils.monthPositionFromDate(Config.INIT_DATE));
@@ -285,7 +272,7 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
   }
 
   private void initWeekViewPager() {
-    weekViewPager = (ViewPager) findViewById(R.id.week_view_pager);
+    weekViewPager = findViewById(R.id.week_view_pager);
     weekPagerAdapter = new CalendarAdapter(getContext(), Config.ViewPagerType.WEEK, this);
     weekViewPager.setAdapter(weekPagerAdapter);
     setWeekViewPagerPosition(Utils.weekPositionFromDate(Config.INIT_DATE), false);

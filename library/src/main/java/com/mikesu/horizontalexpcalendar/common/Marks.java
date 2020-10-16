@@ -17,7 +17,7 @@ import java.util.Map;
 
 public class Marks {
 
-  private static final String TAG = Marks.class.getName();
+  private static final String TAG = "Marks";
   private static Map<String, MarkSetup> marksMap;
   private static boolean locked = false;
 
