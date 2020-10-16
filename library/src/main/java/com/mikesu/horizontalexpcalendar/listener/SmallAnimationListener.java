@@ -11,34 +11,34 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class SmallAnimationListener implements Animator.AnimatorListener, ValueAnimator.AnimatorUpdateListener {
 
-  @Override
-  public void onAnimationUpdate(@NotNull ValueAnimator valueAnimator) {
-    animationUpdate(valueAnimator.getAnimatedValue());
-  }
+    @Override
+    public void onAnimationUpdate(@NotNull ValueAnimator valueAnimator) {
+        animationUpdate(valueAnimator.getAnimatedValue());
+    }
 
-  @Override
-  public void onAnimationStart(Animator animator) {
-    animationStart(animator);
-  }
+    @Override
+    public void onAnimationStart(Animator animator) {
+        animationStart(animator);
+    }
 
-  @Override
-  public void onAnimationEnd(Animator animator) {
-    animationEnd(animator);
-  }
+    @Override
+    public void onAnimationEnd(Animator animator) {
+        animationEnd(animator);
+    }
 
-  @Override
-  public void onAnimationCancel(Animator animator) {
-    animationEnd(animator);
-  }
+    @Override
+    public void onAnimationCancel(Animator animator) {
+        animationEnd(animator);
+    }
 
-  @Override
-  public void onAnimationRepeat(Animator animator) {
-    // IGNORE
-  }
+    @Override
+    public void onAnimationRepeat(Animator animator) {
+        // IGNORE
+    }
 
-  public abstract void animationStart(Animator animation);
+    public abstract void animationStart(Animator animation);
 
-  public abstract void animationEnd(Animator animation);
+    public abstract void animationEnd(Animator animation);
 
-  public abstract void animationUpdate(Object value);
+    public abstract void animationUpdate(Object value);
 }

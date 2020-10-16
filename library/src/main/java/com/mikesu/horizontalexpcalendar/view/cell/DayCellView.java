@@ -77,27 +77,27 @@ public class DayCellView extends BaseCellView {
 
 
     private void setTextColor() {
-            if (markSetup == null) {
-                colorTextWithoutMark();
-            } else {
-                if (markSetup.isToday() && markSetup.isSelected()) {
-                    text.setTextColor(Color.WHITE);
-                    return;
-                }
-                if (markSetup.isToday() && !markSetup.isSelected()) {
-                    text.setTextColor(Color.parseColor("#f65f00"));
-                    return;
-                }
-                if (!markSetup.isToday() && markSetup.isSelected()) {
-                    text.setTextColor(Color.WHITE);
-                    return;
-                }
-                colorTextWithoutMark();
+        if (markSetup == null) {
+            colorTextWithoutMark();
+        } else {
+            if (markSetup.isToday() && markSetup.isSelected()) {
+                text.setTextColor(Color.WHITE);
+                return;
             }
+            if (markSetup.isToday() && !markSetup.isSelected()) {
+                text.setTextColor(Color.parseColor("#f65f00"));
+                return;
+            }
+            if (!markSetup.isToday() && markSetup.isSelected()) {
+                text.setTextColor(Color.WHITE);
+                return;
+            }
+            colorTextWithoutMark();
+        }
     }
 
     public void colorTextWithoutMark() {
-        if (timeType != TimeType.CURRENT && Config.currentViewPager == Config.ViewPagerType.MONTH)  {
+        if (timeType != TimeType.CURRENT && Config.currentViewPager == Config.ViewPagerType.MONTH) {
             text.setTextColor(Config.CELL_TEXT_ANOTHER_MONTH_COLOR);
         } else {
             text.setTextColor(Config.CELL_TEXT_CURRENT_MONTH_COLOR);

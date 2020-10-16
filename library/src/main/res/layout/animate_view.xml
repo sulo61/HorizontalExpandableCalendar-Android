@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:columnCount="7"
-            android:orientation="horizontal"
-            android:rowCount="1">
-</GridLayout>
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:columnCount="@integer/month_columns"
+    android:orientation="horizontal"
+    android:rowCount="@integer/week_rows"></GridLayout>

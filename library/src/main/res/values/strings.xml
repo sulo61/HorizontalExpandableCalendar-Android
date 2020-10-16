@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">ExpandableCalendar</string>
+
+    <string name="action_expand">Expand</string>
+    <string name="action_collapse">Collapse</string>
+    <string name="action_today">Today</string>
 </resources>

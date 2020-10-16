@@ -24,125 +24,125 @@ import java.time.LocalDate;
  */
 public class PageView extends FrameLayout implements View.OnClickListener {
 
-  private PageViewListener pageViewListener;
-  private GridLayout gridLayout;
-  private LocalDate pageDate;
+    private PageViewListener pageViewListener;
+    private GridLayout gridLayout;
+    private LocalDate pageDate;
 
-  private Config.ViewPagerType viewPagerType;
-  private int rows;
+    private Config.ViewPagerType viewPagerType;
+    private int rows;
 
-  public PageView(Context context) {
-    this(context, null, null);
-  }
-
-  public PageView(Context context, Config.ViewPagerType viewPagerType, PageViewListener pageViewListener) {
-    super(context);
-    if (pageViewListener != null) {
-      this.pageViewListener = pageViewListener;
+    public PageView(Context context) {
+        this(context, null, null);
     }
-    if (viewPagerType != null) {
-      this.viewPagerType = viewPagerType;
-      this.rows = viewPagerType == Config.ViewPagerType.MONTH ? Config.MONTH_ROWS : Config.WEEK_ROWS;
-      init();
-    }
-  }
 
-  private void init() {
-    initViews();
-  }
-
-  private void initViews() {
-    inflate(getContext(), R.layout.page_view, this);
-    gridLayout = findViewById(R.id.grid_layout);
-    gridLayout.setColumnCount(Config.COLUMNS);
-    gridLayout.setRowCount(rows + (Utils.dayLabelExtraRow()));
-  }
-
-  public void setup(LocalDate pageDate) {
-    this.pageDate = pageDate;
-    addCellsToGrid();
-  }
-
-  private void addCellsToGrid() {
-    LocalDate cellDate;
-    if (viewPagerType == Config.ViewPagerType.MONTH) {
-      cellDate = pageDate.withDayOfMonth(1).plusDays(-pageDate.withDayOfMonth(1).getDayOfWeek().getValue() + 1 + Utils.firstDayOffset());
-    } else {
-      cellDate = pageDate.plusDays(-pageDate.getDayOfWeek().getValue() + 1 + Utils.firstDayOffset());
-    }
-    addLabels();
-    addDays(cellDate);
-  }
-
-  private void addDays(LocalDate cellDate) {
-    for (int r = Utils.dayLabelExtraRow(); r < rows + (Utils.dayLabelExtraRow()); r++) {
-      for (int c = 0; c < Config.COLUMNS; c++) {
-        DayCellView dayCellView = new DayCellView(getContext());
-
-        GridLayout.LayoutParams cellParams = new GridLayout.LayoutParams(GridLayout.spec(r), GridLayout.spec(c));
-        cellParams.height = Config.cellHeight;
-        cellParams.width = Config.cellWidth;
-        dayCellView.setTag(cellDate);
-        dayCellView.setLayoutParams(cellParams);
-        dayCellView.setDayNumber(cellDate.getDayOfMonth());
-        dayCellView.setDayType(Utils.isWeekendByColumnNumber(c) ? BaseCellView.DayType.WEEKEND : BaseCellView.DayType.NO_WEEKEND);
-        dayCellView.setMark(Marks.getMark(cellDate), Config.cellHeight);
-        dayCellView.setOnClickListener(this);
-
-        if (viewPagerType == Config.ViewPagerType.MONTH) {
-          dayCellView.setTimeType(getTimeType(cellDate));
+    public PageView(Context context, Config.ViewPagerType viewPagerType, PageViewListener pageViewListener) {
+        super(context);
+        if (pageViewListener != null) {
+            this.pageViewListener = pageViewListener;
         }
-
-        gridLayout.addView(dayCellView);
-
-        cellDate = cellDate.plusDays(1);
-      }
+        if (viewPagerType != null) {
+            this.viewPagerType = viewPagerType;
+            this.rows = viewPagerType == Config.ViewPagerType.MONTH ? Config.MONTH_ROWS : Config.WEEK_ROWS;
+            init();
+        }
     }
-  }
 
-  private void addLabels() {
-    if (Config.USE_DAY_LABELS) {
-      for (int l = 0; l < Config.COLUMNS; l++) {
-        LabelCellView label = new LabelCellView(getContext());
-
-        GridLayout.LayoutParams labelParams = new GridLayout.LayoutParams(GridLayout.spec(0), GridLayout.spec(l));
-        labelParams.height = Config.cellHeight;
-        labelParams.width = Config.cellWidth;
-        label.setLayoutParams(labelParams);
-        label.setText(Constants.NAME_OF_DAYS[(l + 1 + Utils.firstDayOffset()) % 7]);
-        label.setDayType(Utils.isWeekendByColumnNumber(l) ? BaseCellView.DayType.WEEKEND : BaseCellView.DayType.NO_WEEKEND);
-
-        gridLayout.addView(label);
-
-      }
+    private void init() {
+        initViews();
     }
-  }
 
-  private DayCellView.TimeType getTimeType(@NotNull LocalDate cellTime) {
-    if (cellTime.getMonth().compareTo(pageDate.getMonth()) < 0) {
-      return DayCellView.TimeType.PAST;
-    } else if (cellTime.getMonth().compareTo(pageDate.getMonth()) > 0) {
-      return DayCellView.TimeType.FUTURE;
-    } else {
-      return DayCellView.TimeType.CURRENT;
+    private void initViews() {
+        inflate(getContext(), R.layout.page_view, this);
+        gridLayout = findViewById(R.id.grid_layout);
+        gridLayout.setColumnCount(Config.COLUMNS);
+        gridLayout.setRowCount(rows + (Utils.dayLabelExtraRow()));
     }
-  }
 
-  public void updateMarks() {
-    for (int c = Utils.dayLabelExtraChildCount(); c < gridLayout.getChildCount(); c++) {
-      DayCellView dayCellView = (DayCellView) gridLayout.getChildAt(c);
-      dayCellView.setMarkSetup(Marks.getMark((LocalDate) dayCellView.getTag()));
+    public void setup(LocalDate pageDate) {
+        this.pageDate = pageDate;
+        addCellsToGrid();
     }
-  }
 
-  @Override
-  public void onClick(View view) {
-    if (pageViewListener != null) {
-      pageViewListener.onDayClick((LocalDate) view.getTag());
+    private void addCellsToGrid() {
+        LocalDate cellDate;
+        if (viewPagerType == Config.ViewPagerType.MONTH) {
+            cellDate = pageDate.withDayOfMonth(1).plusDays(-pageDate.withDayOfMonth(1).getDayOfWeek().getValue() + 1 + Utils.firstDayOffset());
+        } else {
+            cellDate = pageDate.plusDays(-pageDate.getDayOfWeek().getValue() + 1 + Utils.firstDayOffset());
+        }
+        addLabels();
+        addDays(cellDate);
     }
-  }
 
-  public interface PageViewListener {
-    void onDayClick(LocalDate dateTime);
-  }
+    private void addDays(LocalDate cellDate) {
+        for (int r = Utils.dayLabelExtraRow(); r < rows + (Utils.dayLabelExtraRow()); r++) {
+            for (int c = 0; c < Config.COLUMNS; c++) {
+                DayCellView dayCellView = new DayCellView(getContext());
+
+                GridLayout.LayoutParams cellParams = new GridLayout.LayoutParams(GridLayout.spec(r), GridLayout.spec(c));
+                cellParams.height = Config.cellHeight;
+                cellParams.width = Config.cellWidth;
+                dayCellView.setTag(cellDate);
+                dayCellView.setLayoutParams(cellParams);
+                dayCellView.setDayNumber(cellDate.getDayOfMonth());
+                dayCellView.setDayType(Utils.isWeekendByColumnNumber(c) ? BaseCellView.DayType.WEEKEND : BaseCellView.DayType.NO_WEEKEND);
+                dayCellView.setMark(Marks.getMark(cellDate), Config.cellHeight);
+                dayCellView.setOnClickListener(this);
+
+                if (viewPagerType == Config.ViewPagerType.MONTH) {
+                    dayCellView.setTimeType(getTimeType(cellDate));
+                }
+
+                gridLayout.addView(dayCellView);
+
+                cellDate = cellDate.plusDays(1);
+            }
+        }
+    }
+
+    private void addLabels() {
+        if (Config.USE_DAY_LABELS) {
+            for (int l = 0; l < Config.COLUMNS; l++) {
+                LabelCellView label = new LabelCellView(getContext());
+
+                GridLayout.LayoutParams labelParams = new GridLayout.LayoutParams(GridLayout.spec(0), GridLayout.spec(l));
+                labelParams.height = Config.cellHeight;
+                labelParams.width = Config.cellWidth;
+                label.setLayoutParams(labelParams);
+                label.setText(Constants.NAME_OF_DAYS[(l + 1 + Utils.firstDayOffset()) % 7]);
+                label.setDayType(Utils.isWeekendByColumnNumber(l) ? BaseCellView.DayType.WEEKEND : BaseCellView.DayType.NO_WEEKEND);
+
+                gridLayout.addView(label);
+
+            }
+        }
+    }
+
+    private DayCellView.TimeType getTimeType(@NotNull LocalDate cellTime) {
+        if (cellTime.getMonth().compareTo(pageDate.getMonth()) < 0) {
+            return DayCellView.TimeType.PAST;
+        } else if (cellTime.getMonth().compareTo(pageDate.getMonth()) > 0) {
+            return DayCellView.TimeType.FUTURE;
+        } else {
+            return DayCellView.TimeType.CURRENT;
+        }
+    }
+
+    public void updateMarks() {
+        for (int c = Utils.dayLabelExtraChildCount(); c < gridLayout.getChildCount(); c++) {
+            DayCellView dayCellView = (DayCellView) gridLayout.getChildAt(c);
+            dayCellView.setMarkSetup(Marks.getMark((LocalDate) dayCellView.getTag()));
+        }
+    }
+
+    @Override
+    public void onClick(View view) {
+        if (pageViewListener != null) {
+            pageViewListener.onDayClick((LocalDate) view.getTag());
+        }
+    }
+
+    public interface PageViewListener {
+        void onDayClick(LocalDate dateTime);
+    }
 }

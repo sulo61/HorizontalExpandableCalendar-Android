@@ -13,41 +13,41 @@ import com.mikesu.horizontalexpcalendar.R;
 
 public class LabelCellView extends BaseCellView {
 
-  private TextView text;
+    private TextView text;
 
-  public LabelCellView(Context context) {
-    super(context);
-    init();
-  }
+    public LabelCellView(Context context) {
+        super(context);
+        init();
+    }
 
-  public LabelCellView(Context context, AttributeSet attrs) {
-    super(context, attrs);
-    init();
-  }
+    public LabelCellView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        init();
+    }
 
-  public LabelCellView(Context context, AttributeSet attrs, int defStyleAttr) {
-    super(context, attrs, defStyleAttr);
-    init();
-  }
+    public LabelCellView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init();
+    }
 
-  private void init() {
-    initView();
-  }
+    private void init() {
+        initView();
+    }
 
-  private void initView() {
-    inflate(getContext(), R.layout.label_cell_view, this);
+    private void initView() {
+        inflate(getContext(), R.layout.label_cell_view, this);
 
-    text = findViewById(R.id.text);
-  }
+        text = findViewById(R.id.text);
+    }
 
-  public void setText(String text) {
-    this.text.setText(text);
-  }
+    public void setText(String text) {
+        this.text.setText(text);
+    }
 
-  public void setDayType(DayType dayType) {
-    this.dayType = dayType;
-    setTextBackgroundByDayType();
-  }
+    public void setDayType(DayType dayType) {
+        this.dayType = dayType;
+        setTextBackgroundByDayType();
+    }
 
 
 }

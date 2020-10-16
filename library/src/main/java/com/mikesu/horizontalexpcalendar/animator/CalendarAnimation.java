@@ -10,9 +10,9 @@ import com.mikesu.horizontalexpcalendar.listener.SmallAnimationListener;
  */
 public class CalendarAnimation extends ValueAnimator {
 
-  public void setListener(SmallAnimationListener smallAnimationListener) {
-    addUpdateListener(smallAnimationListener);
-    addListener(smallAnimationListener);
-    start();
-  }
+    public void setListener(SmallAnimationListener smallAnimationListener) {
+        addUpdateListener(smallAnimationListener);
+        addListener(smallAnimationListener);
+        start();
+    }
 }
