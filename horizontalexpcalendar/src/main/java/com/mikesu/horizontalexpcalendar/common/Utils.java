@@ -1,8 +1,12 @@
 package com.mikesu.horizontalexpcalendar.common;
 
 import android.content.res.Resources;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.time.LocalDate;
+import java.time.temporal.ChronoField;
 import java.util.Random;
-import org.joda.time.DateTime;
 
 /**
  * Created by MikeSu on 08/08/16.
@@ -11,17 +15,14 @@ import org.joda.time.DateTime;
 
 public class Utils {
 
-  public static int monthPositionFromDate(DateTime dateTo) {
-    DateTime dateFrom = Config.START_DATE.withDayOfWeek(7);
-    return ((dateTo.getYear() - dateFrom.getYear()) * 12) + (dateTo.getMonthOfYear() - dateFrom.getMonthOfYear());
+  public static int monthPositionFromDate(@NotNull LocalDate dateTo) {
+    LocalDate dateFrom = Config.START_DATE.with(ChronoField.DAY_OF_WEEK,7);
+    return ((dateTo.getYear() - dateFrom.getYear()) * 12) + (dateTo.getMonthValue() - dateFrom.getMonthValue());
   }
 
-  public static int weekPositionFromDate(DateTime dateTo) {
-    DateTime dateFrom = Config.START_DATE.toDateTime();
-    DateTime dateToWithFixedSeconds = dateTo
-        .minusDays(firstDayOffset())
-        .withSecondOfMinute(dateFrom.getSecondOfMinute())
-        .withMillisOfSecond(dateFrom.getMillisOfSecond());
+  public static int weekPositionFromDate(@NotNull LocalDate dateTo) {
+    LocalDate dateFrom = Config.START_DATE;
+    LocalDate dateToWithFixedSeconds = dateTo.minusDays(firstDayOffset());
     int weeksBetween = 0;
     while (dateFrom.isBefore(dateToWithFixedSeconds.plusDays(1))) {
       weeksBetween++;
@@ -57,31 +58,31 @@ public class Utils {
     return Config.currentViewPager == Config.ViewPagerType.MONTH;
   }
 
-  public static DateTime getDateByMonthPosition(int position) {
-    return Config.START_DATE.withDayOfWeek(7 + firstDayOffset()).withDayOfMonth(1).plusMonths(position);
+  public static LocalDate getDateByMonthPosition(int position) {
+    return Config.START_DATE.with(ChronoField.DAY_OF_WEEK,7 + firstDayOffset()).withDayOfMonth(1).plusMonths(position);
   }
 
-  public static DateTime getDateByWeekPosition(int position) {
-    return Config.START_DATE.withDayOfWeek(7 + firstDayOffset()).plusWeeks(position);
+  public static LocalDate getDateByWeekPosition(int position) {
+    return Config.START_DATE.with(ChronoField.DAY_OF_WEEK,7 + firstDayOffset()).plusWeeks(position);
   }
 
-  public static boolean isTheSameMonthToScrollDate(DateTime dateTime) {
+  public static boolean isTheSameMonthToScrollDate(LocalDate dateTime) {
     return isTheSameMonth(Config.scrollDate, dateTime);
   }
 
-  public static boolean isTheSameMonth(DateTime dateTime1, DateTime dateTime2) {
-    return (dateTime1.getYear() == dateTime2.getYear()) && (dateTime1.getMonthOfYear() == dateTime2.getMonthOfYear());
+  public static boolean isTheSameMonth(@NotNull LocalDate dateTime1, @NotNull LocalDate dateTime2) {
+    return (dateTime1.getYear() == dateTime2.getYear()) && (dateTime1.getMonthValue() == dateTime2.getMonthValue());
   }
 
-  public static boolean isTheSameWeekToScrollDate(DateTime dateTime) {
+  public static boolean isTheSameWeekToScrollDate(LocalDate dateTime) {
     return isTheSameWeek(Config.scrollDate, dateTime);
   }
 
-  public static boolean isTheSameWeek(DateTime dateTime1, DateTime dateTime2) {
-    DateTime firstDateMovedByFirstDayOfWeek = dateTime1.minusDays(firstDayOffset());
-    DateTime secondDateMovedByFirstDayOfWeek = dateTime2.minusDays(firstDayOffset());
+  public static boolean isTheSameWeek(@NotNull LocalDate dateTime1, @NotNull LocalDate dateTime2) {
+    LocalDate firstDateMovedByFirstDayOfWeek = dateTime1.minusDays(firstDayOffset());
+    LocalDate secondDateMovedByFirstDayOfWeek = dateTime2.minusDays(firstDayOffset());
     return (firstDateMovedByFirstDayOfWeek.getYear() == secondDateMovedByFirstDayOfWeek.getYear()) &&
-        (firstDateMovedByFirstDayOfWeek.getWeekOfWeekyear() == secondDateMovedByFirstDayOfWeek.getWeekOfWeekyear());
+        (firstDateMovedByFirstDayOfWeek.get(ChronoField.ALIGNED_WEEK_OF_YEAR) == secondDateMovedByFirstDayOfWeek.get(ChronoField.ALIGNED_WEEK_OF_YEAR));
   }
 
   public static int firstDayOffset() {
@@ -94,11 +95,12 @@ public class Utils {
     return 0;
   }
 
-  public static int getWeekOfMonth(DateTime dateTime) {
-    return ((dateTime.getDayOfMonth() + dateTime.withDayOfMonth(1).getDayOfWeek() - 2 - firstDayOffset()) / 7) + 1;
+  public static int getWeekOfMonth(@NotNull LocalDate dateTime) {
+    //todo check if correctly converted return ((dateTime.getDayOfMonth() + dateTime.withDayOfMonth(1).getDayOfWeek() - 2 - firstDayOffset()) / 7) + 1;
+  return dateTime.  get(ChronoField.ALIGNED_WEEK_OF_MONTH);
   }
 
-  public static int animateContainerExtraTopOffset(Resources resources) {
+  public static int animateContainerExtraTopOffset(@NotNull Resources resources) {
     float density = resources.getDisplayMetrics().density;
     if (density >= 4.0) {
       return 0;
@@ -118,7 +120,7 @@ public class Utils {
     return 0;
   }
 
-  public static int animateContainerExtraSideOffset(Resources resources) {
+  public static int animateContainerExtraSideOffset(@NotNull Resources resources) {
     float density = resources.getDisplayMetrics().density;
     if (density >= 4.0) {
       return 2;

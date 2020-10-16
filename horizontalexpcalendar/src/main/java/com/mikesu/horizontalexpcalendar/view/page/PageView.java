@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.GridLayout;
+
 import com.mikesu.horizontalexpcalendar.R;
 import com.mikesu.horizontalexpcalendar.common.Config;
 import com.mikesu.horizontalexpcalendar.common.Constants;
@@ -12,7 +13,10 @@ import com.mikesu.horizontalexpcalendar.common.Utils;
 import com.mikesu.horizontalexpcalendar.view.cell.BaseCellView;
 import com.mikesu.horizontalexpcalendar.view.cell.DayCellView;
 import com.mikesu.horizontalexpcalendar.view.cell.LabelCellView;
-import org.joda.time.DateTime;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.time.LocalDate;
 
 /**
  * Created by MikeSu on 09.08.2016.
@@ -22,7 +26,7 @@ public class PageView extends FrameLayout implements View.OnClickListener {
 
   private PageViewListener pageViewListener;
   private GridLayout gridLayout;
-  private DateTime pageDate;
+  private LocalDate pageDate;
 
   private Config.ViewPagerType viewPagerType;
   private int rows;
@@ -54,23 +58,23 @@ public class PageView extends FrameLayout implements View.OnClickListener {
     gridLayout.setRowCount(rows + (Utils.dayLabelExtraRow()));
   }
 
-  public void setup(DateTime pageDate) {
+  public void setup(LocalDate pageDate) {
     this.pageDate = pageDate;
     addCellsToGrid();
   }
 
   private void addCellsToGrid() {
-    DateTime cellDate;
+    LocalDate cellDate;
     if (viewPagerType == Config.ViewPagerType.MONTH) {
-      cellDate = pageDate.withDayOfMonth(1).plusDays(-pageDate.withDayOfMonth(1).getDayOfWeek() + 1 + Utils.firstDayOffset());
+      cellDate = pageDate.withDayOfMonth(1).plusDays(-pageDate.withDayOfMonth(1).getDayOfWeek().getValue() + 1 + Utils.firstDayOffset());
     } else {
-      cellDate = pageDate.plusDays(-pageDate.getDayOfWeek() + 1 + Utils.firstDayOffset());
+      cellDate = pageDate.plusDays(-pageDate.getDayOfWeek().getValue() + 1 + Utils.firstDayOffset());
     }
     addLabels();
     addDays(cellDate);
   }
 
-  private void addDays(DateTime cellDate) {
+  private void addDays(LocalDate cellDate) {
     for (int r = Utils.dayLabelExtraRow(); r < rows + (Utils.dayLabelExtraRow()); r++) {
       for (int c = 0; c < Config.COLUMNS; c++) {
         DayCellView dayCellView = new DayCellView(getContext());
@@ -114,10 +118,10 @@ public class PageView extends FrameLayout implements View.OnClickListener {
     }
   }
 
-  private DayCellView.TimeType getTimeType(DateTime cellTime) {
-    if (cellTime.getMonthOfYear() < pageDate.getMonthOfYear()) {
+  private DayCellView.TimeType getTimeType(@NotNull LocalDate cellTime) {
+    if (cellTime.getMonth().compareTo(pageDate.getMonth()) < 0) {
       return DayCellView.TimeType.PAST;
-    } else if (cellTime.getMonthOfYear() > pageDate.getMonthOfYear()) {
+    } else if (cellTime.getMonth().compareTo(pageDate.getMonth()) > 0) {
       return DayCellView.TimeType.FUTURE;
     } else {
       return DayCellView.TimeType.CURRENT;
@@ -127,18 +131,18 @@ public class PageView extends FrameLayout implements View.OnClickListener {
   public void updateMarks() {
     for (int c = Utils.dayLabelExtraChildCount(); c < gridLayout.getChildCount(); c++) {
       DayCellView dayCellView = (DayCellView) gridLayout.getChildAt(c);
-      dayCellView.setMarkSetup(Marks.getMark((DateTime) dayCellView.getTag()));
+      dayCellView.setMarkSetup(Marks.getMark((LocalDate) dayCellView.getTag()));
     }
   }
 
   @Override
   public void onClick(View view) {
     if (pageViewListener != null) {
-      pageViewListener.onDayClick((DateTime) view.getTag());
+      pageViewListener.onDayClick((LocalDate) view.getTag());
     }
   }
 
   public interface PageViewListener {
-    void onDayClick(DateTime dateTime);
+    void onDayClick(LocalDate dateTime);
   }
 }

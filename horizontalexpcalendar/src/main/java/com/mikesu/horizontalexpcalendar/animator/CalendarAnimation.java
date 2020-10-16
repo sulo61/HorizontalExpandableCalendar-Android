@@ -1,6 +1,7 @@
 package com.mikesu.horizontalexpcalendar.animator;
 
 import android.animation.ValueAnimator;
+
 import com.mikesu.horizontalexpcalendar.listener.SmallAnimationListener;
 
 /**

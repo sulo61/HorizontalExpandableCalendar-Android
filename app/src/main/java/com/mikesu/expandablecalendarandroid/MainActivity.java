@@ -5,7 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import com.mikesu.horizontalexpcalendar.HorizontalExpCalendar;
 import com.mikesu.horizontalexpcalendar.common.Config;
-import org.joda.time.DateTime;
+
+import java.time.LocalDate;
 
 /**
  * Created by MikeSu on 04/08/16.
@@ -24,12 +25,12 @@ public class MainActivity extends AppCompatActivity {
     horizontalExpCalendar = (HorizontalExpCalendar) findViewById(R.id.calendar);
     horizontalExpCalendar.setHorizontalExpCalListener(new HorizontalExpCalendar.HorizontalExpCalListener() {
       @Override
-      public void onCalendarScroll(DateTime dateTime) {
+      public void onCalendarScroll(LocalDate dateTime) {
         Log.i(TAG, "onCalendarScroll: " + dateTime.toString());
       }
 
       @Override
-      public void onDateSelected(DateTime dateTime) {
+      public void onDateSelected(LocalDate dateTime) {
         Log.i(TAG, "onDateSelected: " + dateTime.toString());
       }
 

@@ -3,6 +3,8 @@ package com.mikesu.horizontalexpcalendar.listener;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Created by MikeSu on 18/08/16.
  * www.michalsulek.pl
@@ -10,7 +12,7 @@ import android.animation.ValueAnimator;
 public abstract class SmallAnimationListener implements Animator.AnimatorListener, ValueAnimator.AnimatorUpdateListener {
 
   @Override
-  public void onAnimationUpdate(ValueAnimator valueAnimator) {
+  public void onAnimationUpdate(@NotNull ValueAnimator valueAnimator) {
     animationUpdate(valueAnimator.getAnimatedValue());
   }
 

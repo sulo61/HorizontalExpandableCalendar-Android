@@ -1,10 +1,14 @@
 package com.mikesu.horizontalexpcalendar.common;
 
 import android.util.Log;
+
 import com.mikesu.horizontalexpcalendar.model.MarkSetup;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
-import org.joda.time.DateTime;
 
 /**
  * Created by MikeSu on 09.08.2016.
@@ -30,16 +34,16 @@ public class Marks {
       return;
     }
     lock();
-    MarkSetup markSetup = getMark(new DateTime());
+    MarkSetup markSetup = getMark(LocalDate.now());
     if (markSetup == null) {
-      addNewMark(new DateTime(), new MarkSetup(true, false));
+      addNewMark(LocalDate.now(), new MarkSetup(true, false));
     } else {
       markSetup.setToday(true);
     }
     unlock();
   }
 
-  public static void refreshMarkSelected(DateTime newSelection) {
+  public static void refreshMarkSelected(LocalDate newSelection) {
     if (isLocked()) {
       return;
     }
@@ -64,7 +68,7 @@ public class Marks {
     unlock();
   }
 
-  public static void refreshCustomMark(DateTime dateTime, CustomMarks customMarks, boolean mark) {
+  public static void refreshCustomMark(LocalDate dateTime, CustomMarks customMarks, boolean mark) {
     if (isLocked()) {
       return;
     }
@@ -98,16 +102,17 @@ public class Marks {
     marksMap.clear();
   }
 
-  private static void addNewMark(DateTime dateTime, MarkSetup markSetup) {
+  private static void addNewMark(LocalDate dateTime, MarkSetup markSetup) {
     marksMap.put(dateTimeToStringKey(dateTime), markSetup);
   }
 
-  public static MarkSetup getMark(DateTime dateTime) {
+  public static MarkSetup getMark(LocalDate dateTime) {
     return marksMap.get(dateTimeToStringKey(dateTime));
   }
 
-  private static String dateTimeToStringKey(DateTime dateTime) {
-    return dateTime.getYear() + "-" + dateTime.getMonthOfYear() + "-" + dateTime.getDayOfMonth();
+  @NotNull
+  private static String dateTimeToStringKey(@NotNull LocalDate dateTime) {
+    return dateTime.getYear() + "-" + dateTime.getMonthValue() + "-" + dateTime.getDayOfMonth();
   }
 
   public static void lock() {

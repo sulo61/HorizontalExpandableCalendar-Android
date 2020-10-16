@@ -97,7 +97,7 @@ public class DayCellView extends BaseCellView {
     }
 
     public void colorTextWithoutMark() {
-        if ((timeType != TimeType.CURRENT) && ((Config.currentViewPager == Config.ViewPagerType.MONTH) )) {
+        if (timeType != TimeType.CURRENT && Config.currentViewPager == Config.ViewPagerType.MONTH)  {
             text.setTextColor(Config.CELL_TEXT_ANOTHER_MONTH_COLOR);
         } else {
             text.setTextColor(Config.CELL_TEXT_CURRENT_MONTH_COLOR);

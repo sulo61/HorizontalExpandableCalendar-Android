@@ -5,11 +5,16 @@ import android.content.Context;
 import android.util.Log;
 import android.view.View;
 import android.widget.GridLayout;
+
 import com.mikesu.horizontalexpcalendar.animator.CalendarAnimation;
 import com.mikesu.horizontalexpcalendar.listener.SmallAnimationListener;
 import com.mikesu.horizontalexpcalendar.view.cell.BaseCellView;
 import com.mikesu.horizontalexpcalendar.view.cell.DayCellView;
-import org.joda.time.DateTime;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.time.LocalDate;
+import java.time.temporal.ChronoField;
 
 /**
  * Created by MikeSu on 18/08/16.
@@ -245,7 +250,7 @@ public class Animations {
     increasingSizeAnimation.removeAllListeners();
   }
 
-  private DateTime getAnimateContainerDate() {
+  private LocalDate getAnimateContainerDate() {
     if (!Utils.isMonthView()) {
       if (Utils.isTheSameMonthToScrollDate(Config.selectionDate)) {
         return Config.selectionDate;
@@ -264,10 +269,10 @@ public class Animations {
   private void addCellsToAnimateContainer() {
     animationsListener.animateContainerRemoveViews();
 
-    DateTime animateInitDate = getAnimateContainerDate().minusDays(Utils.firstDayOffset()).withDayOfWeek(1);
+    LocalDate animateInitDate = getAnimateContainerDate().minusDays(Utils.firstDayOffset()).with(ChronoField.DAY_OF_WEEK,1);
 
     for (int d = 0; d < 7; d++) {
-      DateTime cellDate = animateInitDate.plusDays(d + Utils.firstDayOffset());
+      LocalDate cellDate = animateInitDate.plusDays(d + Utils.firstDayOffset());
 
       DayCellView dayCellView = new DayCellView(context);
 
@@ -284,10 +289,10 @@ public class Animations {
     }
   }
 
-  private DayCellView.TimeType getTimeType(DateTime cellTime) {
-    if (cellTime.getMonthOfYear() < Config.scrollDate.getMonthOfYear()) {
+  private DayCellView.TimeType getTimeType(@NotNull LocalDate cellTime) {
+    if (cellTime.getMonth().compareTo(Config.scrollDate.getMonth()) < 0) {
       return DayCellView.TimeType.PAST;
-    } else if (cellTime.getMonthOfYear() > Config.scrollDate.getMonthOfYear()) {
+    } else if (cellTime.getMonth().compareTo(Config.scrollDate.getMonth()) > 0) {
       return DayCellView.TimeType.FUTURE;
     } else {
       return DayCellView.TimeType.CURRENT;
@@ -309,7 +314,7 @@ public class Animations {
 
     void setWeekPagerAlpha(float alpha);
 
-    void scrollToDate(DateTime dateTime, boolean scrollMonthPager, boolean scrollWeekPager, boolean animate);
+    void scrollToDate(LocalDate dateTime, boolean scrollMonthPager, boolean scrollWeekPager, boolean animate);
 
     void animateContainerAddView(View view);
 

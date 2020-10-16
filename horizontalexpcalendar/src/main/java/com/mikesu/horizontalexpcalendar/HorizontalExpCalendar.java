@@ -1,9 +1,7 @@
 package com.mikesu.horizontalexpcalendar;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
-import androidx.viewpager.widget.ViewPager;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -11,6 +9,8 @@ import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import androidx.viewpager.widget.ViewPager;
 
 import com.mikesu.horizontalexpcalendar.adapter.CalendarAdapter;
 import com.mikesu.horizontalexpcalendar.common.Animations;
@@ -20,7 +20,10 @@ import com.mikesu.horizontalexpcalendar.common.Utils;
 import com.mikesu.horizontalexpcalendar.listener.SmallPageChangeListener;
 import com.mikesu.horizontalexpcalendar.view.page.PageView;
 
-import org.joda.time.DateTime;
+import org.jetbrains.annotations.NotNull;
+
+import java.time.LocalDate;
+import java.time.temporal.ChronoField;
 
 /**
  * Created by MikeSu on 23/04/18.
@@ -88,13 +91,13 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
 
   private void renderCustomMarks() {
     // custom1
-    Marks.refreshCustomMark(new DateTime().minusDays(5), Marks.CustomMarks.CUSTOM1, true);
-    Marks.refreshCustomMark(new DateTime().plusDays(1), Marks.CustomMarks.CUSTOM1, true);
-    Marks.refreshCustomMark(new DateTime().plusDays(4), Marks.CustomMarks.CUSTOM1, true);
+    Marks.refreshCustomMark(LocalDate.now().minusDays(5), Marks.CustomMarks.CUSTOM1, true);
+    Marks.refreshCustomMark(LocalDate.now().plusDays(1), Marks.CustomMarks.CUSTOM1, true);
+    Marks.refreshCustomMark(LocalDate.now().plusDays(4), Marks.CustomMarks.CUSTOM1, true);
     // custom2
-    Marks.refreshCustomMark(new DateTime().minusDays(7), Marks.CustomMarks.CUSTOM2, true);
-    Marks.refreshCustomMark(new DateTime().plusDays(1), Marks.CustomMarks.CUSTOM2, true);
-    Marks.refreshCustomMark(new DateTime().plusDays(10), Marks.CustomMarks.CUSTOM2, true);
+    Marks.refreshCustomMark(LocalDate.now().minusDays(7), Marks.CustomMarks.CUSTOM2, true);
+    Marks.refreshCustomMark(LocalDate.now().plusDays(1), Marks.CustomMarks.CUSTOM2, true);
+    Marks.refreshCustomMark(LocalDate.now().plusDays(10), Marks.CustomMarks.CUSTOM2, true);
   }
 
   private void setCellHeight() {
@@ -125,8 +128,7 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
     setHeightToCenterContainer(Utils.isMonthView() ? Config.monthViewPagerHeight : Config.weekViewPagerHeight);
   }
 
-  @SuppressLint("WrongViewCast")
-  private void setupBottomContainerFromAttr(TypedArray typedArray) {
+  private void setupBottomContainerFromAttr(@NotNull TypedArray typedArray) {
     if (typedArray.hasValue(R.styleable.HorizontalExpCalendar_bottom_container_height)) {
       ((LinearLayout.LayoutParams) findViewById(R.id.bottom_container).getLayoutParams()).height =
               typedArray.getDimensionPixelSize(R.styleable.HorizontalExpCalendar_bottom_container_height,
@@ -134,7 +136,7 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
     }
   }
 
-  private void setupMiddleContainerFromAttr(TypedArray typedArray) {
+  private void setupMiddleContainerFromAttr(@NotNull TypedArray typedArray) {
     if (typedArray.hasValue(R.styleable.HorizontalExpCalendar_center_container_expanded_height)) {
       Config.monthViewPagerHeight = typedArray.getDimensionPixelSize(
               R.styleable.HorizontalExpCalendar_center_container_expanded_height, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -145,8 +147,7 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
     }
   }
 
-  @SuppressLint("WrongViewCast")
-  private void setupTopContainerFromAttr(TypedArray typedArray) {
+  private void setupTopContainerFromAttr(@NotNull TypedArray typedArray) {
     if (typedArray.hasValue(R.styleable.HorizontalExpCalendar_top_container_height)) {
       ((LinearLayout.LayoutParams) findViewById(R.id.top_container).getLayoutParams()).height =
               typedArray.getDimensionPixelSize(R.styleable.HorizontalExpCalendar_top_container_height,
@@ -154,7 +155,7 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
     }
   }
 
-  private void setupExpandedFromAttr(TypedArray typedArray) {
+  private void setupExpandedFromAttr(@NotNull TypedArray typedArray) {
     if (typedArray.hasValue(R.styleable.HorizontalExpCalendar_expanded)) {
       Config.currentViewPager = typedArray.getBoolean(R.styleable.HorizontalExpCalendar_expanded, true) ?
               Config.ViewPagerType.MONTH : Config.ViewPagerType.WEEK;
@@ -187,7 +188,7 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
       public void onClick(View view) {
         if (!isLocked()) {
           lock();
-          scrollToDate(new DateTime(), true, true, true);
+          scrollToDate(LocalDate.now(), true, true, true);
           unlock();
         }
       }
@@ -223,7 +224,7 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
       }
       unlock();
       if (horizontalExpCalListener != null) {
-        horizontalExpCalListener.onCalendarScroll(Config.scrollDate.withDayOfWeek(1));
+        horizontalExpCalListener.onCalendarScroll(Config.scrollDate.with(ChronoField.DAY_OF_WEEK,1));
       }
     }
   }
@@ -240,7 +241,7 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
       }
       unlock();
       if (horizontalExpCalListener != null) {
-        horizontalExpCalListener.onCalendarScroll(Config.scrollDate.withDayOfWeek(7));
+        horizontalExpCalListener.onCalendarScroll(Config.scrollDate.with(ChronoField.DAY_OF_WEEK,7));
       }
     }
   }
@@ -270,7 +271,7 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
         if (Utils.isMonthView()) {
           Config.scrollDate = Utils.getDateByMonthPosition(monthViewPager.getCurrentItem());
           if (Utils.isTheSameMonthToScrollDate(Config.selectionDate)) {
-            Config.scrollDate = Config.selectionDate.toDateTime();
+            Config.scrollDate = Config.selectionDate;
           }
           refreshTitleTextView();
           if (horizontalExpCalListener != null) {
@@ -305,7 +306,7 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
           }
           refreshTitleTextView();
           if (horizontalExpCalListener != null) {
-            horizontalExpCalListener.onCalendarScroll(Config.scrollDate.withDayOfWeek(1));
+            horizontalExpCalListener.onCalendarScroll(Config.scrollDate.with(ChronoField.DAY_OF_WEEK,1));
           }
           unlock();
         }
@@ -314,7 +315,7 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
     weekViewPager.setVisibility(!Utils.isMonthView() ? VISIBLE : GONE);
   }
 
-  public void scrollToDate(DateTime dateTime, boolean animate) {
+  public void scrollToDate(LocalDate dateTime, boolean animate) {
     if (Config.currentViewPager == Config.ViewPagerType.MONTH && Utils.isTheSameMonthToScrollDate(dateTime)) {
       return;
     }
@@ -335,7 +336,7 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
   }
 
   private void refreshTitleTextView() {
-    DateTime titleDate = Config.scrollDate;
+    LocalDate titleDate = Config.scrollDate;
     if (Config.currentViewPager == Config.ViewPagerType.MONTH) {
       if (Utils.isTheSameMonthToScrollDate(Config.selectionDate)) {
         titleDate = Config.selectionDate;
@@ -345,7 +346,7 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
         titleDate = Config.selectionDate;
       }
     }
-    titleTextView.setText(String.format("%s - %s", titleDate.getYear(), titleDate.getMonthOfYear()));
+    titleTextView.setText(String.format("%s - %s", titleDate.getYear(), titleDate.getMonthValue()));
   }
 
   private void lock() {
@@ -375,7 +376,7 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
   }
 
   @Override
-  public void scrollToDate(DateTime dateTime, boolean scrollMonthPager, boolean scrollWeekPager, boolean animate) {
+  public void scrollToDate(LocalDate dateTime, boolean scrollMonthPager, boolean scrollWeekPager, boolean animate) {
     if (scrollMonthPager) {
       setMonthViewPagerPosition(Utils.monthPositionFromDate(dateTime), animate);
     }
@@ -411,7 +412,7 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
   }
 
   @Override
-  public void onDayClick(DateTime dateTime) {
+  public void onDayClick(LocalDate dateTime) {
     scrollToDate(dateTime, true);
 
     Marks.refreshMarkSelected(dateTime);
@@ -461,9 +462,9 @@ public class HorizontalExpCalendar extends RelativeLayout implements PageView.Pa
   }
 
   public interface HorizontalExpCalListener {
-    void onCalendarScroll(DateTime dateTime);
+    void onCalendarScroll(LocalDate dateTime);
 
-    void onDateSelected(DateTime dateTime);
+    void onDateSelected(LocalDate dateTime);
 
     void onChangeViewPager(Config.ViewPagerType viewPagerType);
   }

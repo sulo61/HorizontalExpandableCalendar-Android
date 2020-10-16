@@ -1,13 +1,18 @@
 package com.mikesu.horizontalexpcalendar.adapter;
 
 import android.content.Context;
-import androidx.viewpager.widget.PagerAdapter;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.viewpager.widget.PagerAdapter;
+
 import com.mikesu.horizontalexpcalendar.common.Config;
 import com.mikesu.horizontalexpcalendar.common.Utils;
 import com.mikesu.horizontalexpcalendar.view.page.PageView;
+
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,12 +47,13 @@ public class CalendarAdapter extends PagerAdapter {
   }
 
   @Override
-  public boolean isViewFromObject(View view, Object object) {
+  public boolean isViewFromObject(@NotNull View view, @NotNull Object object) {
     return view == object;
   }
 
+  @NotNull
   @Override
-  public Object instantiateItem(ViewGroup container, int position) {
+  public Object instantiateItem(@NotNull ViewGroup container, int position) {
     PageView pageView = new PageView(context, viewPagerType, pageViewListener);
     visiblePages.add(pageView);
 
@@ -68,7 +74,7 @@ public class CalendarAdapter extends PagerAdapter {
   }
 
   @Override
-  public void destroyItem(ViewGroup container, int position, Object object) {
+  public void destroyItem(@NotNull ViewGroup container, int position, @NotNull Object object) {
     visiblePages.remove(object);
     container.removeView((PageView) object);
   }
